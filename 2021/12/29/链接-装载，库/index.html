@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="链接，装载，库从源代码到内存的通路可执行文件的组成在链接前，需要将源文件编译为目标文件，目标文件链接为可执行文件。可执行文件（动态链接与运行时加载）由多个段组成：  文件头：文件基本信息。 段表：描述各段的基本信息。 基本的代码段和数据段。 链接相关的。（符号的解析和重定位） 装载相关。  可执行文件的加载： 源代码编译而成的目标文件一般依赖系统的运行库和其他共享对象，将它们链接成可执行的程序并加">
+<meta property="og:type" content="article">
+<meta property="og:title" content="链接,装载，库">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/29/%E9%93%BE%E6%8E%A5-%E8%A3%85%E8%BD%BD%EF%BC%8C%E5%BA%93/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="链接，装载，库从源代码到内存的通路可执行文件的组成在链接前，需要将源文件编译为目标文件，目标文件链接为可执行文件。可执行文件（动态链接与运行时加载）由多个段组成：  文件头：文件基本信息。 段表：描述各段的基本信息。 基本的代码段和数据段。 链接相关的。（符号的解析和重定位） 装载相关。  可执行文件的加载： 源代码编译而成的目标文件一般依赖系统的运行库和其他共享对象，将它们链接成可执行的程序并加">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gxuy176e6rj30u00znmy3.jpg">
+<meta property="article:published_time" content="2021-12-29T11:13:32.000Z">
+<meta property="article:modified_time" content="2021-12-30T04:00:26.849Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta property="article:tag" content="编译原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gxuy176e6rj30u00znmy3.jpg">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/29/%E9%93%BE%E6%8E%A5-%E8%A3%85%E8%BD%BD%EF%BC%8C%E5%BA%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/29/%E9%93%BE%E6%8E%A5-%E8%A3%85%E8%BD%BD%EF%BC%8C%E5%BA%93/","path":"2021/12/29/链接-装载，库/","title":"链接,装载，库"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>链接,装载，库 | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%93%BE%E6%8E%A5%EF%BC%8C%E8%A3%85%E8%BD%BD%EF%BC%8C%E5%BA%93"><span class="nav-number">1.</span> <span class="nav-text">链接，装载，库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E5%86%85%E5%AD%98%E7%9A%84%E9%80%9A%E8%B7%AF"><span class="nav-number">1.1.</span> <span class="nav-text">从源代码到内存的通路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.1.1.</span> <span class="nav-text">可执行文件的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%9A%84%E5%8A%A0%E8%BD%BD%EF%BC%9A"><span class="nav-number">1.1.2.</span> <span class="nav-text">可执行文件的加载：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%9A%84%E6%98%A0%E5%B0%84"><span class="nav-number">1.1.3.</span> <span class="nav-text">文件的映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E7%9A%84%E5%88%86%E5%B8%83%EF%BC%9A"><span class="nav-number">1.1.4.</span> <span class="nav-text">进程虚拟地址空间的分布：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7-amp-%E6%A8%A1%E5%9D%97%EF%BC%8C%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%EF%BC%8C%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5"><span class="nav-number">1.2.</span> <span class="nav-text">符号&amp;模块，静态链接，动态链接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7-amp-%E6%A8%A1%E5%9D%97"><span class="nav-number">1.2.1.</span> <span class="nav-text">符号&amp;模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%EF%BC%9A"><span class="nav-number">1.2.2.</span> <span class="nav-text">静态链接：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%EF%BC%9A"><span class="nav-number">1.2.3.</span> <span class="nav-text">动态链接：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%AE%9E%E7%8E%B0%EF%BC%9A"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">基本实现：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%97%B6%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E7%9A%84%E5%88%86%E5%B8%83"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">动态链接程序运行时地址空间的分布</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%86%85%E5%AE%B9%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">其他内容：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E4%B8%8E%E6%A0%88%EF%BC%9A"><span class="nav-number">1.3.1.</span> <span class="nav-text">函数调用与栈：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%92%8C%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0%E5%AD%98%E5%9C%A8%EF%BC%9A"><span class="nav-number">1.3.2.</span> <span class="nav-text">构造函数和析构函数存在：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%EF%BC%9A"><span class="nav-number">1.4.</span> <span class="nav-text">应用：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/29/%E9%93%BE%E6%8E%A5-%E8%A3%85%E8%BD%BD%EF%BC%8C%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          链接,装载，库
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-12-29 19:13:32" itemprop="dateCreated datePublished" datetime="2021-12-29T19:13:32+08:00">2021-12-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-12-30 12:00:26" itemprop="dateModified" datetime="2021-12-30T12:00:26+08:00">2021-12-30</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="链接，装载，库"><a href="#链接，装载，库" class="headerlink" title="链接，装载，库"></a>链接，装载，库</h1><h2 id="从源代码到内存的通路"><a href="#从源代码到内存的通路" class="headerlink" title="从源代码到内存的通路"></a>从源代码到内存的通路</h2><h3 id="可执行文件的组成"><a href="#可执行文件的组成" class="headerlink" title="可执行文件的组成"></a>可执行文件的组成</h3><p>在链接前，需要将源文件编译为目标文件，目标文件链接为可执行文件。可执行文件（动态链接与运行时加载）由多个段组成：</p>
+<ol>
+<li>文件头：文件基本信息。</li>
+<li>段表：描述各段的基本信息。</li>
+<li>基本的代码段和数据段。</li>
+<li>链接相关的。（符号的解析和重定位）</li>
+<li>装载相关。</li>
+</ol>
+<h3 id="可执行文件的加载："><a href="#可执行文件的加载：" class="headerlink" title="可执行文件的加载："></a>可执行文件的加载：</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxuy176e6rj30u00znmy3.jpg" alt="img"></p>
+<p>源代码编译而成的目标文件一般依赖系统的运行库和其他共享对象，将它们链接成可执行的程序并加载到内存。有以下这些方式“</p>
+<ol>
+<li>将所有相关文件静态链接成一个完整的可执行文件，然后加载到内存</li>
+<li>将目标文件作为可执行文件，载入内存时由动态链接器加载其依赖的其他文件</li>
+<li>将目标文件作为可执行文件，载入内存，由程序调用”依赖函数“加载或找到已加载到内存的函数地址，继续执行。</li>
+</ol>
+<h3 id="文件的映射"><a href="#文件的映射" class="headerlink" title="文件的映射"></a>文件的映射</h3><p>程序并不会完整的加载到内存中，会在执行时访问数据发生缺页时再加载。其中有两个关键的映射关系：、</p>
+<ol>
+<li>可执行文件各段与虚拟地址空间的映射。（VMA的数据结构）</li>
+<li>虚拟地址空间与物理地址空间的映射。（页表）</li>
+</ol>
+<h3 id="进程虚拟地址空间的分布："><a href="#进程虚拟地址空间的分布：" class="headerlink" title="进程虚拟地址空间的分布："></a>进程虚拟地址空间的分布：</h3><p>代码区：</p>
+<p>数据区：</p>
+<p>​    静态数据区，动态数据区（堆，栈）</p>
+<h2 id="符号-amp-模块，静态链接，动态链接"><a href="#符号-amp-模块，静态链接，动态链接" class="headerlink" title="符号&amp;模块，静态链接，动态链接"></a>符号&amp;模块，静态链接，动态链接</h2><h3 id="符号-amp-模块"><a href="#符号-amp-模块" class="headerlink" title="符号&amp;模块"></a>符号&amp;模块</h3><p>符号：符号最早起源于汇编的概念，汇编最早使用机器码（数字）来描述指令，操作数，地址值，后续改进为使用符号代替机器码。后续的符号也通常用于表示地址值，对于函数地址和变量地址都以符号来表示。</p>
+<p>模块：现代语言中，通常会按照功能划分为不同的模块。在C语言中，若干变量和函数组成了一个模块，存放到一个.c源码文件中，这些源代码文件按照目录结构组织。</p>
+<p>大规模软件通常会有很大规模的模块，这些模块直接相互依赖又相互独立。编译器会对每一个模块单独编译，每一个模块都会生成中间文件。中间文件最后会组合为一个单一的可执行文件。</p>
+<p>因为模块间存在相互依赖，表现为：1. 模块间的函数调用 2. 模块间的变量访问</p>
+<p>函数访问需要知道目标函数的地址，变量访问需要知道变量的地址，即：模块间符号的引用</p>
+<h3 id="静态链接："><a href="#静态链接：" class="headerlink" title="静态链接："></a>静态链接：</h3><p>主要过程：</p>
+<pre><code> 1. 地址和空间分配：
+ + 扫描所有的目标文件，获得它们每个节的长度，属性，位置，并将目标文件中的符号表中所有的符号定义和符合引用收集，统一放到一个全局的符号表。链接器可以获得所有输入目标文件的节的长度，并将它们合并，计算出输出文件中各个节合并后的长度和位置，建立映射关系。
+ 2. 符号决议
+ + 将每个引用于它输入的可重定位目标文件的符号表中的一个确定的符合定义关联起来。
+ + 相同模块的局部符号的引用。（每个模块的每个局部符合只有一个定义）
+ + 全局符号：编译器遇到一个不在当前模块中定义的符号，会假设其再其他某个模块中定义，生成一个链接器符号表条目，并将其交给链接器处理。如果链接器在它的任何输入模块都找不到被引用符号的定义，就会输出一条错误信息并终止。
+ + 多个目标文件出现相同名字的全局符合：
+   1. 不允许有多个同名的强符号
+   2. 如果有一个强符合与多个弱符合同名，选择强符合
+   3. 多个弱符号同名，则从这些弱符合中任意选择一个。
+ + 一个弱符号定义在多个目标文件
+   1. 多个强符号类型不同（非法）
+   2. 一个强符号，多个弱符合，出现类型不一致（同强符号，如果弱符合类型大于强，则发出警告）
+   3. 多个弱符合类型不一致（选择最大的类型）
+ 3. **重定位**：
+ + 链接器已经确定所有符合的虚拟地址了。链接器就可以根据符号的地址对每个需要重定位的指令进行地址修正。
+</code></pre>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* a.c */</span></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> shared;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> *b)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">100</span>;</span><br><span class="line">    swap(&amp;a, &amp;shared);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* b.c */</span></span><br><span class="line"><span class="keyword">int</span> shared = <span class="number">42</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> *b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> temp = &amp;a;</span><br><span class="line">    &amp;a = &amp;b;</span><br><span class="line">    &amp;b = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>b.c中定义了2个全局符号，一个变量<strong>shared</strong>，一个函数<strong>swap</strong>. a.c中定义了一个全局符号<strong>main</strong>，a.c中引用了b.c中的2个符号。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c a.c b.c</span><br></pre></td></tr></table></figure>
+
+<p>使用gcc将这两个文件编译为中间文件以后，a的中间文件中，符号<strong>shared</strong>,<strong>swap</strong>地址的值都为0.</p>
+<p>在这个过程中，每个模块会有一个relocation table保存每个模块的那些符号需要重定位，整体上有一个symbol table保存符号地址。</p>
+<p>静态链接过程中，各个中间文件会把relocation table中需要重定位的符号进行重定位。</p>
+<p>静态链接的问题：1. 浪费磁盘和内存空间 - 各个可执行程序中依赖的库都需要链接到可执行文件中 2. 程序的更新，部署，发布会有很多麻烦 - 每当更新程序时，都需要重新进行编译和链接</p>
+<h3 id="动态链接："><a href="#动态链接：" class="headerlink" title="动态链接："></a>动态链接：</h3><p>不对组成程序的目标文件进行链接，等到程序运行时才进行链接。即链接推迟到运行时进行。</p>
+<p>动态链接还分为：non-lazy binding(程序运行前就会被绑定) lazy binding(符号第一次使用时)绑定</p>
+<h4 id="基本实现："><a href="#基本实现：" class="headerlink" title="基本实现："></a>基本实现：</h4><ol>
+<li>动态链接会涉及到运行时的链接以及多个文件的装载，必须有操作系统的支持。</li>
+<li>在Linux中，ELF动态链接文件被称为 DSO（动态共享对象 Dynamic Shared Objects）</li>
+<li>Windows (DLL Dynamic Linking Library)</li>
+<li>当程序被装载时，系统的动态链接器会将程序所需要的所有动态链接库装载到进程的地址空间，并将程序中所有未解析的符号绑定到相应的动态链接库，然后进行重定位。</li>
+</ol>
+<h4 id="动态链接程序运行时地址空间的分布"><a href="#动态链接程序运行时地址空间的分布" class="headerlink" title="动态链接程序运行时地址空间的分布"></a>动态链接程序运行时地址空间的分布</h4><ol>
+<li>对于静态链接的可执行文件来说，整个进程只有一个文件要被映射即可执行文件。对于动态链接，除了可执行文件以外，还有它所依赖的共享目标文件。</li>
+<li>共享目标文件的地址分配<ol>
+<li>静态共享库（地址固定）将程序的各个模块统一交给操作系统进行管理，操作系统在某个特定的地址划分出一些地址块，为哪些已知的模块预留足够的控件。这个地址对不同的应用程序都是固定的。</li>
+<li>动态共享库（地址不固定）在链接时，对所有绝对地址的引用都不作重定位，而把这一步推迟到装载时再完成。一旦模块装载地址确定，即目标地址确定，那么系统就对所有绝对地址引用进行重定位。</li>
+</ol>
+</li>
+<li>地址无关代码：<ol>
+<li>把指令中需要修改的部分都剥离出来，和数据部分放在一起。这样指令部分就可以保持不变，而数据部分在每个进程都有一个副本。</li>
+</ol>
+</li>
+<li>地址引用的处理<ol>
+<li>模块内部的函数调用<ol>
+<li>调用函数和调用者在同一模块，相对位置固定，不需要重定位</li>
+</ol>
+</li>
+<li>模块内部的数据访问<ol>
+<li>统一模块，相对位置固定</li>
+</ol>
+</li>
+<li>模块外部的函数调用<ol>
+<li>会在数据段中建立一个指向这些变量的指针数组，也称为全局偏移表（Global Offset Table, GOT)，当需要引用该全局变量，可以通过GOT中相对应的间接引用。链接器会在装载模块时查找每个变量所在的地址，然后填充GOT中各项，确保指向地址正确。</li>
+</ol>
+</li>
+<li>模块外部的数据访问<ol>
+<li>会在数据段中建立一个指向这些变量的指针数组，也称为全局偏移表（Global Offset Table, GOT)，当需要引用该全局变量，可以通过GOT中相对应的间接引用。链接器会在装载模块时查找每个变量所在的地址，然后填充GOT中各项，确保指向地址正确。</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="其他内容："><a href="#其他内容：" class="headerlink" title="其他内容："></a>其他内容：</h2><h3 id="函数调用与栈："><a href="#函数调用与栈：" class="headerlink" title="函数调用与栈："></a>函数调用与栈：</h3><ol>
+<li>为什么值传递：函数调用时，参数和返回值都是放到栈帧中的，对参数的操作访问是访问的栈帧中的内容。出栈时相关的修改部分就会丢失。</li>
+<li>局部变量的生命周期：因为局部变量时存放到栈帧当中，所以局部变量的生命周期也就只有函数调用过程中。</li>
+</ol>
+<h3 id="构造函数和析构函数存在："><a href="#构造函数和析构函数存在：" class="headerlink" title="构造函数和析构函数存在："></a>构造函数和析构函数存在：</h3><p>可执行文件除了代码段以外，构造函数和析构函数一般存放在.init和.finit段。</p>
+<p>运行库中包含由入口函数，这是进程执行的入口，它会在main之前执行.init中的代码，main执行完毕后执行.finit</p>
+<p>?defer关键词是否存放到.finit</p>
+<h2 id="应用："><a href="#应用：" class="headerlink" title="应用："></a>应用：</h2><p>应用场景1：</p>
+<p>问题：APMInsight用于监控SDK本身的崩溃。对于动态库，由于可以拿到动态库的地址范围，所有很好判断。但是对于静态库SDK来说，它本身就是代码文件的一个集合，会被加入到App的compile source当中一起被编译，链接。最早的方案是通过对SDK的进行扫描，获得所有的符号集合，通过筛选符号是否在符合集合中判断堆栈里的函数是否是SDK的函数。</p>
+<p>前提概念：</p>
+<p>Xcode的静态库：</p>
+<p>由于Xcode编译源代码文件是按照compile source里顺序编译并链接的，并且是静态链接的。当整个SDK被添加到应用里的时候，相对于起始地址存在一个偏移量m，SDK的第一个符号symbol1的地址为addr1,第二个符号的地址为addr2,symbolN的地址为addrN,所有符号直接的地址偏差是固定的，也就是SDK的符号的地址范围为addr1-&gt;addrN，这样就可以在SDK的组件前后分别加上2个.c文件，获取自己的地址，这样就可以拿到SDK所属代码区间，在APM筛选过程中判断函数地址是否在SDK的范围内，即可筛选出是否为SDK的崩溃。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zhongsongzhi97.github.io/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" rel="tag"># 编译原理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2021/12/28/Go%E5%B8%B8%E7%94%A8%E6%A0%87%E5%87%86%E5%BA%93/" rel="prev" title="Go常用标准库">
+                  <i class="fa fa-chevron-left"></i> Go常用标准库
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2021/12/31/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A%E5%B0%8F%E7%BB%93/" rel="next" title="计算广告小结">
+                  计算广告小结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

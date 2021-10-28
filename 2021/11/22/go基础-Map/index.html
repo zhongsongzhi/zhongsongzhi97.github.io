@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="Map及其底层实现map是一种无序的基于key-value的数据结构，Go语言中的map是引用类型，必须初始化才能使用。 实现是一种hashmap。 map定义：123456789map[KeyType]ValueTypeKeyType:表示键的类型。ValueType:表示键对应的值的类型。map类型的变量默认初始值为nil，需要使用make()函数来分配内存。make(map[KeyType]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go基础 - Map">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/22/go%E5%9F%BA%E7%A1%80-Map/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="Map及其底层实现map是一种无序的基于key-value的数据结构，Go语言中的map是引用类型，必须初始化才能使用。 实现是一种hashmap。 map定义：123456789map[KeyType]ValueTypeKeyType:表示键的类型。ValueType:表示键对应的值的类型。map类型的变量默认初始值为nil，需要使用make()函数来分配内存。make(map[KeyType]">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gwnb2ndaawj30xx0e5adm.jpg">
+<meta property="article:published_time" content="2021-11-21T17:26:01.000Z">
+<meta property="article:modified_time" content="2022-01-11T12:31:32.954Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta property="article:tag" content="go语言基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gwnb2ndaawj30xx0e5adm.jpg">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/22/go%E5%9F%BA%E7%A1%80-Map/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/22/go%E5%9F%BA%E7%A1%80-Map/","path":"2021/11/22/go基础-Map/","title":"go基础 - Map"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>go基础 - Map | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Map%E5%8F%8A%E5%85%B6%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">Map及其底层实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#map%E5%AE%9A%E4%B9%89%EF%BC%9A"><span class="nav-number">1.0.1.</span> <span class="nav-text">map定义：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#map%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%EF%BC%9A"><span class="nav-number">1.0.2.</span> <span class="nav-text">map基本使用：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%9F%90%E4%B8%AAkey%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-number">1.0.3.</span> <span class="nav-text">判断某个key是否存在</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#map%E7%9A%84%E9%81%8D%E5%8E%86"><span class="nav-number">1.0.4.</span> <span class="nav-text">map的遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%94%AE%E5%80%BC%E5%AF%B9"><span class="nav-number">1.0.5.</span> <span class="nav-text">删除键值对</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Go%E4%B8%ADMap%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">1.0.6.</span> <span class="nav-text">Go中Map的实现原理：</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/22/go%E5%9F%BA%E7%A1%80-Map/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          go基础 - Map
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-11-22 01:26:01" itemprop="dateCreated datePublished" datetime="2021-11-22T01:26:01+08:00">2021-11-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-01-11 20:31:32" itemprop="dateModified" datetime="2022-01-11T20:31:32+08:00">2022-01-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Map及其底层实现"><a href="#Map及其底层实现" class="headerlink" title="Map及其底层实现"></a>Map及其底层实现</h1><p>map是一种无序的基于key-value的数据结构，Go语言中的map是引用类型，必须初始化才能使用。</p>
+<p>实现是一种hashmap。</p>
+<h3 id="map定义："><a href="#map定义：" class="headerlink" title="map定义："></a>map定义：</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">map</span>[KeyType]ValueType</span><br><span class="line"></span><br><span class="line">KeyType:表示键的类型。</span><br><span class="line"></span><br><span class="line">ValueType:表示键对应的值的类型。</span><br><span class="line"></span><br><span class="line"><span class="keyword">map</span>类型的变量默认初始值为<span class="literal">nil</span>，需要使用<span class="built_in">make</span>()函数来分配内存。</span><br><span class="line"></span><br><span class="line"><span class="built_in">make</span>(<span class="keyword">map</span>[KeyType]ValueType, [<span class="built_in">cap</span>])</span><br></pre></td></tr></table></figure>
+
+<h3 id="map基本使用："><a href="#map基本使用：" class="headerlink" title="map基本使用："></a>map基本使用：</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">scoreMap := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>, <span class="number">8</span>)</span><br><span class="line">scoreMap[<span class="string">&quot;张三&quot;</span>] = <span class="number">90</span></span><br><span class="line">scoreMap[<span class="string">&quot;小明&quot;</span>] = <span class="number">100</span></span><br><span class="line"></span><br><span class="line">userInfo := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">        <span class="string">&quot;username&quot;</span>: <span class="string">&quot;pprof.cn&quot;</span>,</span><br><span class="line">        <span class="string">&quot;password&quot;</span>: <span class="string">&quot;123456&quot;</span>,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="判断某个key是否存在"><a href="#判断某个key是否存在" class="headerlink" title="判断某个key是否存在"></a>判断某个key是否存在</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">value, ok := <span class="keyword">map</span>[key]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">scoreMap := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>)</span><br><span class="line">scoreMap[<span class="string">&quot;张三&quot;</span>] = <span class="number">90</span></span><br><span class="line">scoreMap[<span class="string">&quot;小明&quot;</span>] = <span class="number">100</span></span><br><span class="line"><span class="comment">// 如果key存在ok为true,v为对应的值；不存在ok为false,v为值类型的零值</span></span><br><span class="line">v, ok := scoreMap[<span class="string">&quot;张三&quot;</span>]</span><br><span class="line"><span class="keyword">if</span> ok &#123;</span><br><span class="line">  fmt.Println(v)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;查无此人&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="map的遍历"><a href="#map的遍历" class="headerlink" title="map的遍历"></a>map的遍历</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> k, v := <span class="keyword">range</span> scoreMap &#123;</span><br><span class="line">        fmt.Println(k, v)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除键值对"><a href="#删除键值对" class="headerlink" title="删除键值对"></a>删除键值对</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">delete</span>(<span class="keyword">map</span>, key)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Go中Map的实现原理："><a href="#Go中Map的实现原理：" class="headerlink" title="Go中Map的实现原理："></a>Go中Map的实现原理：</h3><p>map是通过数组存储，数组下标出存储的是一个bucket,每个bucket可以存储8个kv对，当存满8个以后，会通过overflow指针指向一个新的bucket，形成一个链表</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwnb2ndaawj30xx0e5adm.jpg" alt="img"></p>
+<p>tophash用于快速查找key值是否在该bucket，存储结构为kkk vvv是因为，比如map[int64]int8，由于kv的长度不同，如果按照kv存储，考虑到内存对齐，v也需要int64，但是按照kkkvvv，则8个v刚好占用一个int64</p>
+<p>overflow是链表法解决key的hash冲突问题</p>
+<p>具体情况：</p>
+<p>当往map存储一个kv对时，通过k获取hash值，hash值的低八位与bucket数组长度取余，定位到数组的下标，hash值的高八位存储在bucket的tophash中，快速判断是否存在key，kv的具体值则是通过指针运算存储，当bucket满时会自动通过overflow链接到下一个bucket</p>
+<p>补充：在运行期间，<a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.bmap"><code>runtime.bmap</code></a> 结构体其实不止包含 <code>tophash</code> 字段，因为哈希表中可能存储不同类型的键值对，而且 Go 语言也不支持泛型，所以键值对占据的内存空间大小只能在编译时进行推导。<a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.bmap"><code>runtime.bmap</code></a> 中的其他字段在运行时也都是通过计算内存地址的方式访问的，所以它的定义中就不包含这些字段，不过我们能根据编译期间的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/cmd/compile/internal/gc.bmap"><code>cmd/compile/internal/gc.bmap</code></a> 函数重建它的结构：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> bmap <span class="keyword">struct</span> &#123;</span><br><span class="line">    topbits  [<span class="number">8</span>]<span class="keyword">uint8</span></span><br><span class="line">    keys     [<span class="number">8</span>]keytype</span><br><span class="line">    values   [<span class="number">8</span>]valuetype</span><br><span class="line">    pad      <span class="keyword">uintptr</span></span><br><span class="line">    overflow <span class="keyword">uintptr</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>随着哈希表存储的数据逐渐增多，我们会扩容哈希表或者使用额外的桶存储溢出的数据，不会让单个桶中的数据超过 8 个，不过溢出桶只是临时的解决方案，创建过多的溢出桶最终也会导致哈希的扩容。</p>
+<p>go的map源码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mapassign</span><span class="params">(t *maptype, h *hmap, key unsafe.Pointer)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">    <span class="comment">//获取hash算法</span></span><br><span class="line">    alg := t.key.alg</span><br><span class="line">    <span class="comment">//计算hash值</span></span><br><span class="line">    hash := alg.hash(key, <span class="keyword">uintptr</span>(h.hash0))</span><br><span class="line">    <span class="comment">//如果bucket数组一开始为空，则初始化</span></span><br><span class="line">    <span class="keyword">if</span> h.buckets == <span class="literal">nil</span> &#123;</span><br><span class="line">        h.buckets = newobject(t.bucket) <span class="comment">// newarray(t.bucket, 1)</span></span><br><span class="line">    &#125;</span><br><span class="line">again:</span><br><span class="line">    <span class="comment">// 定位存储在哪一个bucket中</span></span><br><span class="line">    bucket := hash &amp; bucketMask(h.B)</span><br><span class="line">    <span class="comment">//得到bucket的结构体</span></span><br><span class="line">    b := (*bmap)(unsafe.Pointer(<span class="keyword">uintptr</span>(h.buckets) +bucket*<span class="keyword">uintptr</span>(t.bucketsize)))</span><br><span class="line">    <span class="comment">//获取高八位hash值</span></span><br><span class="line">    top := tophash(hash)</span><br><span class="line">    <span class="keyword">var</span> inserti *<span class="keyword">uint8</span></span><br><span class="line">    <span class="keyword">var</span> insertk unsafe.Pointer</span><br><span class="line">    <span class="keyword">var</span> val unsafe.Pointer</span><br><span class="line">bucketloop:</span><br><span class="line">    <span class="comment">//死循环</span></span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        <span class="comment">//循环bucket中的tophash数组</span></span><br><span class="line">        <span class="keyword">for</span> i := <span class="keyword">uintptr</span>(<span class="number">0</span>); i &lt; bucketCnt; i++ &#123;</span><br><span class="line">            <span class="comment">//如果hash不相等</span></span><br><span class="line">            <span class="keyword">if</span> b.tophash[i] != top &#123;</span><br><span class="line">             <span class="comment">//判断是否为空，为空则插入</span></span><br><span class="line">                <span class="keyword">if</span> isEmpty(b.tophash[i]) &amp;&amp; inserti == <span class="literal">nil</span> &#123;</span><br><span class="line">                    inserti = &amp;b.tophash[i]</span><br><span class="line">                    insertk = add(unsafe.Pointer(b), dataOffset+i*<span class="keyword">uintptr</span>(t.keysize))</span><br><span class="line">                    val = add( unsafe.Pointer(b), </span><br><span class="line">                    dataOffset+bucketCnt*<span class="keyword">uintptr</span>(t.keysize)+i*<span class="keyword">uintptr</span>(t.valuesize) )</span><br><span class="line">                &#125;</span><br><span class="line">              <span class="comment">//插入成功，终止最外层循环</span></span><br><span class="line">                <span class="keyword">if</span> b.tophash[i] == emptyRest &#123;</span><br><span class="line">                    <span class="keyword">break</span> bucketloop</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//到这里说明高八位hash一样，获取已存在的key</span></span><br><span class="line">            k := add(unsafe.Pointer(b), dataOffset+i*<span class="keyword">uintptr</span>(t.keysize))</span><br><span class="line">            <span class="keyword">if</span> t.indirectkey() &#123;</span><br><span class="line">                k = *((*unsafe.Pointer)(k))</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//判断两个key是否相等，不相等就循环下一个</span></span><br><span class="line">            <span class="keyword">if</span> !alg.equal(key, k) &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 如果相等则更新</span></span><br><span class="line">            <span class="keyword">if</span> t.needkeyupdate() &#123;</span><br><span class="line">                typedmemmove(t.key, k, key)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//获取已存在的value</span></span><br><span class="line">            val = add(unsafe.Pointer(b), dataOffset+bucketCnt*<span class="keyword">uintptr</span>(t.keysize)+i*<span class="keyword">uintptr</span>(t.valuesize))</span><br><span class="line">            <span class="keyword">goto</span> done</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果上一个bucket没能插入，则通过overflow获取链表上的下一个bucket</span></span><br><span class="line">        ovf := b.overflow(t)</span><br><span class="line">        <span class="keyword">if</span> ovf == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">        b = ovf</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> inserti == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// all current buckets are full, allocate a new one.</span></span><br><span class="line">        newb := h.newoverflow(t, b)</span><br><span class="line">        inserti = &amp;newb.tophash[<span class="number">0</span>]</span><br><span class="line">        insertk = add(unsafe.Pointer(newb), dataOffset)</span><br><span class="line">        val = add(insertk, bucketCnt*<span class="keyword">uintptr</span>(t.keysize))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// store new key/value at insert position</span></span><br><span class="line">    <span class="keyword">if</span> t.indirectkey() &#123;</span><br><span class="line">        kmem := newobject(t.key)</span><br><span class="line">        *(*unsafe.Pointer)(insertk) = kmem</span><br><span class="line">        insertk = kmem</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> t.indirectvalue() &#123;</span><br><span class="line">        vmem := newobject(t.elem)</span><br><span class="line">        *(*unsafe.Pointer)(val) = vmem</span><br><span class="line">    &#125;</span><br><span class="line">    typedmemmove(t.key, insertk, key)</span><br><span class="line">    <span class="comment">//将高八位hash值存储</span></span><br><span class="line">    *inserti = top</span><br><span class="line">    h.count++</span><br><span class="line">    <span class="keyword">return</span> val</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zhongsongzhi97.github.io/tags/go%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/" rel="tag"># go语言基础</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2021/11/22/go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/" rel="prev" title="go基础 - 指针">
+                  <i class="fa fa-chevron-left"></i> go基础 - 指针
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2021/11/24/go%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80-%E7%BB%93%E6%9E%84%E4%BD%93/" rel="next" title="go语言基础 - 结构体">
+                  go语言基础 - 结构体 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

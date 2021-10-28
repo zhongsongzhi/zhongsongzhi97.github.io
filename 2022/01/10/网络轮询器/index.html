@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="IO与网络轮询器如今的大部分服务都是I&#x2F;O密集型的，应用会花费大量的时间等待I&#x2F;O操作完成。Go使用了网络轮询器用于处理I&#x2F;O操作，底层使用了操作系统的多路复用机制epoll 通常的IO多路模型是通过回调机制进行控制的，Go的话将其隐藏在了runtime中了，Go开发者无需关注socket是否是 non-block的，也无需亲自注册文件描述符的回调，只需在每个连接对应的goroutine中以“bl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络轮询器">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/10/%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="IO与网络轮询器如今的大部分服务都是I&#x2F;O密集型的，应用会花费大量的时间等待I&#x2F;O操作完成。Go使用了网络轮询器用于处理I&#x2F;O操作，底层使用了操作系统的多路复用机制epoll 通常的IO多路模型是通过回调机制进行控制的，Go的话将其隐藏在了runtime中了，Go开发者无需关注socket是否是 non-block的，也无需亲自注册文件描述符的回调，只需在每个连接对应的goroutine中以“bl">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gy7xf9y6qzj30xj08caae.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gy7zf09e2xj30h508vmxk.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gy7zgho21oj313f0krmyp.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gy7zh0rzj3j30if09kt94.jpg">
+<meta property="article:published_time" content="2022-01-09T16:37:38.000Z">
+<meta property="article:modified_time" content="2022-01-09T18:30:20.399Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta property="article:tag" content="Go基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gy7xf9y6qzj30xj08caae.jpg">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/10/%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/10/%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8/","path":"2022/01/10/网络轮询器/","title":"网络轮询器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>网络轮询器 | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#IO%E4%B8%8E%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">IO与网络轮询器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E5%92%8C%E5%89%8D%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">原理和前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BB%E5%A1%9EI-O%E6%A8%A1%E5%9E%8B%EF%BC%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">阻塞I&#x2F;O模型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E9%98%BB%E5%A1%9EI-O%E6%A8%A1%E5%9E%8B%EF%BC%9A"><span class="nav-number">1.1.2.</span> <span class="nav-text">非阻塞I&#x2F;O模型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%EF%BC%9A"><span class="nav-number">1.1.3.</span> <span class="nav-text">I&#x2F;O多路复用：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">网络轮询器：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.2.1.</span> <span class="nav-text">接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.2.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="nav-number">1.2.3.</span> <span class="nav-text">多路复用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">网络轮询器的初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%90%91%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8%E5%8A%A0%E5%85%A5%E5%BE%85%E7%9B%91%E6%8E%A7%E7%9A%84%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">如何向网络轮询器加入待监控的任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BB%8E%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8%E8%8E%B7%E5%8F%96%E8%A7%A6%E5%8F%91%E7%9A%84%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">如何从网络轮询器获取触发的事件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">事件循环</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%88%AA%E6%AD%A2%E6%97%A5%E6%9C%9F"><span class="nav-number">1.2.3.5.</span> <span class="nav-text">截止日期</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IO%E5%89%8D%E5%90%8E%E7%9A%84GPM"><span class="nav-number">1.3.</span> <span class="nav-text">IO前后的GPM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/10/%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络轮询器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-01-10 00:37:38 / Modified: 02:30:20" itemprop="dateCreated datePublished" datetime="2022-01-10T00:37:38+08:00">2022-01-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="IO与网络轮询器"><a href="#IO与网络轮询器" class="headerlink" title="IO与网络轮询器"></a>IO与网络轮询器</h1><p>如今的大部分服务都是I/O密集型的，应用会花费大量的时间等待I/O操作完成。Go使用了网络轮询器用于处理I/O操作，底层使用了操作系统的多路复用机制epoll</p>
+<p>通常的IO多路模型是通过回调机制进行控制的，Go的话将其隐藏在了runtime中了，Go开发者无需关注socket是否是 non-block的，也无需亲自注册文件描述符的回调，只需在每个连接对应的goroutine中以“block I/O”的方式对待socket处理即可。</p>
+<h2 id="原理和前言"><a href="#原理和前言" class="headerlink" title="原理和前言"></a>原理和前言</h2><p>作用：监控网络I/O，文件I/O</p>
+<p>I/O模型“</p>
+<h3 id="阻塞I-O模型："><a href="#阻塞I-O模型：" class="headerlink" title="阻塞I/O模型："></a>阻塞I/O模型：</h3><h3 id="非阻塞I-O模型："><a href="#非阻塞I-O模型：" class="headerlink" title="非阻塞I/O模型："></a>非阻塞I/O模型：</h3><h3 id="I-O多路复用："><a href="#I-O多路复用：" class="headerlink" title="I/O多路复用："></a>I/O多路复用：</h3><h2 id="网络轮询器："><a href="#网络轮询器：" class="headerlink" title="网络轮询器："></a>网络轮询器：</h2><p><a target="_blank" rel="noopener" href="https://draveness.me/golang/docs/part3-runtime/ch06-concurrency/golang-netpoller/#662-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">网络轮询器</a></p>
+<ol>
+<li>多路复用依赖于epoll 机制</li>
+<li>epoll 机制包含两个fd:epfd 和 待读写数据的fd（比如socket）。先创建efpd，然后向epfd 注册fd事件， 之后触发epoll_wait 轮询注册在epfd 的fd 事件发生了没有。</li>
+<li>netpoller 负责将 操作系统 提供的nio 转换为 goroutine 支持的blocking io。为屏蔽linux、windows 等底层nio 接口的差异，netpoller 定义一个虚拟接口来封装底层接口。</li>
+</ol>
+<h3 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollinit</span><span class="params">()</span> //单例，初始化轮询器</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollopen</span><span class="params">(fd <span class="keyword">uintptr</span>, pd *pollDesc)</span> <span class="title">int32</span> //监听<span class="title">FD</span>的事件，创建事件并加入监听</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpoll</span><span class="params">(delta <span class="keyword">int64</span>)</span> <span class="title">gList</span> //轮询网络并返回一组已经准备就绪的<span class="title">Goroutine</span> &lt;0 无限期等待 =0 非阻塞轮询 &gt;0 阻塞特定时间轮询</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollBreak</span><span class="params">()</span> //中断轮询器</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollIsPollDescriptor</span><span class="params">(fd <span class="keyword">uintptr</span>)</span> <span class="title">bool</span> //判断<span class="title">FD</span>是否被轮询器使用</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy7xf9y6qzj30xj08caae.jpg" alt="poll-desc-list"></p>
+<p>pollCache是一个运行时包的全局变量，包含一个互斥锁和一个链表（pollDesc链表),pollDesc是对fd的封装</p>
+<p>初始化和释放：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *pollCache)</span> <span class="title">alloc</span><span class="params">()</span> *<span class="title">pollDesc</span></span> &#123;</span><br><span class="line">	lock(&amp;c.lock)</span><br><span class="line">	<span class="keyword">if</span> c.first == <span class="literal">nil</span> &#123; <span class="comment">//初次初始化时，会进行批量初始化以增加吞吐量</span></span><br><span class="line">		<span class="keyword">const</span> pdSize = unsafe.Sizeof(pollDesc&#123;&#125;)</span><br><span class="line">		n := pollBlockSize / pdSize</span><br><span class="line">		<span class="keyword">if</span> n == <span class="number">0</span> &#123;</span><br><span class="line">			n = <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		mem := persistentalloc(n*pdSize, <span class="number">0</span>, &amp;memstats.other_sys)</span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">uintptr</span>(<span class="number">0</span>); i &lt; n; i++ &#123;</span><br><span class="line">			pd := (*pollDesc)(add(mem, i*pdSize))</span><br><span class="line">			pd.link = c.first</span><br><span class="line">			c.first = pd</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	pd := c.first <span class="comment">//返回的是链表头的没有使用过的pollDesc</span></span><br><span class="line">	c.first = pd.link</span><br><span class="line">	unlock(&amp;c.lock)</span><br><span class="line">	<span class="keyword">return</span> pd</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>已经用过的pollDesc会在运行时调用free释放</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *pollCache)</span> <span class="title">free</span><span class="params">(pd *pollDesc)</span></span> &#123;</span><br><span class="line">	lock(&amp;c.lock)</span><br><span class="line">	pd.link = c.first <span class="comment">//释放时将其出队</span></span><br><span class="line">	c.first = pd</span><br><span class="line">	unlock(&amp;c.lock)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h3><h4 id="网络轮询器的初始化"><a href="#网络轮询器的初始化" class="headerlink" title="网络轮询器的初始化"></a>网络轮询器的初始化</h4><p>调用 <code>internal/poll.pollDesc.init</code> 初始化文件描述符时不止会初始化网络轮询器，会通过 <code>runtime.poll_runtime_pollOpen</code> 函数重置轮询信息 <code>runtime.pollDesc</code> 并调用 <code>runtime.netpollopen</code> 初始化轮询事件。<code>runtime.netpollopen</code> 会调用 epollctl 向全局的轮询文件描述符 epfd 中加入新的轮询事件监听文件描述符的可读和可写状态</p>
+<h4 id="如何向网络轮询器加入待监控的任务"><a href="#如何向网络轮询器加入待监控的任务" class="headerlink" title="如何向网络轮询器加入待监控的任务"></a>如何向网络轮询器加入待监控的任务</h4><h4 id="如何从网络轮询器获取触发的事件"><a href="#如何从网络轮询器获取触发的事件" class="headerlink" title="如何从网络轮询器获取触发的事件"></a>如何从网络轮询器获取触发的事件</h4><h4 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环"></a>事件循环</h4><ol>
+<li><p>等待事件：在fd执行读写操作，如果fd不可读或者不可写，当前Goroutine会执行pollWait让出线程</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">poll_runtime_pollWait</span><span class="params">(pd *pollDesc, mode <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">for</span> !netpollblock(pd, <span class="keyword">int32</span>(mode), <span class="literal">false</span>) &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollblock</span><span class="params">(pd *pollDesc, mode <span class="keyword">int32</span>, waitio <span class="keyword">bool</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	gpp := &amp;pd.rg <span class="comment">//检查pollDesc状态</span></span><br><span class="line">	<span class="keyword">if</span> mode == <span class="string">&#x27;w&#x27;</span> &#123;</span><br><span class="line">		gpp = &amp;pd.wg</span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> waitio || netpollcheckerr(pd, mode) == <span class="number">0</span> &#123; </span><br><span class="line">		gopark(netpollblockcommit, unsafe.Pointer(gpp), waitReasonIOWait, traceEvGoBlockNet, <span class="number">5</span>) <span class="comment">//让出当前线程，Goroutine转换到休眠状态并等待运行时唤醒</span></span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>轮询等待</p>
+<p>Go的runtime会在调度或系统监控中调用netpoll轮询网络</p>
+<p>步骤：</p>
+<ul>
+<li>根据传入的delay计算epoll系统调用需要等待的时间</li>
+<li>调用epollwait等待可读或可写事件</li>
+<li>在循环中依次处理epollevent事件</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> events [<span class="number">128</span>]epollevent</span><br><span class="line">retry:</span><br><span class="line">	n := epollwait(epfd, &amp;events[<span class="number">0</span>], <span class="keyword">int32</span>(<span class="built_in">len</span>(events)), waitms) <span class="comment">//等待fd可读或可写</span></span><br><span class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123; <span class="comment">//epoll返回负值，返回空gList或者重试</span></span><br><span class="line">		<span class="keyword">if</span> waitms &gt; <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> gList&#123;&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">goto</span> retry</span><br><span class="line">	&#125;</span><br><span class="line"><span class="comment">//如果大于0，则在循环中处理事件</span></span><br><span class="line"><span class="keyword">var</span> toRun gList</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">int32</span>(<span class="number">0</span>); i &lt; n; i++ &#123;</span><br><span class="line">		ev := &amp;events[i]</span><br><span class="line">    <span class="comment">//netpollBreak的事件，中断网络轮询器</span></span><br><span class="line">		<span class="keyword">if</span> *(**<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;ev.data)) == &amp;netpollBreakRd &#123;</span><br><span class="line">			...</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//正常的读写事件，通过netpollready进行处理</span></span><br><span class="line">		<span class="keyword">var</span> mode <span class="keyword">int32</span></span><br><span class="line">		<span class="keyword">if</span> ev.events&amp;(_EPOLLIN|_EPOLLRDHUP|_EPOLLHUP|_EPOLLERR) != <span class="number">0</span> &#123;</span><br><span class="line">			mode += <span class="string">&#x27;r&#x27;</span></span><br><span class="line">		&#125;</span><br><span class="line">		...</span><br><span class="line">		<span class="keyword">if</span> mode != <span class="number">0</span> &#123;</span><br><span class="line">			pd := *(**pollDesc)(unsafe.Pointer(&amp;ev.data))</span><br><span class="line">			pd.everr = <span class="literal">false</span></span><br><span class="line">			netpollready(&amp;toRun, pd, mode)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> toRun</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollready</span><span class="params">(toRun *gList, pd *pollDesc, mode <span class="keyword">int32</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> rg, wg *g</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> mode == <span class="string">&#x27;w&#x27;</span> || mode == <span class="string">&#x27;r&#x27;</span>+<span class="string">&#x27;w&#x27;</span> &#123;</span><br><span class="line">		wg = netpollunblock(pd, <span class="string">&#x27;w&#x27;</span>, <span class="literal">true</span>) <span class="comment">//将pd中的读写信号转换为pdReady，并返回pd的Goroutine</span></span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> wg != <span class="literal">nil</span> &#123;</span><br><span class="line">		toRun.push(wg) <span class="comment">//加入待执行列表，Goroutine列表会被加入到处理器或者全局运行队列</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="截止日期"><a href="#截止日期" class="headerlink" title="截止日期"></a>截止日期</h4><p>计时器依赖于网络轮询器唤醒，文件和网络I/O的截止日期也由其负责处理。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//用于设置截止日期</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">poll_runtime_pollSetDeadline</span><span class="params">(pd *pollDesc, d <span class="keyword">int64</span>, mode <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	rd0, wd0 := pd.rd, pd.wd</span><br><span class="line">	<span class="keyword">if</span> d &gt; <span class="number">0</span> &#123;</span><br><span class="line">		d += nanotime()</span><br><span class="line">	&#125;</span><br><span class="line">	pd.rd = d <span class="comment">//先使用截止日期计算过期的时间点</span></span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> pd.rt.f == <span class="literal">nil</span> &#123; <span class="comment">//如果没有设置执行的函数</span></span><br><span class="line">		<span class="keyword">if</span> pd.rd &gt; <span class="number">0</span> &#123;</span><br><span class="line">			pd.rt.f = netpollReadDeadline  <span class="comment">//设置计时器到期执行的函数</span></span><br><span class="line">			pd.rt.arg = pd</span><br><span class="line">			pd.rt.seq = pd.rseq</span><br><span class="line">			resettimer(&amp;pd.rt, pd.rd) <span class="comment">//重置计时器</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> pd.rd != rd0 &#123; <span class="comment">//如果截止日期已改变</span></span><br><span class="line">		pd.rseq++</span><br><span class="line">		<span class="keyword">if</span> pd.rd &gt; <span class="number">0</span> &#123; <span class="comment">//新截止日期 &gt; 0 ，修改计时器</span></span><br><span class="line">			modtimer(&amp;pd.rt, pd.rd, <span class="number">0</span>, rtf, pd, pd.rseq)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123; <span class="comment">//新日期 &lt; 0 ，删除计时器, 并会在后面直接唤醒对应的Goroutine</span></span><br><span class="line">			deltimer(&amp;pd.rt)</span><br><span class="line">			pd.rt.f = <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行时会在计时器到期时调用netpolldeadlineimpl,直接使用netpollgoready唤醒对应的Goroutine，Goroutine被唤醒后，会意识到当前I/O操作已经超时，选择重试或者终止调用</p>
+<h2 id="IO前后的GPM"><a href="#IO前后的GPM" class="headerlink" title="IO前后的GPM"></a>IO前后的GPM</h2><ol>
+<li>G1 正在 M 上执行，还有 3 个 Goroutine 在 LRQ 上等待执行。网络轮询器空闲着，什么都没干。</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy7zf09e2xj30h508vmxk.jpg" alt="img"></p>
+<ol start="2">
+<li><p>G1 想要进行网络系统调用，因此它被移动到网络轮询器并且处理异步网络系统调用。然后，M 可以从LRQ 执行另外的 Goroutine。此时，G2 就被上下文切换到 M 上了。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy7zgho21oj313f0krmyp.jpg" alt="img"></p>
+</li>
+<li><p>异步网络系统调用由网络轮询器完成，G1 被移回到 P 的 LRQ 中。一旦 G1 可以在 M 上进行上下文切换，它负责的 Go 相关代码就可以再次执行。执行网络系统调用不需要额外的 M。网络轮询器使用系统线程，它时刻处理一个有效的事件循环/eventloop。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy7zh0rzj3j30if09kt94.jpg" alt="img"></p>
+</li>
+</ol>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>网络轮询器并不是一个独立运行的，调度器和系统调用都会通过netpoll与网络循环器交换信息，获取待执行的GoRoutine列表，并将待执行的Goroutine加入运行队列等待处理</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zhongsongzhi97.github.io/tags/Go%E5%9F%BA%E7%A1%80/" rel="tag"># Go基础</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/01/10/MQ/" rel="prev" title="">
+                  <i class="fa fa-chevron-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/01/11/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" rel="next" title="系统监控">
+                  系统监控 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

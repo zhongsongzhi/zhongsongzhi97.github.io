@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="Go 语法文档https:&#x2F;&#x2F;studygolang.com&#x2F;pkgdoc https:&#x2F;&#x2F;www.topgoer.com&#x2F; https:&#x2F;&#x2F;go-zh.org&#x2F;doc&#x2F; Go语言特征1234567891.自动垃圾回收。2.更丰富的内置类型。3.函数多返回值。4.错误处理。5.匿名函数和闭包。6.类型和接口。7.并发编程。8.反射。9.语言交互性。  关键字12345break        de">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go 语言基础部分">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/10/28/go-%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="Go 语法文档https:&#x2F;&#x2F;studygolang.com&#x2F;pkgdoc https:&#x2F;&#x2F;www.topgoer.com&#x2F; https:&#x2F;&#x2F;go-zh.org&#x2F;doc&#x2F; Go语言特征1234567891.自动垃圾回收。2.更丰富的内置类型。3.函数多返回值。4.错误处理。5.匿名函数和闭包。6.类型和接口。7.并发编程。8.反射。9.语言交互性。  关键字12345break        de">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-10-28T15:47:13.000Z">
+<meta property="article:modified_time" content="2021-11-04T16:52:05.125Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta property="article:tag" content="go语言基础">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/10/28/go-%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/10/28/go-%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/","path":"2021/10/28/go-语言基础部分/","title":"go 语言基础部分"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>go 语言基础部分 | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Go-%E8%AF%AD%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">Go 语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%A1%A3"><span class="nav-number">1.1.</span> <span class="nav-text">文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Go%E8%AF%AD%E8%A8%80%E7%89%B9%E5%BE%81"><span class="nav-number">1.2.</span> <span class="nav-text">Go语言特征</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">1.2.1.</span> <span class="nav-text">关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E7%95%99%E5%AD%97"><span class="nav-number">1.2.2.</span> <span class="nav-text">保留字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-number">1.2.3.</span> <span class="nav-text">可见性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E"><span class="nav-number">1.2.4.</span> <span class="nav-text">声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Init%E5%87%BD%E6%95%B0%E5%92%8Cmain%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.5.</span> <span class="nav-text">Init函数和main函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Init%E5%87%BD%E6%95%B0%EF%BC%9A%E7%94%A8%E4%BA%8E%E5%8C%85%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%88%E6%97%A9%E4%BA%8Emain%EF%BC%8C%E7%94%B1runtime%E8%BF%9B%E8%A1%8C%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%89"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">Init函数：用于包的初始化（早于main，由runtime进行初始化）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Main%E5%87%BD%E6%95%B0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%BB%98%E8%AE%A4%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">Main函数:程序的默认入口函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E5%88%92%E7%BA%BF%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">下划线：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%EF%BC%8C%E5%B8%B8%E9%87%8F"><span class="nav-number">1.4.</span> <span class="nav-text">变量，常量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">常量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iota"><span class="nav-number">1.4.3.</span> <span class="nav-text">iota</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.5.</span> <span class="nav-text">基本类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.5.1.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.5.2.</span> <span class="nav-text">类型转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.6.</span> <span class="nav-text">容器类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#List"><span class="nav-number">1.6.1.</span> <span class="nav-text">List</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/10/28/go-%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          go 语言基础部分
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-10-28 23:47:13" itemprop="dateCreated datePublished" datetime="2021-10-28T23:47:13+08:00">2021-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-11-05 00:52:05" itemprop="dateModified" datetime="2021-11-05T00:52:05+08:00">2021-11-05</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Go-语法"><a href="#Go-语法" class="headerlink" title="Go 语法"></a>Go 语法</h1><h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p><a target="_blank" rel="noopener" href="https://studygolang.com/pkgdoc">https://studygolang.com/pkgdoc</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.topgoer.com/">https://www.topgoer.com/</a></p>
+<p><a target="_blank" rel="noopener" href="https://go-zh.org/doc/">https://go-zh.org/doc/</a></p>
+<h2 id="Go语言特征"><a href="#Go语言特征" class="headerlink" title="Go语言特征"></a>Go语言特征</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.自动垃圾回收。</span><br><span class="line">2.更丰富的内置类型。</span><br><span class="line">3.函数多返回值。</span><br><span class="line">4.错误处理。</span><br><span class="line">5.匿名函数和闭包。</span><br><span class="line">6.类型和接口。</span><br><span class="line">7.并发编程。</span><br><span class="line">8.反射。</span><br><span class="line">9.语言交互性。</span><br></pre></td></tr></table></figure>
+
+<h3 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">break        default      func         interface    select</span><br><span class="line">case         defer        go           map          struct</span><br><span class="line">chan         else         goto         package      switch</span><br><span class="line">const        fallthrough  if           range        type</span><br><span class="line">continue     for          import       return       var</span><br></pre></td></tr></table></figure>
+
+<h3 id="保留字"><a href="#保留字" class="headerlink" title="保留字"></a>保留字</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Constants:    true  false  iota  nil</span><br><span class="line"></span><br><span class="line">Types:    int  int8  int16  int32  int64  </span><br><span class="line">					uint  uint8  uint16  uint32  uint64  uintptr</span><br><span class="line">          float32  float64  complex128  complex64</span><br><span class="line">          bool  byte  rune  string  error</span><br><span class="line"></span><br><span class="line">Functions:   make  len  cap  new  append  copy  close  delete</span><br><span class="line">						 complex  real  imag</span><br><span class="line">             panic  recover</span><br></pre></td></tr></table></figure>
+
+<h3 id="可见性"><a href="#可见性" class="headerlink" title="可见性"></a>可见性</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 声明在函数内部，类似private</span><br><span class="line">2. 声明在函数外部，为包可见，类似protect</span><br><span class="line">3. 声明在函数外部，且首字母大写，全局可见，类似public</span><br></pre></td></tr></table></figure>
+
+<h3 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var (声明变量), const(声明常量), type(声明类型), func(声明函数)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Init函数和main函数"><a href="#Init函数和main函数" class="headerlink" title="Init函数和main函数"></a>Init函数和main函数</h3><h4 id="Init函数：用于包的初始化（早于main，由runtime进行初始化）"><a href="#Init函数：用于包的初始化（早于main，由runtime进行初始化）" class="headerlink" title="Init函数：用于包的初始化（早于main，由runtime进行初始化）"></a>Init函数：用于包的初始化（早于main，由runtime进行初始化）</h4><p>顺序：1. 初始化导入的包（解析包依赖关系，没有依赖的最先初始化）2. 初始化包作用域的变量（解析变量的依赖关系，没有依赖的最先初始化）3. 执行包的Init函数（可以并发Init）</p>
+<p>特征：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 init函数是用于程序执行前做包的初始化的函数，比如初始化包里的变量等</span><br><span class="line"></span><br><span class="line">2 每个包可以拥有多个init函数</span><br><span class="line"></span><br><span class="line">3 包的每个源文件也可以拥有多个init函数</span><br><span class="line"></span><br><span class="line">4 同一个包中多个init函数的执行顺序go语言没有明确的定义(说明)，测试为安卓</span><br><span class="line"></span><br><span class="line">5 不同包的init函数按照包导入的依赖关系决定该初始化函数的执行顺序</span><br><span class="line"></span><br><span class="line">6 init函数不能被其他函数调用，而是在main函数执行之前，自动被调用</span><br></pre></td></tr></table></figure>
+
+<h4 id="Main函数-程序的默认入口函数"><a href="#Main函数-程序的默认入口函数" class="headerlink" title="Main函数:程序的默认入口函数"></a>Main函数:程序的默认入口函数</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对同一个go文件的<code>init()</code>调用顺序是从上到下的。</p>
+<p>对同一个package中不同文件是按文件名字符串比较“从小到大”顺序调用各文件中的<code>init()</code>函数。</p>
+<p>对于不同的<code>package</code>，如果不相互依赖的话，按照main包中”先<code>import</code>的后调用”的顺序调用其包中的<code>init()</code>，如果<code>package</code>存在依赖，则先调用最早被依赖的<code>package</code>中的<code>init()</code>，最后调用<code>main</code>函数。</p>
+<h2 id="下划线："><a href="#下划线：" class="headerlink" title="下划线："></a>下划线：</h2><p>“_”作为特殊标识符，用于忽略结果</p>
+<ol>
+<li><p>在import中</p>
+<p>用【import _ 包路径】引用该包，仅仅是为了调用init()函数，无法通过包名来调用包中的其他函数</p>
+</li>
+<li><p>在变量中</p>
+<p>作为匿名变量，用于忽略变量</p>
+</li>
+</ol>
+<h2 id="变量，常量"><a href="#变量，常量" class="headerlink" title="变量，常量"></a>变量，常量</h2><h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><ol>
+<li><p>声明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var 变量名 变量类型</span><br><span class="line"></span><br><span class="line">//批量声明</span><br><span class="line">var (</span><br><span class="line">	 a string</span><br><span class="line">	 b int</span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+<li><p>变量初始化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var 变量名 类型 = 表达式</span><br><span class="line"></span><br><span class="line">var name string = &quot;abc&quot;</span><br><span class="line">var name, sex string = &quot;abc&quot;,&quot;female&quot;</span><br><span class="line"></span><br><span class="line">类型推导: 编译器处理推导</span><br><span class="line">var name = &quot;abc&quot;</span><br><span class="line">a := 10 //短变量声明（类型推导，只在函数内部）函数外的语句必须以关键字开始(var,const,func等)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//全局变量</span></span><br><span class="line"><span class="keyword">var</span> m = <span class="number">100</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	n := <span class="number">10</span></span><br><span class="line">	m1 := <span class="number">20</span><span class="comment">//&quot;abc&quot; //局部变量</span></span><br><span class="line">	fmt.Println(m1,n,m)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>匿名变量</p>
+<ol>
+<li>在多次赋值时，可以使用匿名变量( _ )来忽略某个值</li>
+<li>匿名变量不占用命名空间，不会分配内存，不会存在重复声明</li>
+</ol>
+</li>
+</ol>
+<h3 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pi = <span class="number">3.14</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	a = <span class="number">1</span></span><br><span class="line">	b = <span class="number">2</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	n1 = <span class="number">100</span></span><br><span class="line">	n2</span><br><span class="line">	n3</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="iota"><a href="#iota" class="headerlink" title="iota"></a>iota</h3><p><code>iota</code>是<code>go</code>语言的常量计数器，只能在常量的表达式中使用。 <code>iota</code>在<code>const</code>关键字出现时将被重置为<code>0</code>。<code>const</code>中每新增一行常量声明将使<code>iota</code>计数一次(<code>iota</code>可理解为<code>const</code>语句块中的行索引)。常用于枚举的声明。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用_跳过某些值</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	n1 = <span class="literal">iota</span></span><br><span class="line">	n2</span><br><span class="line">	_</span><br><span class="line">	n4</span><br><span class="line">)</span><br><span class="line"><span class="comment">//0 1 3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//iota声明中间插队</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	a1 = <span class="literal">iota</span></span><br><span class="line">	a2 = <span class="number">100</span></span><br><span class="line">	a3 = <span class="literal">iota</span></span><br><span class="line">	a4</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> a5 = <span class="literal">iota</span></span><br><span class="line"><span class="comment">//0 100 2 3 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//定义数量级</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	_ = <span class="literal">iota</span></span><br><span class="line">	KB = <span class="number">1</span> &lt;&lt; (<span class="number">10</span> * <span class="literal">iota</span>)</span><br><span class="line">	MB = <span class="number">1</span> &lt;&lt; (<span class="number">10</span> * <span class="literal">iota</span>)</span><br><span class="line">	GB = <span class="number">1</span> &lt;&lt; (<span class="number">10</span> * <span class="literal">iota</span>)</span><br><span class="line">)</span><br><span class="line"><span class="comment">//1024 1048576 1073741824</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//多个iota定义在一行，一行的iota为一个值</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	i1, i2 = <span class="literal">iota</span> + <span class="number">1</span>, <span class="literal">iota</span> + <span class="number">2</span></span><br><span class="line">	i3, i4</span><br><span class="line">	i5, i6</span><br><span class="line">)</span><br><span class="line"><span class="comment">//1 2 2 3 3 4</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="基本类型"><a href="#基本类型" class="headerlink" title="基本类型"></a>基本类型</h2><table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="center">长度（byte）</th>
+<th align="center">默认值</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">bool</td>
+<td align="center">1</td>
+<td align="center">false</td>
+<td align="center">只有ture和false.不能用其他类型强转和参与数值运算。</td>
+</tr>
+<tr>
+<td align="center">byte</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">uint8</td>
+</tr>
+<tr>
+<td align="center">rune</td>
+<td align="center">4</td>
+<td align="center">0</td>
+<td align="center">Unicode Code, int32</td>
+</tr>
+<tr>
+<td align="center">int,uint</td>
+<td align="center">4或8</td>
+<td align="center">0</td>
+<td align="center">32位或者64位</td>
+</tr>
+<tr>
+<td align="center">int8,uint8</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">-128<del>127,0</del>255,byte就是uint8</td>
+</tr>
+<tr>
+<td align="center">int16,uint16</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">-32768<del>32767,0</del>65536</td>
+</tr>
+<tr>
+<td align="center">int32,uint32</td>
+<td align="center">4</td>
+<td align="center">0</td>
+<td align="center">-21亿<del>21亿,0</del>42亿,rune</td>
+</tr>
+<tr>
+<td align="center">int64,uint64</td>
+<td align="center">8</td>
+<td align="center">0</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">float32</td>
+<td align="center">4</td>
+<td align="center">0.0</td>
+<td align="center">3.4e38,math.MaxFloat32</td>
+</tr>
+<tr>
+<td align="center">float64</td>
+<td align="center">8</td>
+<td align="center">0.0</td>
+<td align="center">1.8e308,math.MaxFloat64</td>
+</tr>
+<tr>
+<td align="center">complex64</td>
+<td align="center">8</td>
+<td align="center"></td>
+<td align="center">实部32，虚部32</td>
+</tr>
+<tr>
+<td align="center">complex128</td>
+<td align="center">16</td>
+<td align="center"></td>
+<td align="center">实部64，虚部64</td>
+</tr>
+<tr>
+<td align="center">uintptr</td>
+<td align="center">4/8</td>
+<td align="center"></td>
+<td align="center">存储指针的uint32或uint64</td>
+</tr>
+<tr>
+<td align="center">array</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">值类型</td>
+</tr>
+<tr>
+<td align="center">struct</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">值类型</td>
+</tr>
+<tr>
+<td align="center">string</td>
+<td align="center"></td>
+<td align="center">“”</td>
+<td align="center">值类型,UTF8字符串</td>
+</tr>
+<tr>
+<td align="center">slice</td>
+<td align="center"></td>
+<td align="center">nil</td>
+<td align="center">引用类型</td>
+</tr>
+<tr>
+<td align="center">map</td>
+<td align="center"></td>
+<td align="center">nil</td>
+<td align="center">引用类型</td>
+</tr>
+<tr>
+<td align="center">channel</td>
+<td align="center"></td>
+<td align="center">nil</td>
+<td align="center">引用类型</td>
+</tr>
+<tr>
+<td align="center">interface</td>
+<td align="center"></td>
+<td align="center">nil</td>
+<td align="center">接口</td>
+</tr>
+<tr>
+<td align="center">function</td>
+<td align="center"></td>
+<td align="center">nil</td>
+<td align="center">函数</td>
+</tr>
+</tbody></table>
+<p>注：</p>
+<ol>
+<li>支持八进制，十六进制，科学计数法</li>
+<li>math库有定义取值范围</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="number">071</span></span><br><span class="line">b := <span class="number">0x1F</span></span><br><span class="line">c := <span class="number">1e9</span></span><br><span class="line">d := math.MinInt16</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>空指针类型为nil</li>
+</ol>
+<h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><ol>
+<li><p>字符串转义符：\r 回车 \n 换行 \t 制表  \ ‘单引 \ &quot;双引  \反斜杠</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(&quot;str :=\&quot;c:\\a\\main.exe\&quot;&quot;)</span><br></pre></td></tr></table></figure></li>
+<li><p>多行字符串</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">s1 := `第一行</span><br><span class="line">第二行</span><br><span class="line">第三行</span><br><span class="line">    `</span><br><span class="line">fmt.Println(s1)</span><br><span class="line"></span><br><span class="line">//out</span><br><span class="line">第一行</span><br><span class="line">第二行</span><br><span class="line">第三行</span><br></pre></td></tr></table></figure></li>
+<li><p>字符串常用操作:</p>
+<table>
+<thead>
+<tr>
+<th align="center">方法</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">len(str)</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">+ / fmt.Sprintf</td>
+<td align="center">拼接字符串</td>
+</tr>
+<tr>
+<td align="center">strings.Split</td>
+<td align="center">分割</td>
+</tr>
+<tr>
+<td align="center">strings.Contains</td>
+<td align="center">是否包含</td>
+</tr>
+<tr>
+<td align="center">strings.HasPrefix,strings.HasSuffix</td>
+<td align="center">前缀/后缀判断</td>
+</tr>
+<tr>
+<td align="center">strings.Index(),strings.LastIndex()</td>
+<td align="center">子串出现的位置</td>
+</tr>
+<tr>
+<td align="center">strings.Join(a[] string,sep string)</td>
+<td align="center">join</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>byte和rune</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">unit8/byte -&gt; ASCII码字符</span><br><span class="line">rune -&gt; UTF8字符</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">s := &quot;abc123我的博客&quot;</span><br><span class="line">	for i := 0; i &lt; len(s); i++ &#123;</span><br><span class="line">		fmt.Printf(&quot;%c&quot;,s[i])</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println()</span><br><span class="line">	for _, r := range s &#123;</span><br><span class="line">		fmt.Printf(&quot;%c&quot;,r)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println()</span><br><span class="line">	</span><br><span class="line">//out</span><br><span class="line">abc123æ  ç  å  å®¢</span><br><span class="line">abc123我的博客</span><br></pre></td></tr></table></figure>
+
+<p>字符串底层是一个byte数组，可以和[]byte相互转换。字符串是不可修改的。这里由于底层是byte数组，所有长度是byte数组的长度，如果是用len变量UTF8字符串就会乱码，使用forr形式就OK</p>
+</li>
+<li><p>修改字符串</p>
+<p>先将其转换为[]rune或者[]byte，完成以后再转换为string,但是都需要重写分配内存和复制字节数组。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">s1 := <span class="string">&quot;hello&quot;</span></span><br><span class="line"><span class="comment">//强制类型转换</span></span><br><span class="line">byteS1 := []<span class="keyword">byte</span>(s1)</span><br><span class="line">byteS1[<span class="number">0</span>] = <span class="string">&#x27;H&#x27;</span></span><br><span class="line">fmt.Println(<span class="keyword">string</span>(byteS1), <span class="built_in">len</span>(byteS1))</span><br><span class="line">fmt.Println(byteS1)</span><br><span class="line"></span><br><span class="line">s2:=<span class="string">&quot;博客&quot;</span></span><br><span class="line">runeS2 := []<span class="keyword">rune</span>(s2)</span><br><span class="line">runeS2[<span class="number">1</span>] = <span class="string">&#x27;击&#x27;</span></span><br><span class="line">fmt.Println(<span class="keyword">string</span>(runeS2), <span class="built_in">len</span>(runeS2))</span><br><span class="line">fmt.Println(runeS2)</span><br><span class="line"></span><br><span class="line"><span class="comment">//out</span></span><br><span class="line">Hello <span class="number">5</span></span><br><span class="line">[<span class="number">72</span> <span class="number">101</span> <span class="number">108</span> <span class="number">108</span> <span class="number">111</span>]</span><br><span class="line">博击 <span class="number">2</span></span><br><span class="line">[<span class="number">21338</span> <span class="number">20987</span>]</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><p>Go只支持强制类型转换，没有隐式转换</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T(表达式)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="容器类型"><a href="#容器类型" class="headerlink" title="容器类型"></a>容器类型</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Element <span class="keyword">struct</span> &#123;</span><br><span class="line">	next, prev *Element</span><br><span class="line">	<span class="comment">// The list to which this element belongs.</span></span><br><span class="line">	list *List</span><br><span class="line">	<span class="comment">// The value stored with this element.</span></span><br><span class="line">	Value <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//两个方法，获取上一个或下一个元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *Element)</span> <span class="title">Next</span><span class="params">()</span> *<span class="title">Element</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *Element)</span> <span class="title">Prev</span><span class="params">()</span> *<span class="title">Element</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> List <span class="keyword">struct</span> &#123;</span><br><span class="line">	root Element </span><br><span class="line">	<span class="built_in">len</span>  <span class="keyword">int</span>     </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">Init</span><span class="params">()</span> *<span class="title">List</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span> *<span class="title">List</span> //<span class="title">alloc</span> + <span class="title">Init</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">Front</span><span class="params">()</span> *<span class="title">Element</span>//返回列表头</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">Back</span><span class="params">()</span> *<span class="title">Element</span> //返回列表尾</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//at后插入e,返回e</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">insert</span><span class="params">(e, at *Element)</span> *<span class="title">Element</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">insertValue</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;, at *Element)</span> *<span class="title">Element</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">remove</span><span class="params">(e *Element)</span> *<span class="title">Element</span>//移除<span class="title">e</span>，返回<span class="title">e</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">move</span><span class="params">(e, at *Element)</span> *<span class="title">Element</span> //<span class="title">e</span>放到<span class="title">at</span>后面，返回<span class="title">e</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushFront</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span> *<span class="title">Element</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushBack</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span> *<span class="title">Element</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">InsertBefore</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;, mark *Element)</span> *<span class="title">Element</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">InsertAfter</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;, mark *Element)</span> *<span class="title">Element</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">MoveToFront</span><span class="params">(e *Element)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">MoveToBack</span><span class="params">(e *Element)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">MoveBefore</span><span class="params">(e, mark *Element)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">MoveAfter</span><span class="params">(e, mark *Element)</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushBackList</span><span class="params">(other *List)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *List)</span> <span class="title">PushFrontList</span><span class="params">(other *List)</span></span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zhongsongzhi97.github.io/tags/go%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/" rel="tag"># go语言基础</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2021/10/31/%E5%B0%8F%E7%82%B9%E9%9B%86%E5%90%88/" rel="next" title="小点集合">
+                  小点集合 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

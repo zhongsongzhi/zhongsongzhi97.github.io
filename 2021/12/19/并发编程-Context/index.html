@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="并发编程 - 上下文ContextContext的作用和使用上下文 context.Context Go 语言中用来设置截止日期、同步信号，传递请求相关值的结构体。 该接口有4个需要实现的方法 123456type Context interface &amp;#123;	Deadline() (deadline time.Time, ok bool) &#x2F;&#x2F;返回context.Context被取消的时间">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并发编程 - Context">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/19/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Context/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="并发编程 - 上下文ContextContext的作用和使用上下文 context.Context Go 语言中用来设置截止日期、同步信号，传递请求相关值的结构体。 该接口有4个需要实现的方法 123456type Context interface &amp;#123;	Deadline() (deadline time.Time, ok bool) &#x2F;&#x2F;返回context.Context被取消的时间">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gxj50vvo7hj30xc0aa0tb.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gxj5x724t9j30xc0aawf3.jpg">
+<meta property="article:published_time" content="2021-12-19T06:36:52.000Z">
+<meta property="article:modified_time" content="2021-12-19T07:14:22.393Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta property="article:tag" content="并发编程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gxj50vvo7hj30xc0aa0tb.jpg">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/19/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Context/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/19/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Context/","path":"2021/12/19/并发编程-Context/","title":"并发编程 - Context"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>并发编程 - Context | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E4%B8%8A%E4%B8%8B%E6%96%87Context"><span class="nav-number">1.</span> <span class="nav-text">并发编程 - 上下文Context</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Context%E7%9A%84%E4%BD%9C%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">Context的作用和使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="nav-number">1.2.</span> <span class="nav-text">默认上下文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%96%E6%B6%88%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.3.</span> <span class="nav-text">取消信号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E5%80%BC%E6%96%B9%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">传值方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/19/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Context/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          并发编程 - Context
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-12-19 14:36:52 / Modified: 15:14:22" itemprop="dateCreated datePublished" datetime="2021-12-19T14:36:52+08:00">2021-12-19</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="并发编程-上下文Context"><a href="#并发编程-上下文Context" class="headerlink" title="并发编程 - 上下文Context"></a>并发编程 - 上下文Context</h1><h2 id="Context的作用和使用"><a href="#Context的作用和使用" class="headerlink" title="Context的作用和使用"></a>Context的作用和使用</h2><p>上下文 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> Go 语言中用来设置截止日期、同步信号，传递请求相关值的结构体。</p>
+<p>该接口有4个需要实现的方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Context <span class="keyword">interface</span> &#123;</span><br><span class="line">	Deadline() (deadline time.Time, ok <span class="keyword">bool</span>) <span class="comment">//返回context.Context被取消的时间</span></span><br><span class="line">	Done() &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; <span class="comment">//返回一个channel，会在工作完成或context被取消后关闭，重复调用返回同一个Channel</span></span><br><span class="line">	Err() error <span class="comment">//被取消 - Canceled错误 超时 - DeadlineExceeded</span></span><br><span class="line">	Value(key <span class="keyword">interface</span>&#123;&#125;) <span class="keyword">interface</span>&#123;&#125; <span class="comment">//获取键对应的值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>作用：</strong>在 Goroutine 构成的树形结构中对信号进行同步以减少计算资源的浪费是 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> 的最大作用。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxj50vvo7hj30xc0aa0tb.jpg" alt="golang-context-usage"></p>
+<p>Go 服务的每一个请求都是通过单独的 Goroutine 处理的，HTTP/RPC 请求的处理器会启动新的 Goroutine 访问数据库和其他服务，如上图所示，对于同一个请求可能会创建多个Goroutine，需要使用Context.context在Goroutine直接同步特定数据，取消信号以及处理请求的截止日期。</p>
+<p>当上层的Goroutine因为某些原因执行失败时，使用context.Context就可以在下层及时停掉无用的工作以减少额外资源的消耗</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handle</span><span class="params">(ctx context.Context, duration time.Duration)</span></span>  &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">		fmt.Println(<span class="string">&quot;handle&quot;</span>,ctx.Err())</span><br><span class="line">	<span class="keyword">case</span> &lt;-time.After(duration):</span><br><span class="line">		fmt.Println(<span class="string">&quot;process request with&quot;</span>,duration)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(),<span class="number">1</span> * time.Second)</span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> handle(ctx,<span class="number">500</span>*time.Millisecond)</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">		fmt.Println(<span class="string">&quot;main&quot;</span>,ctx.Err())</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//handle处理时间为500ms</span></span><br><span class="line">process request with <span class="number">500</span>ms</span><br><span class="line">main context deadline exceeded</span><br><span class="line"><span class="comment">//handle处理时间为1500ms</span></span><br><span class="line">handle context deadline exceeded</span><br><span class="line">main context deadline exceeded</span><br></pre></td></tr></table></figure>
+
+<p>多个Goroutine同时订阅ctx.Done()管道中的消息，一旦收到取消信号就立刻停止当前执行的工作</p>
+<h2 id="默认上下文"><a href="#默认上下文" class="headerlink" title="默认上下文"></a>默认上下文</h2><p>context里最常用的方法是context.Background, context.TODO，这两个方法都会返回预先初始化好的私有变量backgroud和todo，这两个变量都是通过new(emptyCtx)初始化，即全为空实现的context.Context</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Background"><code>context.Background</code></a> 是上下文的默认值，所有其他的上下文都应该从它衍生出来；</li>
+<li><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.TODO"><code>context.TODO</code></a> 应该仅在不确定应该使用哪种上下文时使用；</li>
+</ul>
+<p>在多数情况下，如果当前函数没有上下文作为入参，我们都会使用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Background"><code>context.Background</code></a> 作为起始的上下文向下传递。</p>
+<h2 id="取消信号"><a href="#取消信号" class="headerlink" title="取消信号"></a>取消信号</h2><p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithCancel"><code>context.WithCancel</code></a> 函数能够从 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> 中衍生出一个新的子上下文并返回用于取消该上下文的函数。一旦我们执行返回的取消函数，当前上下文以及它的子上下文都会被取消，所有的 Goroutine 都会同步收到这一取消信号。</p>
+<p>除了 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithCancel"><code>context.WithCancel</code></a> 之外，<a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/context"><code>context</code></a> 包中的另外两个函数 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithDeadline"><code>context.WithDeadline</code></a> 和 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithTimeout"><code>context.WithTimeout</code></a> 也都能创建可以被取消的计时器上下文 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.timerCtx"><code>context.timerCtx</code></a>：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxj5x724t9j30xc0aawf3.jpg" alt="golang-parent-cancel-context"></p>
+<h2 id="传值方法"><a href="#传值方法" class="headerlink" title="传值方法"></a>传值方法</h2><p>如何使用上下文传值:<a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/context"><code>context</code></a> 包中的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithValue"><code>context.WithValue</code></a> 能从父上下文中创建一个子上下文，传值的子上下文使用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.valueCtx"><code>context.valueCtx</code></a> 类型</p>
+<p>如果 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.valueCtx"><code>context.valueCtx</code></a> 中存储的键值对与 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.valueCtx.Value"><code>context.valueCtx.Value</code></a> 方法中传入的参数不匹配，就会从父上下文中查找该键对应的值直到某个父上下文中返回 <code>nil</code> 或者查找到对应的值</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithValue</span><span class="params">(parent Context, key, val <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">Context</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;valueCtx&#123;parent, key, val&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> valueCtx <span class="keyword">struct</span> &#123;</span><br><span class="line">	Context</span><br><span class="line">	key, val <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *valueCtx)</span> <span class="title">Value</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">if</span> c.key == key &#123;</span><br><span class="line">		<span class="keyword">return</span> c.val</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> c.Context.Value(key)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Go 语言中的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> 的主要作用还是在多个 Goroutine 组成的树中同步<strong>取消信号</strong>以减少对资源的消耗和占用，虽然它也有传值的功能，但是这个功能我们还是很少用到。</p>
+<p>在真正使用传值的功能时我们也应该非常谨慎，使用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> 传递请求的所有参数一种非常差的设计，比较常见的使用场景是传递请求对应用户的认证令牌以及用于进行分布式追踪的请求 ID。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zhongsongzhi97.github.io/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag"># 并发编程</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2021/12/13/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E8%B0%83%E5%BA%A6%E5%99%A8/" rel="prev" title="Go并发编程 - 调度器">
+                  <i class="fa fa-chevron-left"></i> Go并发编程 - 调度器
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2021/12/20/gRPC%E5%BD%92%E7%BA%B3/" rel="next" title="gRPC归纳">
+                  gRPC归纳 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

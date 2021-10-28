@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="DSL和gRPC protoc-gen-goDSL介绍定义：DSL(Domain Specific Language)为领域特定语言，GPL(General Purpose Language)通用编程语言(图灵完备)，比如C，C++，Python，C#等 常见的DSL：1. Regex,HTML,CSS,CocoaPods,Grandle,SQL Regex: 正则表达式，指定了字符串的模型，会判">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手撸DSL和gRPC解析.proto分析">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/07/%E6%89%8B%E6%92%B8DSL%E5%92%8CgRPC%E8%A7%A3%E6%9E%90-proto%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="DSL和gRPC protoc-gen-goDSL介绍定义：DSL(Domain Specific Language)为领域特定语言，GPL(General Purpose Language)通用编程语言(图灵完备)，比如C，C++，Python，C#等 常见的DSL：1. Regex,HTML,CSS,CocoaPods,Grandle,SQL Regex: 正则表达式，指定了字符串的模型，会判">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gy5597m3jmj30ni0i6t9i.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gy58m7uqwkj312y0oytbm.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gy8eni3fvlj30b60a4glz.jpg">
+<meta property="article:published_time" content="2022-01-07T03:27:36.000Z">
+<meta property="article:modified_time" content="2022-01-10T07:05:14.233Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gy5597m3jmj30ni0i6t9i.jpg">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/07/%E6%89%8B%E6%92%B8DSL%E5%92%8CgRPC%E8%A7%A3%E6%9E%90-proto%E5%88%86%E6%9E%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/07/%E6%89%8B%E6%92%B8DSL%E5%92%8CgRPC%E8%A7%A3%E6%9E%90-proto%E5%88%86%E6%9E%90/","path":"2022/01/07/手撸DSL和gRPC解析-proto分析/","title":"手撸DSL和gRPC解析.proto分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>手撸DSL和gRPC解析.proto分析 | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#DSL%E5%92%8CgRPC-protoc-gen-go"><span class="nav-number">1.</span> <span class="nav-text">DSL和gRPC protoc-gen-go</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DSL%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">DSL介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%89%8B%E6%92%B8DSL"><span class="nav-number">1.2.</span> <span class="nav-text">如何手撸DSL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BADSL"><span class="nav-number">1.2.1.</span> <span class="nav-text">构建DSL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E9%83%A8DSL%E5%92%8C%E5%A4%96%E9%83%A8DSL"><span class="nav-number">1.2.2.</span> <span class="nav-text">内部DSL和外部DSL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CocoaPods%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">1.2.3.</span> <span class="nav-text">CocoaPods分析：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.4.</span> <span class="nav-text">编译原理:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ANTLR"><span class="nav-number">1.2.5.</span> <span class="nav-text">ANTLR:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.6.</span> <span class="nav-text">算法表达式示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#protoc-gen"><span class="nav-number">1.3.</span> <span class="nav-text">protoc-gen</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#generator-GenerateAllFiles"><span class="nav-number">1.3.0.0.1.</span> <span class="nav-text">generator.GenerateAllFiles()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90enum"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">如何生成enum</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90service%E6%9C%8D%E5%8A%A1%E7%9A%84rpc%E6%8E%A5%E5%8F%A3%E6%BA%90%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">如何生成service服务的rpc接口源代码</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/07/%E6%89%8B%E6%92%B8DSL%E5%92%8CgRPC%E8%A7%A3%E6%9E%90-proto%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          手撸DSL和gRPC解析.proto分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-01-07 11:27:36" itemprop="dateCreated datePublished" datetime="2022-01-07T11:27:36+08:00">2022-01-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-01-10 15:05:14" itemprop="dateModified" datetime="2022-01-10T15:05:14+08:00">2022-01-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="DSL和gRPC-protoc-gen-go"><a href="#DSL和gRPC-protoc-gen-go" class="headerlink" title="DSL和gRPC protoc-gen-go"></a>DSL和gRPC protoc-gen-go</h1><h2 id="DSL介绍"><a href="#DSL介绍" class="headerlink" title="DSL介绍"></a>DSL介绍</h2><p>定义：DSL(Domain Specific Language)为领域特定语言，GPL(General Purpose Language)通用编程语言(图灵完备)，比如C，C++，Python，C#等</p>
+<p>常见的DSL：1. Regex,HTML,CSS,CocoaPods,Grandle,SQL</p>
+<p>Regex: 正则表达式，指定了字符串的模型，会判断当前字符串跟正则表达式是否匹配</p>
+<p>SQL: 用于操作数据库，数据库会从SQL语句读取信息，然后返回使用者期望的结果</p>
+<p>CocoaPods|Grandle: 设定了具体的规则，用于管理第三方库和工程配置 </p>
+<h2 id="如何手撸DSL"><a href="#如何手撸DSL" class="headerlink" title="如何手撸DSL"></a>如何手撸DSL</h2><h3 id="构建DSL"><a href="#构建DSL" class="headerlink" title="构建DSL"></a>构建DSL</h3><ol>
+<li>设计语法和语义，定义DSL中的元素（token）是什么样的，元素（token）代表什么意思</li>
+<li>实现parser，对DSL进行解析，生成并处理抽象树(AST)，DSL最终通过解释器来执行</li>
+</ol>
+<h3 id="内部DSL和外部DSL"><a href="#内部DSL和外部DSL" class="headerlink" title="内部DSL和外部DSL"></a>内部DSL和外部DSL</h3><p>外部DSL：语法语义，语法解析器和抽象树的处理都需要自己完成。</p>
+<p>内部DSL：内部DSL嵌入一些编程语言中的，比如iOS的CocoaPods(Ruby)和Android的Gradle(Groovy)。</p>
+<p>内部DSL使用了宿主的能力，不需要实现语法分析器(Parser)，通常会使用宿主语言的特性进行创造。</p>
+<h3 id="CocoaPods分析："><a href="#CocoaPods分析：" class="headerlink" title="CocoaPods分析："></a>CocoaPods分析：</h3><ol>
+<li><p>为什么基于Ruby:</p>
+<ol>
+<li>ruby一切皆对象，减少了语言中的元素，不存在基本类型，操作符</li>
+<li>ruby方法传入代码块很方便</li>
+<li>作为解释执行的语言，eval可以将字符串作为代码执行</li>
+<li>代码格式不受限</li>
+</ol>
+</li>
+<li><p>Podfile:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">source <span class="string">&#x27;https://github.com/volcengine/volcengine-specs.git&#x27;</span> </span><br><span class="line">source <span class="string">&#x27;https://cdn.cocoapods.org/&#x27;</span>   </span><br><span class="line"></span><br><span class="line">target <span class="string">&#x27;testTTAcount&#x27;</span> <span class="keyword">do</span></span><br><span class="line">   pod <span class="string">&#x27;gRPC-Swift&#x27;</span>, <span class="string">&#x27;~&gt; 1.0.0&#x27;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>Source: 依赖的源地址</p>
+<p>Target: 要添加依赖的工程的名字</p>
+<p>Pod: 表示依赖，gRPC-Swift为依赖库，后面为版本号</p>
+<p>将上面的部分以更符合代码形式则表示为:</p>
+<p>在执行时会作为Ruby代码来执行</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">source(<span class="string">&#x27;https://github.com/volcengine/volcengine-specs.git&#x27;</span>)</span><br><span class="line">source(<span class="string">&#x27;https://cdn.cocoapods.org/&#x27;</span>)</span><br><span class="line"></span><br><span class="line">target(<span class="string">&#x27;testTTAcount&#x27;</span>) <span class="keyword">do</span></span><br><span class="line">  pod (<span class="string">&#x27;gRPC-Swift&#x27;</span>, <span class="string">&#x27;~&gt; 1.0.0&#x27;</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></li>
+<li><p>如何使用Ruby实现一个简单的内部DSL</p>
+<ol>
+<li>创建一些Podfile中”代码“执行的上下文，即一些方法。</li>
+<li>读取Podfile中的内容到脚本中。</li>
+<li>使用eval在上下文中执行Podfile的”代码“</li>
+</ol>
+</li>
+<li><p>实现：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">source <span class="string">&#x27;https://github.com/volcengine/volcengine-specs.git&#x27;</span> </span><br><span class="line">source <span class="string">&#x27;https://cdn.cocoapods.org/&#x27;</span></span><br><span class="line"></span><br><span class="line">platform <span class="symbol">:ios</span>, <span class="string">&#x27;10.0&#x27;</span></span><br><span class="line"></span><br><span class="line">target <span class="string">&#x27;testTTAcount&#x27;</span> <span class="keyword">do</span></span><br><span class="line">    pod <span class="string">&#x27;gRPC-Swift&#x27;</span>, <span class="string">&#x27;~&gt; 1.0.0&#x27;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>这里的source, platform, target,pod都是方法，所以需要构建包含这些方法的上下文</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># eval_pod.rb</span></span><br><span class="line"><span class="variable">$hash_value</span> = &#123;&#125; /<span class="regexp">/存储指定的依赖</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">def source(url)</span></span><br><span class="line"><span class="regexp">end</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">def target(target)</span></span><br><span class="line"><span class="regexp">end</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">def platform(platform, version)</span></span><br><span class="line"><span class="regexp">end</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">def pod(pod)</span></span><br><span class="line"><span class="regexp">end</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">content = File.read &#x27;./</span>Podfile<span class="string">&#x27;//从一个podfile中读取</span></span><br><span class="line"><span class="string">eval content //使用eval执行，读取的内容（作为ruby代码执行）</span></span><br><span class="line"><span class="string">p $hash_value //打印指定的依赖</span></span><br></pre></td></tr></table></figure>
+
+<p>简单实现一下：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">source</span><span class="params">(url)</span></span></span><br><span class="line">    <span class="variable">$hash_value</span>[<span class="string">&#x27;source&#x27;</span>] = url</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">target</span><span class="params">(target)</span></span></span><br><span class="line">    targets = <span class="variable">$hash_value</span>[<span class="string">&#x27;targets&#x27;</span>]</span><br><span class="line">    targets = [] <span class="keyword">if</span> targets == <span class="literal">nil</span></span><br><span class="line">    targets &lt;&lt; target</span><br><span class="line">    <span class="variable">$hash_value</span>[<span class="string">&#x27;targets&#x27;</span>] = targets</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">if</span> block_given?</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">platform</span><span class="params">(platform, version)</span></span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pod</span><span class="params">(pod)</span></span></span><br><span class="line">    pods = <span class="variable">$hash_value</span>[<span class="string">&#x27;pods&#x27;</span>]</span><br><span class="line">    pods = [] <span class="keyword">if</span> pods == <span class="literal">nil</span></span><br><span class="line">    pods &lt;&lt; pod</span><br><span class="line">    <span class="variable">$hash_value</span>[<span class="string">&#x27;pods&#x27;</span>] = pods</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ruby eval_pod.rb</span><br><span class="line">&#123;<span class="string">&quot;source&quot;</span>=&gt;[<span class="string">&#x27;https://github.com/volcengine/volcengine-specs.git&#x27;</span>,<span class="string">&#x27;https://cdn.cocoapods.org/&#x27;</span>], <span class="string">&quot;targets&quot;</span>=&gt;[<span class="string">&quot;testTTAcount&quot;</span>], <span class="string">&quot;pods&quot;</span>=&gt;[<span class="string">&quot;gRPC-Swift&quot;</span>, <span class="string">&quot;SDWebImage&quot;</span>]&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="编译原理"><a href="#编译原理" class="headerlink" title="编译原理:"></a>编译原理:</h3><p>编译的过程：</p>
+<ol>
+<li><p>预处理:</p>
+<ul>
+<li>头文件替换</li>
+<li>宏展开</li>
+<li>注释清除</li>
+<li>预编译指令处理</li>
+<li>条件编译</li>
+<li>…</li>
+</ul>
+</li>
+<li><p>词法分析:</p>
+<p>简单的说就是想读英文文章一样，先一个一个的读出单词，获取到单词的意思。</p>
+<p>这里将“词法记号”，即token。词法分析的过程叫做分词，可以将语句切割成多个token</p>
+<ol>
+<li>通过正则文法读取</li>
+<li>通过有限自动机</li>
+</ol>
+</li>
+<li><p>语法分析：</p>
+<p>在词法分析的基础上识别程序的语法结构，生成一个树状结构，即抽象语法树(AST Abstract Syntax Tree)</p>
+<p>Eg: 1+2*3</p>
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gy5597m3jmj30ni0i6t9i.jpg" alt="img" style="zoom:50%;" /></li>
+<li><p>语义分析：</p>
+<p>基于AST，编译器会进行语义分析。语义分析会标注在抽象语法树的节点上。</p>
+<p>Eg: </p>
+<ol>
+<li>某个表达式的结果是什么类型？不一样能否自动转换</li>
+<li>一个代码块内部和外部有相同名称的变量，执行时应该用哪一个</li>
+</ol>
+</li>
+<li><p>中间代码生成：</p>
+<p>一般来说，编译器会有一个抽象于机器平台的中间语言（IR）以便后续的机器无关的优化</p>
+</li>
+<li><p>代码优化：</p>
+<p>机器无关的优化。函数内联，for循环展开</p>
+</li>
+<li><p>目标代码生成：</p>
+<p>生成目标平台的代码，如果是编译型的语言，往往是产生.o文件。这里编译器的工作已经结束了。</p>
+</li>
+</ol>
+<p>词法分析，语法分析，语义分析为编译器前端内容</p>
+<p>中间代码生成，代码优化，目标代码生成为编译器后端内容</p>
+<h3 id="ANTLR"><a href="#ANTLR" class="headerlink" title="ANTLR:"></a>ANTLR:</h3><p>教程文档:<a target="_blank" rel="noopener" href="https://wizardforcel.gitbooks.io/antlr4-short-course/content/">https://wizardforcel.gitbooks.io/antlr4-short-course/content/</a></p>
+<p>官网：<a target="_blank" rel="noopener" href="https://www.antlr.org/support.html">https://www.antlr.org/support.html</a></p>
+<p>介绍:</p>
+<p>ANTLR v4是一款功能强大的语法分析器生成器，可以用来读取、处理、执行和转换结构化文本或二进制文件。它被广泛应用于学术界和工业界构建各种语言、工具和框架。</p>
+<p>从称为文法的一种形式化的语言描述中，ANTLR生成该语言的语法分析器。生成的语法分析器可以自动构建语法分析树——表示文法如何匹配输入的数据结构。ANTLR还可以自动生成树遍历器，你可以用它来访问那些树的节点，以执行特定的代码。</p>
+<p>原理：</p>
+<p><a target="_blank" rel="noopener" href="http://staff.ustc.edu.cn/~yuzhang/compiler/2019f/lectures/allstar.pdf">ANTLR原理</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.gopheracademy.com/advent-2017/parsing-with-antlr4-and-go/">ANTLR-Go</a></p>
+<h3 id="算法表达式示例"><a href="#算法表达式示例" class="headerlink" title="算法表达式示例"></a>算法表达式示例</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy58m7uqwkj312y0oytbm.jpg" alt="飞书20220107-172941"></p>
+<ol>
+<li><p>词法定义：</p>
+<p>词法规则类似与正则表达式，这里即关注数字和加减乘除，忽略空白符</p>
+</li>
+<li><p>文法规则：</p>
+<p>start为文法的入口； expresion定义了具体的计算表达式。</p>
+<p>表达式：表达式可以是一个数字，数字的加减乘除，表达式的加减乘除，或者通过括号包裹表达式组合。</p>
+</li>
+<li><p>规则名称：</p>
+<p>antlr会将.g4定义的规则生成一个解析器的代码框架，能自动解析并生成AST。业务层拿到抽象语法树以后，还需要根据AST来处理业务逻辑以及业务需求</p>
+</li>
+<li><p>上下文标记：</p>
+<p>为文法规则分配上下文标记，该标记可用再业务代码处理AST时，更加明确区分当前上下文的规则。</p>
+<p>比如在：AdditionOrSubstraction这行，左右表达式都是expressin，这里通过上下文标记，left=,right=的方式为左右expresion添加了上下文标记，这样业务代码也就可用区分左右表达式了</p>
+</li>
+<li><p>生成解析器（Visitor模式|Listener模式）</p>
+<p>Visitor模式：</p>
+<p>执行对于语言的命令后，会生成对应语言下的代码：</p>
+<p>其中calcLexer是词法分析器，calcParser是语法分析器，calcVisitor是遍历AST的访问器的interface，业务代码需要实现该interface实现具体的业务需求逻辑</p>
+</li>
+</ol>
+<p>生成的结构：</p>
+<p>根据名字大概可以看出各个文件的作用，calc_lexer为词法分析器，作用是生成tokens流。calc_parser是语法分析器，用于生成AST。calcVisitor是用于遍历AST的访问器的接口，业务代码通过实现该接口来实现具体的业务逻辑。</p>
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gy8eni3fvlj30b60a4glz.jpg" alt="飞书20220110-111501" align='left' style="zoom: 67%;" />
+
+<p>在calc_visitor这个接口中，定义了一系列以visit为前缀的函数，这些函数对应了.g4中的每一个规则名称。</p>
+<p>eg: visitNumber对应了.g4里的#Number规则</p>
+<p>这些访问函数，都接收一个上下文参数，不同的规则，上下文参数会有差异，最主要就是会有不同的上下文标记可用使用。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CalcVisitor <span class="keyword">interface</span> &#123;</span><br><span class="line">	antlr.ParseTreeVisitor</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Visit a parse tree produced by CalcParser#start.</span></span><br><span class="line">	VisitStart(ctx *StartContext) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Visit a parse tree produced by CalcParser#Number.</span></span><br><span class="line">	VisitNumber(ctx *NumberContext) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Visit a parse tree produced by CalcParser#MultiplicationOrDivision.</span></span><br><span class="line">	VisitMultiplicationOrDivision(ctx *MultiplicationOrDivisionContext) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Visit a parse tree produced by CalcParser#AdditionOrSubstraction.</span></span><br><span class="line">	VisitAdditionOrSubstraction(ctx *AdditionOrSubstractionContext) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Visit a parse tree produced by CalcParser#Parentheses.</span></span><br><span class="line">	VisitParentheses(ctx *ParenthesesContext) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Visit a parse tree produced by CalcParser#Power.</span></span><br><span class="line">	VisitPower(ctx *PowerContext) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关键函数.visit：这个函数是遍历AST的核心函数，这个函数内部会根据visit的具体规则，进入到visitXXX函数，在具体的visitXXX函数，又通过业务代码调用.visit来实现深度优先遍历</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> visitor</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;Calc/parser&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/antlr/antlr4/runtime/Go/antlr&quot;</span></span><br><span class="line">	<span class="string">&quot;math&quot;</span></span><br><span class="line">	<span class="string">&quot;strconv&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> _<span class="title">opt</span><span class="params">(opr <span class="keyword">string</span>,a,b <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">int</span></span>  &#123; <span class="comment">//处理算术运行逻辑</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;_opt&quot;</span>,opr,a,b)</span><br><span class="line">	a1,b1 := a.(<span class="keyword">int</span>),b.(<span class="keyword">int</span>)</span><br><span class="line">	<span class="keyword">switch</span> opr[<span class="number">0</span>] &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="string">&#x27;+&#x27;</span>: <span class="keyword">return</span> a1+b1</span><br><span class="line">	<span class="keyword">case</span> <span class="string">&#x27;-&#x27;</span>: <span class="keyword">return</span> a1-b1</span><br><span class="line">	<span class="keyword">case</span> <span class="string">&#x27;*&#x27;</span>: <span class="keyword">return</span> a1*b1</span><br><span class="line">	<span class="keyword">case</span> <span class="string">&#x27;/&#x27;</span>: <span class="keyword">return</span> a1/b1</span><br><span class="line">	<span class="keyword">case</span> <span class="string">&#x27;^&#x27;</span>: <span class="keyword">return</span> <span class="keyword">int</span>(math.Pow(<span class="keyword">float64</span>(a1),<span class="keyword">float64</span>(b1)))</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;_opt err&quot;</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> MyCalVisitor <span class="keyword">struct</span> &#123;</span><br><span class="line">	parser.BaseCalcVisitor</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *MyCalVisitor)</span> <span class="title">Visit</span><span class="params">(tree antlr.ParseTree)</span> <span class="title">interface</span></span>&#123;&#125;  &#123;<span class="comment">//目前Go的实现为返回nil，需要自己处理一下</span></span><br><span class="line">	<span class="keyword">switch</span> val := tree.(<span class="keyword">type</span>) &#123;</span><br><span class="line">	<span class="keyword">case</span> *parser.NumberContext:</span><br><span class="line">		<span class="keyword">return</span> v.VisitNumber(val)</span><br><span class="line">	<span class="keyword">case</span> *parser.MultiplicationOrDivisionContext:</span><br><span class="line">		<span class="keyword">return</span> v.VisitMultiplicationOrDivision(val)</span><br><span class="line">	<span class="keyword">case</span> *parser.AdditionOrSubstractionContext:</span><br><span class="line">		<span class="keyword">return</span> v.VisitAdditionOrSubstraction(val)</span><br><span class="line">	<span class="keyword">case</span> *parser.ParenthesesContext:</span><br><span class="line">		<span class="keyword">return</span> v.VisitParentheses(val)</span><br><span class="line">	<span class="keyword">case</span> *parser.PowerContext:</span><br><span class="line">		<span class="keyword">return</span> v.VisitPower(val)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *MyCalVisitor)</span> <span class="title">VisitStart</span><span class="params">(ctx *parser.StartContext)</span> <span class="title">interface</span></span>&#123;&#125; &#123;<span class="comment">//入口，为一个表达式</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;VisitStart&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> v.Visit(ctx.Expression())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *MyCalVisitor)</span> <span class="title">VisitNumber</span><span class="params">(ctx *parser.NumberContext)</span> <span class="title">interface</span></span>&#123;&#125; &#123;<span class="comment">//解析token为一个数字</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;VisitNumber&quot;</span>)</span><br><span class="line">	num,_ := strconv.Atoi(ctx.NUMBER().GetText())</span><br><span class="line">	fmt.Println(num)</span><br><span class="line">	<span class="keyword">return</span> num</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *MyCalVisitor)</span> <span class="title">VisitMultiplicationOrDivision</span><span class="params">(ctx *parser.MultiplicationOrDivisionContext)</span> <span class="title">interface</span></span>&#123;&#125; &#123; <span class="comment">//乘除算术运算</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;VisitMultiplicationOrDivision&quot;</span>)</span><br><span class="line">	a := v.Visit(ctx.GetLeft())</span><br><span class="line">	b := v.Visit(ctx.GetRight())</span><br><span class="line">	<span class="keyword">return</span> _opt(ctx.GetOperator().GetText(),a,b)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *MyCalVisitor)</span> <span class="title">VisitAdditionOrSubstraction</span><span class="params">(ctx *parser.AdditionOrSubstractionContext)</span> <span class="title">interface</span></span>&#123;&#125; &#123; <span class="comment">//加减算术运算</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;VisitAdditionOrSubstraction&quot;</span>)</span><br><span class="line">	a := v.Visit(ctx.GetLeft())</span><br><span class="line">	b := v.Visit(ctx.GetRight())</span><br><span class="line">	<span class="keyword">return</span> _opt(ctx.GetOperator().GetText(),a,b)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *MyCalVisitor)</span> <span class="title">VisitParentheses</span><span class="params">(ctx *parser.ParenthesesContext)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">  <span class="comment">//括号</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;VisitParentheses&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> v.Visit(ctx.GetInner())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *MyCalVisitor)</span> <span class="title">VisitPower</span><span class="params">(ctx *parser.PowerContext)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">  <span class="comment">//阶乘</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;VisitPower&quot;</span>)</span><br><span class="line">	a := v.Visit(ctx.GetLeft())</span><br><span class="line">	b := v.Visit(ctx.GetRight())</span><br><span class="line">	<span class="keyword">return</span> _opt(ctx.GetOperator().GetText(),a,b)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="protoc-gen"><a href="#protoc-gen" class="headerlink" title="protoc-gen"></a>protoc-gen</h2><h5 id="generator-GenerateAllFiles"><a href="#generator-GenerateAllFiles" class="headerlink" title="generator.GenerateAllFiles()"></a>generator.GenerateAllFiles()</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生成所有.proto文件对应的go源代码，这里只是将源代码内容存储到g.Response中，</span></span><br><span class="line"><span class="comment">// 并没有直接创建源代码文件，插件将Response传递给protoc进程后由protoc进程来负</span></span><br><span class="line"><span class="comment">// 责创建源代码文件</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *Generator)</span> <span class="title">GenerateAllFiles</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Initialize the plugins</span></span><br><span class="line">    <span class="keyword">for</span> _, p := <span class="keyword">range</span> plugins &#123;</span><br><span class="line">        p.Init(g)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Generate the output. The generator runs for every file, even the files</span></span><br><span class="line">    <span class="comment">// that we don&#x27;t generate output for, so that we can collate the full list</span></span><br><span class="line">    <span class="comment">// of exported symbols to support public imports.</span></span><br><span class="line">    genFileMap := <span class="built_in">make</span>(<span class="keyword">map</span>[*FileDescriptor]<span class="keyword">bool</span>, <span class="built_in">len</span>(g.genFiles))</span><br><span class="line">    <span class="keyword">for</span> _, file := <span class="keyword">range</span> g.genFiles &#123;</span><br><span class="line">        genFileMap[file] = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> _, file := <span class="keyword">range</span> g.allFiles &#123;</span><br><span class="line">        g.Reset()</span><br><span class="line">        g.writeOutput = genFileMap[file]</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 调用generator的generate(...)方法来生成该proto文件的</span></span><br><span class="line">        <span class="comment">// FileDescriptorProto描述对应的go源代码</span></span><br><span class="line">        g.generate(file)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> !g.writeOutput &#123;</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        g.Response.File = <span class="built_in">append</span>(g.Response.File, &amp;plugin.CodeGeneratorResponse_File&#123;</span><br><span class="line">            Name:    proto.String(file.goFileName()),</span><br><span class="line">            Content: proto.String(g.String()),</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>generator .generate()方法如何实现</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 针对.proto文件（由FileDescriptor表示）生成对应的go源代码</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *Generator)</span> <span class="title">generate</span><span class="params">(file *FileDescriptor)</span></span> &#123;</span><br><span class="line">    g.file = g.FileOf(file.FileDescriptorProto)</span><br><span class="line">    g.usedPackages = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">bool</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 要生成源代码的首个proto文件对应的go源代码，这部分代码顶部插入版权信息</span></span><br><span class="line">    <span class="keyword">if</span> g.file.index == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="comment">// For one file in the package, assert version compatibility.</span></span><br><span class="line">        g.P(<span class="string">&quot;// This is a compile-time assertion to ensure that this generated file&quot;</span>)</span><br><span class="line">        g.P(<span class="string">&quot;// is compatible with the proto package it is being compiled against.&quot;</span>)</span><br><span class="line">        g.P(<span class="string">&quot;// A compilation error at this line likely means your copy of the&quot;</span>)</span><br><span class="line">        g.P(<span class="string">&quot;// proto package needs to be updated.&quot;</span>)</span><br><span class="line">        g.P(<span class="string">&quot;const _ = &quot;</span>, g.Pkg[<span class="string">&quot;proto&quot;</span>], <span class="string">&quot;.ProtoPackageIsVersion&quot;</span>, generatedCodeVersion, <span class="string">&quot; // please upgrade the proto package&quot;</span>)</span><br><span class="line">        g.P()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 生成import语句</span></span><br><span class="line">    <span class="keyword">for</span> _, td := <span class="keyword">range</span> g.file.imp &#123;</span><br><span class="line">        g.generateImported(td)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 生成enum类型定义语句</span></span><br><span class="line">    <span class="keyword">for</span> _, enum := <span class="keyword">range</span> g.file.enum &#123;</span><br><span class="line">        g.generateEnum(enum)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 生成message类型定义语句</span></span><br><span class="line">    <span class="keyword">for</span> _, desc := <span class="keyword">range</span> g.file.desc &#123;</span><br><span class="line">        <span class="comment">// Don&#x27;t generate virtual messages for maps.</span></span><br><span class="line">        <span class="keyword">if</span> desc.GetOptions().GetMapEntry() &#123;</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        g.generateMessage(desc)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 生成extension类型定义语句</span></span><br><span class="line">    <span class="keyword">for</span> _, ext := <span class="keyword">range</span> g.file.ext &#123;</span><br><span class="line">        g.generateExtension(ext)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 生成初始化函数语句</span></span><br><span class="line">    g.generateInitFunction()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 前面生成enum、message、extension等的方式都基本类似，后面我们只给出一个</span></span><br><span class="line">    <span class="comment">// 生成枚举类型方法的说明，生成message、extension的实现方法可以执行查看</span></span><br><span class="line">    <span class="comment">// generator.go中的实现。</span></span><br><span class="line">    <span class="comment">// </span></span><br><span class="line">    <span class="comment">// 需要注意的是，前面的各个生成源代码的方法不能处理service服务定义的rpc接</span></span><br><span class="line">    <span class="comment">// 口代码，这部分rpc代码的生成需要借助于grpc子插件来完成，即下面的g.runPlugins(...)</span></span><br><span class="line">    g.runPlugins(file)</span><br><span class="line"></span><br><span class="line">    g.generateFileDescriptor(file)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 待输出的源代码需要知道哪些package是需要import的，哪些不需要，因此先运行</span></span><br><span class="line">    <span class="comment">// 插件生成go代码中除import之外的其他部分代码，然后知道了哪些package需要</span></span><br><span class="line">    <span class="comment">// import，再插入具体的import语句。</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// 最后在go源代码中插入header、import</span></span><br><span class="line">    rem := g.Buffer</span><br><span class="line">    g.Buffer = <span class="built_in">new</span>(bytes.Buffer)</span><br><span class="line">    g.generateHeader()</span><br><span class="line">    g.generateImports()</span><br><span class="line">    <span class="keyword">if</span> !g.writeOutput &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    g.Write(rem.Bytes())</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 重新格式化生成的go源代码（gofmt）</span></span><br><span class="line">    fset := token.NewFileSet()</span><br><span class="line">    raw := g.Bytes()</span><br><span class="line">    ast, err := parser.ParseFile(fset, <span class="string">&quot;&quot;</span>, g, parser.ParseComments)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// Print out the bad code with line numbers.</span></span><br><span class="line">        <span class="comment">// This should never happen in practice, but it can while changing generated code,</span></span><br><span class="line">        <span class="comment">// so consider this a debugging aid.</span></span><br><span class="line">        <span class="keyword">var</span> src bytes.Buffer</span><br><span class="line">        s := bufio.NewScanner(bytes.NewReader(raw))</span><br><span class="line">        <span class="keyword">for</span> line := <span class="number">1</span>; s.Scan(); line++ &#123;</span><br><span class="line">            fmt.Fprintf(&amp;src, <span class="string">&quot;%5d\t%s\n&quot;</span>, line, s.Bytes())</span><br><span class="line">        &#125;</span><br><span class="line">        g.Fail(<span class="string">&quot;bad Go source code was generated:&quot;</span>, err.Error(), <span class="string">&quot;\n&quot;</span>+src.String())</span><br><span class="line">    &#125;</span><br><span class="line">    g.Reset()</span><br><span class="line">    err = (&amp;printer.Config&#123;Mode: printer.TabIndent | printer.UseSpaces, Tabwidth: <span class="number">8</span>&#125;).Fprint(g, fset, ast)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        g.Fail(<span class="string">&quot;generated Go source code could not be reformatted:&quot;</span>, err.Error())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="如何生成enum"><a href="#如何生成enum" class="headerlink" title="如何生成enum"></a>如何生成enum</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生成指定enum类型的go源代码</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *Generator)</span> <span class="title">generateEnum</span><span class="params">(enum *EnumDescriptor)</span></span> &#123;</span><br><span class="line">    <span class="comment">// enum类型的完整类型名</span></span><br><span class="line">    typeName := enum.TypeName()</span><br><span class="line">    <span class="comment">// CamelCased之后的完整类型名</span></span><br><span class="line">    ccTypeName := CamelCaseSlice(typeName)</span><br><span class="line">    ccPrefix := enum.prefix()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打印enum类型定义之前的leading comments</span></span><br><span class="line">    <span class="comment">// - 提取源代码信息SourceCodeInfo都是通过Location path来获取的；</span></span><br><span class="line">    <span class="comment">// - 提取注释信息也不例外，下面我们会介绍PrintComments(path)如何通过</span></span><br><span class="line">    <span class="comment">//   Location path来生成注释信息；</span></span><br><span class="line">    g.PrintComments(enum.path)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 生成枚举类型的定义起始部分：type 枚举类型名 int32</span></span><br><span class="line">    g.P(<span class="string">&quot;type &quot;</span>, ccTypeName, <span class="string">&quot; int32&quot;</span>)</span><br><span class="line">    g.file.addExport(enum, enumSymbol&#123;ccTypeName, enum.proto3()&#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 枚举类型里面的各个枚举值都作为const int32常量来定义</span></span><br><span class="line">    g.P(<span class="string">&quot;const (&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 枚举值定义之前缩进一下</span></span><br><span class="line">    g.In()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 针对枚举类型里面的所有枚举值进行源代码生成</span></span><br><span class="line">    <span class="keyword">for</span> i, e := <span class="keyword">range</span> enum.Value &#123;</span><br><span class="line">        <span class="comment">// 生成枚举值前面的leading comments</span></span><br><span class="line">        g.PrintComments(fmt.Sprintf(<span class="string">&quot;%s,%d,%d&quot;</span>, enum.path, enumValuePath, i))</span><br><span class="line">        <span class="comment">// 生成枚举值的name = value形式的go源代码</span></span><br><span class="line">        name := ccPrefix + *e.Name</span><br><span class="line">        g.P(name, <span class="string">&quot; &quot;</span>, ccTypeName, <span class="string">&quot; = &quot;</span>, e.Number)</span><br><span class="line">        g.file.addExport(enum, constOrVarSymbol&#123;name, <span class="string">&quot;const&quot;</span>, ccTypeName&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 枚举值定义完之后取消缩进</span></span><br><span class="line">    g.Out()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打印最后的结束信息</span></span><br><span class="line">    g.P(<span class="string">&quot;)&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 生成枚举类型相关的两个map</span></span><br><span class="line">    <span class="comment">// - 其中一个是枚举值到枚举名的映射；</span></span><br><span class="line">    <span class="comment">// - 另一个是枚举名到枚举值的映射；</span></span><br><span class="line">    g.P(<span class="string">&quot;var &quot;</span>, ccTypeName, <span class="string">&quot;_name = map[int32]string&#123;&quot;</span>)</span><br><span class="line">    g.In()</span><br><span class="line">    <span class="comment">// 第一个map</span></span><br><span class="line">    generated := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int32</span>]<span class="keyword">bool</span>) <span class="comment">// avoid duplicate values</span></span><br><span class="line">    <span class="keyword">for</span> _, e := <span class="keyword">range</span> enum.Value &#123;</span><br><span class="line">        duplicate := <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> _, present := generated[*e.Number]; present &#123;</span><br><span class="line">            duplicate = <span class="string">&quot;// Duplicate value: &quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        g.P(duplicate, e.Number, <span class="string">&quot;: &quot;</span>, strconv.Quote(*e.Name), <span class="string">&quot;,&quot;</span>)</span><br><span class="line">        generated[*e.Number] = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    g.Out()</span><br><span class="line">    g.P(<span class="string">&quot;&#125;&quot;</span>)</span><br><span class="line">    <span class="comment">// 第二个map</span></span><br><span class="line">    g.P(<span class="string">&quot;var &quot;</span>, ccTypeName, <span class="string">&quot;_value = map[string]int32&#123;&quot;</span>)</span><br><span class="line">    g.In()</span><br><span class="line">    <span class="keyword">for</span> _, e := <span class="keyword">range</span> enum.Value &#123;</span><br><span class="line">        g.P(strconv.Quote(*e.Name), <span class="string">&quot;: &quot;</span>, e.Number, <span class="string">&quot;,&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    g.Out()</span><br><span class="line">    g.P(<span class="string">&quot;&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 其他处理动作，也会生成部分源代码，这里可以忽略不计了</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>PrintComments如何通过Location path来提前并打印关联的注释信息</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 打印.proto文件中对该location path关联的leading comments注释信息</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *Generator)</span> <span class="title">PrintComments</span><span class="params">(path <span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> !g.writeOutput &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在protoc进程解析.proto文件的时候就已经将各个类型、字段的comments信息维</span></span><br><span class="line">    <span class="comment">// 护起来了，k就是location的path，通过path就能获取到对应的location，每个</span></span><br><span class="line">    <span class="comment">// location中保存了这个位置的源代码的leading comments、trailing comments信</span></span><br><span class="line">    <span class="comment">// 息，这里只打印leading comments</span></span><br><span class="line">    <span class="keyword">if</span> loc, ok := g.file.comments[path]; ok &#123;</span><br><span class="line">        text := strings.TrimSuffix(loc.GetLeadingComments(), <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> _, line := <span class="keyword">range</span> strings.Split(text, <span class="string">&quot;\n&quot;</span>) &#123;</span><br><span class="line">            g.P(<span class="string">&quot;// &quot;</span>, strings.TrimPrefix(line, <span class="string">&quot; &quot;</span>))</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="如何生成service服务的rpc接口源代码"><a href="#如何生成service服务的rpc接口源代码" class="headerlink" title="如何生成service服务的rpc接口源代码"></a>如何生成service服务的rpc接口源代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Run all the plugins associated with the file.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *Generator)</span> <span class="title">runPlugins</span><span class="params">(file *FileDescriptor)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 在上述generator处理的基础上，继续运行generator中注册的插件，依次运行插件</span></span><br><span class="line">    <span class="keyword">for</span> _, p := <span class="keyword">range</span> plugins &#123;</span><br><span class="line">        p.Generate(file)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生成.proto文件中service定义的rpc接口的go源代码</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *grpc)</span> <span class="title">Generate</span><span class="params">(file *generator.FileDescriptor)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果没有定义service服务直接返回</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(file.FileDescriptorProto.Service) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 相关变量定义</span></span><br><span class="line">    g.P(<span class="string">&quot;// Reference imports to suppress errors if they are not otherwise used.&quot;</span>)</span><br><span class="line">    g.P(<span class="string">&quot;var _ &quot;</span>, contextPkg, <span class="string">&quot;.Context&quot;</span>)</span><br><span class="line">    g.P(<span class="string">&quot;var _ &quot;</span>, grpcPkg, <span class="string">&quot;.ClientConn&quot;</span>)</span><br><span class="line">    g.P()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 断言，检查版本兼容性</span></span><br><span class="line">    g.P(<span class="string">&quot;// This is a compile-time assertion to ensure that this generated file&quot;</span>)</span><br><span class="line">    g.P(<span class="string">&quot;// is compatible with the grpc package it is being compiled against.&quot;</span>)</span><br><span class="line">    g.P(<span class="string">&quot;const _ = &quot;</span>, grpcPkg, <span class="string">&quot;.SupportPackageIsVersion&quot;</span>, generatedCodeVersion)</span><br><span class="line">    g.P()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 针对所有的service定义生成相关的service的go源代码</span></span><br><span class="line">    <span class="keyword">for</span> i, service := <span class="keyword">range</span> file.FileDescriptorProto.Service &#123;</span><br><span class="line">        g.generateService(file, service, i)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// grpc中对generateService的实现，生成service相关的go源代码</span></span><br><span class="line"><span class="comment">// @param .proto解析后的各种DescriptorProto的wrapping类，通过它可以方便地访问.proto中定义的东西 </span></span><br><span class="line"><span class="comment">// @param .proto中的某个service解析后对应的ServiceDescriptorProto</span></span><br><span class="line"><span class="comment">// @param .proto中可能定义了多个service，当前这个service对应的索引值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *grpc)</span> <span class="title">generateService</span><span class="params">(file *generator.FileDescriptor, service *pb.ServiceDescriptorProto, index <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 构建当前service对应的path!</span></span><br><span class="line">    path := fmt.Sprintf(<span class="string">&quot;6,%d&quot;</span>, index) <span class="comment">// 6 means service.</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取service名称</span></span><br><span class="line">    origServName := service.GetName()</span><br><span class="line">    fullServName := origServName</span><br><span class="line">    <span class="keyword">if</span> pkg := file.GetPackage(); pkg != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">        fullServName = pkg + <span class="string">&quot;.&quot;</span> + fullServName</span><br><span class="line">    &#125;</span><br><span class="line">    servName := generator.CamelCase(origServName)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 准备生成client相关的go源代码</span></span><br><span class="line">    g.P()</span><br><span class="line">    g.P(<span class="string">&quot;// Client API for &quot;</span>, servName, <span class="string">&quot; service&quot;</span>)</span><br><span class="line">    g.P()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 服务用户端go源代码生成</span></span><br><span class="line">    <span class="comment">// - type 服务名+Client interface</span></span><br><span class="line">    g.P(<span class="string">&quot;type &quot;</span>, servName, <span class="string">&quot;Client interface &#123;&quot;</span>)</span><br><span class="line">    <span class="comment">// - 服务用户端定义的各个接口方法</span></span><br><span class="line">    <span class="keyword">for</span> i, method := <span class="keyword">range</span> service.Method &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 打印接口的leading comments</span></span><br><span class="line">        g.gen.PrintComments(fmt.Sprintf(<span class="string">&quot;%s,2,%d&quot;</span>, path, i)) <span class="comment">// 2 means method in a service.</span></span><br><span class="line">        <span class="comment">// 生成接口的签名</span></span><br><span class="line">        g.P(g.generateClientSignature(servName, method))</span><br><span class="line">    &#125;</span><br><span class="line">    g.P(<span class="string">&quot;&#125;&quot;</span>)</span><br><span class="line">    g.P()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 服务的用户端struct，其中包括了一个cc *grpc.ClientConn，后面会在该struct</span></span><br><span class="line">    <span class="comment">// 上实现上述服务接口</span></span><br><span class="line">    g.P(<span class="string">&quot;type &quot;</span>, unexport(servName), <span class="string">&quot;Client struct &#123;&quot;</span>)</span><br><span class="line">    g.P(<span class="string">&quot;cc *&quot;</span>, grpcPkg, <span class="string">&quot;.ClientConn&quot;</span>)</span><br><span class="line">    g.P(<span class="string">&quot;&#125;&quot;</span>)</span><br><span class="line">    g.P()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// NewClient工厂 </span></span><br><span class="line">    g.P(<span class="string">&quot;func New&quot;</span>, servName, <span class="string">&quot;Client (cc *&quot;</span>, grpcPkg, <span class="string">&quot;.ClientConn) &quot;</span>, servName, <span class="string">&quot;Client &#123;&quot;</span>)</span><br><span class="line">    g.P(<span class="string">&quot;return &amp;&quot;</span>, unexport(servName), <span class="string">&quot;Client&#123;cc&#125;&quot;</span>)</span><br><span class="line">    g.P(<span class="string">&quot;&#125;&quot;</span>)</span><br><span class="line">    g.P()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> methodIndex, streamIndex <span class="keyword">int</span></span><br><span class="line">    serviceDescVar := <span class="string">&quot;_&quot;</span> + servName + <span class="string">&quot;_serviceDesc&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 服务用户端的接口方法实现</span></span><br><span class="line">    <span class="keyword">for</span> _, method := <span class="keyword">range</span> service.Method &#123;</span><br><span class="line">        <span class="keyword">var</span> descExpr <span class="keyword">string</span></span><br><span class="line">        <span class="keyword">if</span> !method.GetServerStreaming() &amp;&amp; !method.GetClientStreaming() &#123;</span><br><span class="line">            <span class="comment">// Unary RPC method</span></span><br><span class="line">            descExpr = fmt.Sprintf(<span class="string">&quot;&amp;%s.Methods[%d]&quot;</span>, serviceDescVar, methodIndex)</span><br><span class="line">            methodIndex++</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// Streaming RPC method</span></span><br><span class="line">            descExpr = fmt.Sprintf(<span class="string">&quot;&amp;%s.Streams[%d]&quot;</span>, serviceDescVar, streamIndex)</span><br><span class="line">            streamIndex++</span><br><span class="line">        &#125;</span><br><span class="line">        g.generateClientMethod(servName, fullServName, serviceDescVar, method, descExpr)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    g.P(<span class="string">&quot;// Server API for &quot;</span>, servName, <span class="string">&quot; service&quot;</span>)</span><br><span class="line">    g.P()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 服务端接口go源代码生成</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>generator生成service以为的代码，grpc生成service相关的go代码</p>
+<p>参考:</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://draveness.me/dsl/">https://draveness.me/dsl/</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.hitzhangjie.pro/blog/2017-05-23-protoc%E5%8F%8A%E6%8F%92%E4%BB%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90%E7%B2%BE%E5%8D%8E%E7%89%88/#242-%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8Bcodegeneratorrequest--codegeneratorresponse%E7%9A%84%E5%AE%9A%E4%B9%89">https://www.hitzhangjie.pro/blog/2017-05-23-protoc%E5%8F%8A%E6%8F%92%E4%BB%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90%E7%B2%BE%E5%8D%8E%E7%89%88/#242-%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8Bcodegeneratorrequest--codegeneratorresponse%E7%9A%84%E5%AE%9A%E4%B9%89</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/01/06/MySQL-%E7%B4%A2%E5%BC%95%E5%92%8C%E8%B0%83%E4%BC%98%E5%B0%8F%E7%BB%93/" rel="prev" title="MySQL - 索引和调优小结">
+                  <i class="fa fa-chevron-left"></i> MySQL - 索引和调优小结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/01/10/MQ/" rel="next" title="">
+                   <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

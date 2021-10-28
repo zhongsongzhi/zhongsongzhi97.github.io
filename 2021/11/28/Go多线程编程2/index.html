@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="Go多线程编程定时器 Timer：时间到了，执行只执行1次  12345678910111213141516171819201. 使用timer1 :&#x3D; time.NewTimer(2 * time.Second)t2 :&#x3D; &lt;-timer1.C2. 延时(1) time.Sleep(time.Second)(2) timer3 :&#x3D; time.NewTimer(2 * time.Secon">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go多线程编程2">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/28/Go%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B2/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="Go多线程编程定时器 Timer：时间到了，执行只执行1次  12345678910111213141516171819201. 使用timer1 :&#x3D; time.NewTimer(2 * time.Second)t2 :&#x3D; &lt;-timer1.C2. 延时(1) time.Sleep(time.Second)(2) timer3 :&#x3D; time.NewTimer(2 * time.Secon">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-11-28T08:09:04.000Z">
+<meta property="article:modified_time" content="2021-11-28T10:11:35.613Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta property="article:tag" content="go多线程编程">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/28/Go%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/28/Go%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B2/","path":"2021/11/28/Go多线程编程2/","title":"Go多线程编程2"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Go多线程编程2 | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Go%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">Go多线程编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">定时器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Select"><span class="nav-number">1.2.</span> <span class="nav-text">Select</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B8%8E%E9%94%81"><span class="nav-number">1.3.</span> <span class="nav-text">并发安全与锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sync"><span class="nav-number">1.4.</span> <span class="nav-text">Sync</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sync-WaitGroup"><span class="nav-number">1.4.1.</span> <span class="nav-text">sync.WaitGroup</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sync-Once"><span class="nav-number">1.4.2.</span> <span class="nav-text">sync.Once</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sync-Map"><span class="nav-number">1.4.3.</span> <span class="nav-text">sync.Map</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.</span> <span class="nav-text">原子操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#atomic%E5%8C%85"><span class="nav-number">1.5.1.</span> <span class="nav-text">atomic包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E5%92%8C%E4%BA%92%E6%96%A5%E9%94%81%E7%9A%84%E6%80%A7%E8%83%BD%E6%AF%94%E8%BE%83"><span class="nav-number">1.5.2.</span> <span class="nav-text">原子操作和互斥锁的性能比较</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/28/Go%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go多线程编程2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-11-28 16:09:04 / Modified: 18:11:35" itemprop="dateCreated datePublished" datetime="2021-11-28T16:09:04+08:00">2021-11-28</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Go多线程编程"><a href="#Go多线程编程" class="headerlink" title="Go多线程编程"></a>Go多线程编程</h1><h2 id="定时器"><a href="#定时器" class="headerlink" title="定时器"></a>定时器</h2><ul>
+<li>Timer：时间到了，执行只执行1次</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> 使用</span><br><span class="line">timer1 := time.NewTimer(<span class="number">2</span> * time.Second)</span><br><span class="line">t2 := &lt;-timer1.C</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span> 延时</span><br><span class="line">(<span class="number">1</span>)</span><br><span class="line"> time.Sleep(time.Second)</span><br><span class="line">(<span class="number">2</span>)</span><br><span class="line"> timer3 := time.NewTimer(<span class="number">2</span> * time.Second)</span><br><span class="line"> &lt;-timer3.C</span><br><span class="line">(<span class="number">3</span>)</span><br><span class="line">&lt;-time.After(<span class="number">2</span>*time.Second)</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span> 停止</span><br><span class="line">timer4 := time.NewTimer(<span class="number">2</span> * time.Second)</span><br><span class="line">timer4.Stop()</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span> 重置定时器</span><br><span class="line">timer5 := time.NewTimer(<span class="number">3</span> * time.Second)</span><br><span class="line">timer5.Reset(<span class="number">1</span> * time.Second)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.timer基本使用</span></span><br><span class="line">   <span class="comment">//timer1 := time.NewTimer(2 * time.Second)</span></span><br><span class="line">   <span class="comment">//t1 := time.Now()</span></span><br><span class="line">   <span class="comment">//fmt.Printf(&quot;t1:%v\n&quot;, t1)</span></span><br><span class="line">   <span class="comment">//t2 := &lt;-timer1.C</span></span><br><span class="line">   <span class="comment">//fmt.Printf(&quot;t2:%v\n&quot;, t2)</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// 2.验证timer只能响应1次</span></span><br><span class="line">   <span class="comment">//timer2 := time.NewTimer(time.Second)</span></span><br><span class="line">   <span class="comment">//for &#123;</span></span><br><span class="line">   <span class="comment">// &lt;-timer2.C</span></span><br><span class="line">   <span class="comment">// fmt.Println(&quot;时间到&quot;)</span></span><br><span class="line">   <span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// 3.timer实现延时的功能</span></span><br><span class="line">   <span class="comment">//(1)</span></span><br><span class="line">   <span class="comment">//time.Sleep(time.Second)</span></span><br><span class="line">   <span class="comment">//(2)</span></span><br><span class="line">   <span class="comment">//timer3 := time.NewTimer(2 * time.Second)</span></span><br><span class="line">   <span class="comment">//&lt;-timer3.C</span></span><br><span class="line">   <span class="comment">//fmt.Println(&quot;2秒到&quot;)</span></span><br><span class="line">   <span class="comment">//(3)</span></span><br><span class="line">   <span class="comment">//&lt;-time.After(2*time.Second)</span></span><br><span class="line">   <span class="comment">//fmt.Println(&quot;2秒到&quot;)</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// 4.停止定时器</span></span><br><span class="line">   <span class="comment">//timer4 := time.NewTimer(2 * time.Second)</span></span><br><span class="line">   <span class="comment">//go func() &#123;</span></span><br><span class="line">   <span class="comment">// &lt;-timer4.C</span></span><br><span class="line">   <span class="comment">// fmt.Println(&quot;定时器执行了&quot;)</span></span><br><span class="line">   <span class="comment">//&#125;()</span></span><br><span class="line">   <span class="comment">//b := timer4.Stop()</span></span><br><span class="line">   <span class="comment">//if b &#123;</span></span><br><span class="line">   <span class="comment">// fmt.Println(&quot;timer4已经关闭&quot;)</span></span><br><span class="line">   <span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// 5.重置定时器</span></span><br><span class="line">   timer5 := time.NewTimer(<span class="number">3</span> * time.Second)</span><br><span class="line">   timer5.Reset(<span class="number">1</span> * time.Second)</span><br><span class="line">   fmt.Println(time.Now())</span><br><span class="line">   fmt.Println(&lt;-timer5.C)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> &#123;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Ticker：时间到了，多次执行</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 1.获取ticker对象</span></span><br><span class="line">    ticker := time.NewTicker(<span class="number">1</span> * time.Second)</span><br><span class="line">    i := <span class="number">0</span></span><br><span class="line">    <span class="comment">// 子协程</span></span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">for</span> &#123;</span><br><span class="line">            <span class="comment">//&lt;-ticker.C</span></span><br><span class="line">            i++</span><br><span class="line">            fmt.Println(&lt;-ticker.C)</span><br><span class="line">            <span class="keyword">if</span> i == <span class="number">5</span> &#123;</span><br><span class="line">                <span class="comment">//停止</span></span><br><span class="line">                ticker.Stop()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Select"><a href="#Select" class="headerlink" title="Select"></a>Select</h2><p>用法类似与Socket里的select</p>
+<p>作用：select关键字，可以同时响应多个通道的操作。</p>
+<ul>
+<li>select可以同时监听一个或多个channel，直到其中一个channel ready</li>
+<li>如果多个channel同时ready，则随机选择一个执行</li>
+<li>可以用于判断管道是否存满</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> &lt;-chan1:</span><br><span class="line">       <span class="comment">// 如果chan1成功读到数据，则进行该case处理语句</span></span><br><span class="line">    <span class="keyword">case</span> chan2 &lt;- <span class="number">1</span>:</span><br><span class="line">       <span class="comment">// 如果成功向chan2写入数据，则进行该case处理语句</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">       <span class="comment">// 如果上面都没有成功，则进入default处理流程</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>判断管道是否存满</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">&quot;fmt&quot;</span></span><br><span class="line">   <span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断管道有没有存满</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="comment">// 创建管道</span></span><br><span class="line">   output1 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>, <span class="number">10</span>)</span><br><span class="line">   <span class="comment">// 子协程写数据</span></span><br><span class="line">   <span class="keyword">go</span> write(output1)</span><br><span class="line">   <span class="comment">// 取数据</span></span><br><span class="line">   <span class="keyword">for</span> s := <span class="keyword">range</span> output1 &#123;</span><br><span class="line">      fmt.Println(<span class="string">&quot;res:&quot;</span>, s)</span><br><span class="line">      time.Sleep(time.Second)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">write</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> &#123;</span><br><span class="line">      <span class="keyword">select</span> &#123;</span><br><span class="line">      <span class="comment">// 写数据</span></span><br><span class="line">      <span class="keyword">case</span> ch &lt;- <span class="string">&quot;hello&quot;</span>:</span><br><span class="line">         fmt.Println(<span class="string">&quot;write hello&quot;</span>)</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">         fmt.Println(<span class="string">&quot;channel full&quot;</span>)</span><br><span class="line">      &#125;</span><br><span class="line">      time.Sleep(time.Millisecond * <span class="number">500</span>)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="并发安全与锁"><a href="#并发安全与锁" class="headerlink" title="并发安全与锁"></a>并发安全与锁</h2><h2 id="Sync"><a href="#Sync" class="headerlink" title="Sync"></a>Sync</h2><h3 id="sync-WaitGroup"><a href="#sync-WaitGroup" class="headerlink" title="sync.WaitGroup"></a>sync.WaitGroup</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(wg * WaitGroup) Add(delta int)</td>
+<td>计数器+delta</td>
+</tr>
+<tr>
+<td>(wg *WaitGroup) Done()</td>
+<td>计数器-1</td>
+</tr>
+<tr>
+<td>(wg *WaitGroup) Wait()</td>
+<td>阻塞直到计数器变为0</td>
+</tr>
+</tbody></table>
+<p>sync.WaitGroup内部维护着一个计数器，计数器的值可以增加和减少。例如当我们启动了N 个并发任务时，就将计数器值增加N。每个任务完成时通过调用Done()方法将计数器减1。通过调用Wait()来等待并发任务执行完，当计数器值为0时，表示所有并发任务已经完成。</p>
+<p>注意：sync.WaitGroup是一个结构体，传递的时候要传递指针。</p>
+<h3 id="sync-Once"><a href="#sync-Once" class="headerlink" title="sync.Once"></a>sync.Once</h3><p>实现单例和资源只加载一次的方法</p>
+<p>sync.Once其实内部包含一个互斥锁和一个布尔值，互斥锁保证布尔值和数据的安全，而布尔值用来记录初始化是否完成。这样设计就能保证初始化操作的时候是并发安全的并且初始化操作也不会被执行多次。</p>
+<p>sync.Once只有一个Do方法，其签名如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(o *Once)</span> <span class="title">Do</span><span class="params">(f <span class="keyword">func</span>()</span>)</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> icons <span class="keyword">map</span>[<span class="keyword">string</span>]image.Image</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> loadIconsOnce sync.Once</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">loadIcons</span><span class="params">()</span></span> &#123;</span><br><span class="line">    icons = <span class="keyword">map</span>[<span class="keyword">string</span>]image.Image&#123;</span><br><span class="line">        <span class="string">&quot;left&quot;</span>:  loadIcon(<span class="string">&quot;left.png&quot;</span>),</span><br><span class="line">        <span class="string">&quot;up&quot;</span>:    loadIcon(<span class="string">&quot;up.png&quot;</span>),</span><br><span class="line">        <span class="string">&quot;right&quot;</span>: loadIcon(<span class="string">&quot;right.png&quot;</span>),</span><br><span class="line">        <span class="string">&quot;down&quot;</span>:  loadIcon(<span class="string">&quot;down.png&quot;</span>),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Icon 是并发安全的</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Icon</span><span class="params">(name <span class="keyword">string</span>)</span> <span class="title">image</span>.<span class="title">Image</span></span> &#123;</span><br><span class="line">    loadIconsOnce.Do(loadIcons)</span><br><span class="line">    <span class="keyword">return</span> icons[name]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="sync-Map"><a href="#sync-Map" class="headerlink" title="sync.Map"></a>sync.Map</h3><p>map不是线程安全的，Go语言的sync包中提供了一个开箱即用的并发安全版map–sync.Map。开箱即用表示不用像内置的map一样使用make函数初始化就能直接使用。同时sync.Map内置了诸如Store、Load、LoadOrStore、Delete、Range等操作方法。</p>
+<p><strong>猜测实现类似于Java中的ConcurrentHashMap，待研究</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> m = sync.Map&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    wg := sync.WaitGroup&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">20</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(n <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">            key := strconv.Itoa(n)</span><br><span class="line">            m.Store(key, n)</span><br><span class="line">            value, _ := m.Load(key)</span><br><span class="line">            fmt.Printf(<span class="string">&quot;k=:%v,v:=%v\n&quot;</span>, key, value)</span><br><span class="line">            wg.Done()</span><br><span class="line">        &#125;(i)</span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h2><p>代码中的加锁操作因为涉及内核态的上下文切换会比较耗时、代价比较高。针对基本数据类型我们还可以使用原子操作来保证并发安全，因为原子操作是Go语言提供的方法它在用户态就可以完成，因此性能比加锁操作更好。Go语言中原子操作由内置的标准库sync/atomic提供。</p>
+<p>atomic包提供了底层的原子级内存操作，对于同步算法的实现很有用。这些函数必须谨慎地保证正确使用。除了某些特殊的底层应用，使用通道或者sync包的函数/类型实现同步更好。</p>
+<h3 id="atomic包"><a href="#atomic包" class="headerlink" title="atomic包"></a>atomic包</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>func LoadInt32(addr *int32) (val int32) func LoadInt64(addr <code>*int64</code>) (val int64)<br>func LoadUint32(addr<code>*uint32</code>) (val uint32)<br>func LoadUint64(addr<code>*uint64</code>) (val uint64)<br>func LoadUintptr(addr<code>*uintptr</code>) (val uintptr)<br>func LoadPointer(addr<code>*unsafe.Pointer</code>) (val unsafe.Pointer)</td>
+<td>读取操作</td>
+</tr>
+<tr>
+<td>func StoreInt32(addr <code>*int32</code>, val int32) func StoreInt64(addr <code>*int64</code>, val int64) func StoreUint32(addr <code>*uint32</code>, val uint32) func StoreUint64(addr <code>*uint64</code>, val uint64) func StoreUintptr(addr <code>*uintptr</code>, val uintptr) func StorePointer(addr <code>*unsafe.Pointer</code>, val unsafe.Pointer)</td>
+<td>写入操作</td>
+</tr>
+<tr>
+<td>func AddInt32(addr <code>*int32</code>, delta int32) (new int32) func AddInt64(addr <code>*int64</code>, delta int64) (new int64) func AddUint32(addr <code>*uint32</code>, delta uint32) (new uint32) func AddUint64(addr <code>*uint64</code>, delta uint64) (new uint64) func AddUintptr(addr <code>*uintptr</code>, delta uintptr) (new uintptr)</td>
+<td>修改操作</td>
+</tr>
+<tr>
+<td>func SwapInt32(addr <code>*int32</code>, new int32) (old int32) func SwapInt64(addr <code>*int64</code>, new int64) (old int64) func SwapUint32(addr <code>*uint32</code>, new uint32) (old uint32) func SwapUint64(addr <code>*uint64</code>, new uint64) (old uint64) func SwapUintptr(addr <code>*uintptr</code>, new uintptr) (old uintptr) func SwapPointer(addr <code>*unsafe.Pointer</code>, new unsafe.Pointer) (old unsafe.Pointer)</td>
+<td>交换操作</td>
+</tr>
+<tr>
+<td>func CompareAndSwapInt32(addr <code>*int32</code>, old, new int32) (swapped bool) func CompareAndSwapInt64(addr <code>*int64</code>, old, new int64) (swapped bool) func CompareAndSwapUint32(addr <code>*uint32</code>, old, new uint32) (swapped bool) func CompareAndSwapUint64(addr <code>*uint64</code>, old, new uint64) (swapped bool) func CompareAndSwapUintptr(addr <code>*uintptr</code>, old, new uintptr) (swapped bool) func CompareAndSwapPointer(addr <code>*unsafe.Pointer</code>, old, new unsafe.Pointer) (swapped bool)</td>
+<td>比较并交换操作</td>
+</tr>
+</tbody></table>
+<h3 id="原子操作和互斥锁的性能比较"><a href="#原子操作和互斥锁的性能比较" class="headerlink" title="原子操作和互斥锁的性能比较"></a>原子操作和互斥锁的性能比较</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x <span class="keyword">int64</span></span><br><span class="line"><span class="keyword">var</span> l sync.Mutex</span><br><span class="line"><span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"></span><br><span class="line"><span class="comment">// 普通版加函数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// x = x + 1</span></span><br><span class="line">    x++ <span class="comment">// 等价于上面的操作</span></span><br><span class="line">    wg.Done()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 互斥锁版加函数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mutexAdd</span><span class="params">()</span></span> &#123;</span><br><span class="line">    l.Lock()</span><br><span class="line">    x++</span><br><span class="line">    l.Unlock()</span><br><span class="line">    wg.Done()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 原子操作版加函数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">atomicAdd</span><span class="params">()</span></span> &#123;</span><br><span class="line">    atomic.AddInt64(&amp;x, <span class="number">1</span>)</span><br><span class="line">    wg.Done()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    start := time.Now()</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="comment">// go add()       // 普通版add函数 不是并发安全的</span></span><br><span class="line">        <span class="comment">// go mutexAdd()  // 加锁版add函数 是并发安全的，但是加锁性能开销大</span></span><br><span class="line">        <span class="keyword">go</span> atomicAdd() <span class="comment">// 原子操作版add函数 是并发安全，性能优于加锁版</span></span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">    end := time.Now()</span><br><span class="line">    fmt.Println(x)</span><br><span class="line">    fmt.Println(end.Sub(start))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//out</span></span><br><span class="line"><span class="keyword">go</span> mutexAdd()</span><br><span class="line"><span class="number">10000</span></span><br><span class="line"><span class="number">4.672672</span>ms</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> atomicAdd()</span><br><span class="line"><span class="number">10000</span></span><br><span class="line"><span class="number">4.63377</span>ms</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> add()</span><br><span class="line"><span class="number">9171</span></span><br><span class="line"><span class="number">5.170112</span>ms</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zhongsongzhi97.github.io/tags/go%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/" rel="tag"># go多线程编程</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2021/11/27/go%E5%9F%BA%E7%A1%80-%E6%96%B9%E6%B3%95/" rel="prev" title="go基础 - 方法">
+                  <i class="fa fa-chevron-left"></i> go基础 - 方法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2021/11/28/go-runtime-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/" rel="next" title="">
+                   <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
