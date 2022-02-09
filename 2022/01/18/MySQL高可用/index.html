@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="MySQL高可用主备一致是如何保证的主库同步到从库的过程：  主库接收到写请求以后，执行内部事务的更新逻辑，同时写binlog 从库和主库直接维持了一个长连接，主库A内部有一个线程，专门用于服务备库B的长连接。 事务日志同步：从库和主库建立好长连接后，会收到主库的binlog，存储到本地为relaylog，会有一个线程读取relaylog，解析日志里的sql命令，然后执行  binlog的三种格式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL高可用">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/18/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="MySQL高可用主备一致是如何保证的主库同步到从库的过程：  主库接收到写请求以后，执行内部事务的更新逻辑，同时写binlog 从库和主库直接维持了一个长连接，主库A内部有一个线程，专门用于服务备库B的长连接。 事务日志同步：从库和主库建立好长连接后，会收到主库的binlog，存储到本地为relaylog，会有一个线程读取relaylog，解析日志里的sql命令，然后执行  binlog的三种格式">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gytf1oqf7jj31ga05xdhk.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gytf2ifijgj31hc0et411.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gytgdcxmwcj31hc0ig0y2.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gytifl1yznj30vq0ns0u1.jpg">
+<meta property="article:published_time" content="2022-01-17T18:01:29.000Z">
+<meta property="article:modified_time" content="2022-01-28T09:46:56.981Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gytf1oqf7jj31ga05xdhk.jpg">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/18/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/18/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8/","path":"2022/01/18/MySQL高可用/","title":"MySQL高可用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL高可用 | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">MySQL高可用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E5%A4%87%E4%B8%80%E8%87%B4%E6%98%AF%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">主备一致是如何保证的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.</span> <span class="nav-text">恢复数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E4%B8%BB%E7%BB%93%E6%9E%84%E5%92%8C%E5%BE%AA%E7%8E%AF%E5%A4%8D%E5%88%B6"><span class="nav-number">1.3.</span> <span class="nav-text">双主结构和循环复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E5%A4%87%E5%BB%B6%E8%BF%9F"><span class="nav-number">1.4.</span> <span class="nav-text">主备延迟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E4%B8%BB%E5%A4%87%E5%BB%B6%E8%BF%9F%E5%B8%A6%E6%9D%A5%E7%9A%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">1.4.1.</span> <span class="nav-text">针对主备延迟带来的主备切换策略：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E6%97%B6%E7%BA%A7%E7%9A%84%E4%B8%BB%E5%A4%87%E5%BB%B6%E8%BF%9F-%E5%A4%87%E5%BA%93%E5%B9%B6%E8%A1%8C%E5%A4%8D%E5%88%B6"><span class="nav-number">1.4.2.</span> <span class="nav-text">小时级的主备延迟 - 备库并行复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">1.4.3.</span> <span class="nav-text">一主多从的结构</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/18/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL高可用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-01-18 02:01:29" itemprop="dateCreated datePublished" datetime="2022-01-18T02:01:29+08:00">2022-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-01-28 17:46:56" itemprop="dateModified" datetime="2022-01-28T17:46:56+08:00">2022-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="MySQL高可用"><a href="#MySQL高可用" class="headerlink" title="MySQL高可用"></a>MySQL高可用</h1><h2 id="主备一致是如何保证的"><a href="#主备一致是如何保证的" class="headerlink" title="主备一致是如何保证的"></a>主备一致是如何保证的</h2><p>主库同步到从库的过程：</p>
+<ol>
+<li>主库接收到写请求以后，执行内部事务的更新逻辑，同时写binlog</li>
+<li>从库和主库直接维持了一个长连接，主库A内部有一个线程，专门用于服务备库B的长连接。</li>
+<li>事务日志同步：从库和主库建立好长连接后，会收到主库的binlog，存储到本地为relaylog，会有一个线程读取relaylog，解析日志里的sql命令，然后执行</li>
+</ol>
+<p>binlog的三种格式：</p>
+<ol>
+<li><p>statement</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytf1oqf7jj31ga05xdhk.jpg" alt="img"></p>
+<p>statement格式存储的是原始的SQL语句。</p>
+<p>存在的问题：主库和从库执行同一条sql语句，可能存在结果不一致的情况。</p>
+</li>
+<li><p>row</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytf2ifijgj31hc0et411.jpg" alt="img"></p>
+<p>row格式里存储的是: Table_map, Delete_rows，row格式记录了真实删除行的主键id，也就是主库和备库最终结果是一致的</p>
+</li>
+<li><p>mixed</p>
+<p>mixed是以上两种混合使用的结果</p>
+<p>statement格式的binlog可能会造成主备不一致</p>
+<p>row格式的话，会很占用空间 - 比如delete删除10万行，row格式要记录10w个记录，statement只记录一句sql</p>
+<p>Mixed: 主动判断SQL语句是否可能造成主备不一致，可能就用row，否则stament</p>
+</li>
+<li><p>实践：设置为mixed，如果需要恢复数据的场景，则设置为row</p>
+</li>
+</ol>
+<h2 id="恢复数据"><a href="#恢复数据" class="headerlink" title="恢复数据"></a>恢复数据</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytgdcxmwcj31hc0ig0y2.jpg" alt="img"></p>
+<p>row格式中记录的信息中，bin_row_image的默认设置会存储行的所有字段的值，上面设置为只记录必要信息，只有id=4这个信息</p>
+<p>所以在row格式中，可以记录所有的行的信息。</p>
+<ol>
+<li>delete：执行的delete语句，在row格式的binlog中，被删除的每一行的信息都会保存，既可以将删除的数据insert回去。</li>
+<li>insert: insert语句，row格式的binlog会记录所有字段信息，可以用于定义刚刚插入的一行，使用delete删除即可</li>
+<li>update: update语句，row格式的binlog会记录修改前的整行数据和修改后的整行数据，只需要对调前后，执行update即可</li>
+</ol>
+<h2 id="双主结构和循环复制"><a href="#双主结构和循环复制" class="headerlink" title="双主结构和循环复制"></a>双主结构和循环复制</h2><p>当两个库都作为主库时，会有2个长连接来保持相互同步，但是如何保证不会循环复制。这里使用serverid来做区分。</p>
+<h2 id="主备延迟"><a href="#主备延迟" class="headerlink" title="主备延迟"></a>主备延迟</h2><p>数据同步的节点：</p>
+<ol>
+<li>主库A执行完成一个事务，写入binlog T1</li>
+<li>binlog传给备库B，备库接收完这个binlog T2</li>
+<li>备库B执行完成事务 T3</li>
+</ol>
+<p>主备延迟 = T3 - T1</p>
+<p>T2 - T1 = 网络传输的时间，比较短</p>
+<p>T3 - T2 = 接收完binlog并执行事务的时间（长）</p>
+<p>主备延迟 约等于 T3-T2 接收完binlog，执行relaylog的速度差</p>
+<p><strong>主备延迟的来源</strong>：</p>
+<ol>
+<li>主库机器被备库好</li>
+<li>备库压力大</li>
+<li>大事务 - 因为主库必须等事务执行完以后才会写入binlog，如果大事务执行时间为t1则延迟为t1</li>
+<li>备库的并行复制</li>
+</ol>
+<h3 id="针对主备延迟带来的主备切换策略："><a href="#针对主备延迟带来的主备切换策略：" class="headerlink" title="针对主备延迟带来的主备切换策略："></a>针对主备延迟带来的主备切换策略：</h3><ol>
+<li>可靠性优先策略：</li>
+<li>可用性优先策略：</li>
+</ol>
+<h3 id="小时级的主备延迟-备库并行复制"><a href="#小时级的主备延迟-备库并行复制" class="headerlink" title="小时级的主备延迟 - 备库并行复制"></a>小时级的主备延迟 - 备库并行复制</h3><p>在备库执行日志的速度持续低于主库生成日志的速度情况下，主备延迟有可能变成小时级别。</p>
+<p>为什么要多线程并行复制 - 客户端事务是可以并发的，如果备库处理relaylog是单线程的，则会导致备库执行日志速度持续低于主库生成日志，造成较长时间的主备延迟。</p>
+<p>协调器 - 多工作线程的模式（同时需要保证 不能更新覆盖，不能拆同一个事务）</p>
+<h3 id="一主多从的结构"><a href="#一主多从的结构" class="headerlink" title="一主多从的结构"></a>一主多从的结构</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytifl1yznj30vq0ns0u1.jpg" alt="img"></p>
+<p>具体结构：A与A1是互为主从，B，C，D是执行A的从库，主库为WR，从库为readonly</p>
+<ol>
+<li><p>主库故障后的主从切换：</p>
+<p>当A出错后，A1会作为新的主库，对于从库B来说需要执行change master命令，需要建立到新主库的连接并且将日志位点对齐新主库</p>
+<p><strong>重点问题：日志位点很难对齐</strong></p>
+<p>对于相同的日志，A和A1的位点是不同的，所以从库首先需要对齐位点</p>
+<p>通用的做法是使用GTID来对齐位点：</p>
+<p>GTID(Global Transaction Identifier) 是全局事务ID，是一个事务在提交时生成的</p>
+<p>在开启了GTID以后，日志位点就可以自动对齐了</p>
+<p><strong>流程：</strong></p>
+<ol>
+<li>从库B指定主库A1，基于主备协议建立连接</li>
+<li>从库B把自己的GTID集合set_b发给新主库A1</li>
+<li>主库A1把set_b和自己的GTID集合set_a比较，获取差集，然后看自己是否包含所有的差集</li>
+<li>主库A1在binlog中找到第一个差集中的事务，然后向后顺序取binlog给B</li>
+</ol>
+</li>
+<li></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zhongsongzhi97.github.io/tags/MySQL/" rel="tag"># MySQL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/01/13/Redis%E5%B0%8F%E7%BB%93/" rel="prev" title="Redis小结">
+                  <i class="fa fa-chevron-left"></i> Redis小结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/01/24/%E5%9F%BA%E4%BA%8E%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%93%8D%E5%BA%94%E6%A8%A1%E5%BC%8F/" rel="next" title="基于线程和事件驱动的响应模式">
+                  基于线程和事件驱动的响应模式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

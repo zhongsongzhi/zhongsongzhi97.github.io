@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="如何实现一个远程调用框架RPC框架会涉及到的内容，线程模型，通信协议设计，同步&#x2F;异步调用，负载均衡等。 RPC框架架构设计 大概有三个部分的组件，1. 客户端 2. 注册中心 3. 服务端 服务注册与发现使用注册中心来实现服务注册和发现的功能。 服务端节点上线以后自行向注册中心注册服务列表，节点下线时需要从注册中心将节点数据移除。 客户端向服务端发起调用时，自己从注册中心获取到服务端的服务列表，然">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何实现一个远程调用框架">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/27/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="如何实现一个远程调用框架RPC框架会涉及到的内容，线程模型，通信协议设计，同步&#x2F;异步调用，负载均衡等。 RPC框架架构设计 大概有三个部分的组件，1. 客户端 2. 注册中心 3. 服务端 服务注册与发现使用注册中心来实现服务注册和发现的功能。 服务端节点上线以后自行向注册中心注册服务列表，节点下线时需要从注册中心将节点数据移除。 客户端向服务端发起调用时，自己从注册中心获取到服务端的服务列表，然">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gys9sub3prj31940msabj.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gysaijfmhoj317q0onn2d.jpg">
+<meta property="article:published_time" content="2022-01-27T06:45:00.000Z">
+<meta property="article:modified_time" content="2022-01-27T09:09:32.634Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta property="article:tag" content="RPC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gys9sub3prj31940msabj.jpg">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/27/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/27/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/","path":"2022/01/27/如何实现一个远程调用框架/","title":"如何实现一个远程调用框架"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>如何实现一个远程调用框架 | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6"><span class="nav-number">1.</span> <span class="nav-text">如何实现一个远程调用框架</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RPC%E6%A1%86%E6%9E%B6%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.1.</span> <span class="nav-text">RPC框架架构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">服务注册与发现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE%E4%B8%8E%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">通信协议与序列化：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPC%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">RPC的调用方式：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%EF%BC%9A"><span class="nav-number">1.4.</span> <span class="nav-text">线程模型：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9A"><span class="nav-number">1.5.</span> <span class="nav-text">负载均衡：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%EF%BC%9A"><span class="nav-number">1.6.</span> <span class="nav-text">代理：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A1%86%E6%9E%B6"><span class="nav-number">1.7.</span> <span class="nav-text">基本框架</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%96%B9"><span class="nav-number">1.7.1.</span> <span class="nav-text">服务方</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/27/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          如何实现一个远程调用框架
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-01-27 14:45:00 / Modified: 17:09:32" itemprop="dateCreated datePublished" datetime="2022-01-27T14:45:00+08:00">2022-01-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/RPC/" itemprop="url" rel="index"><span itemprop="name">RPC</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="如何实现一个远程调用框架"><a href="#如何实现一个远程调用框架" class="headerlink" title="如何实现一个远程调用框架"></a>如何实现一个远程调用框架</h1><p>RPC框架会涉及到的内容，线程模型，通信协议设计，同步/异步调用，负载均衡等。</p>
+<h2 id="RPC框架架构设计"><a href="#RPC框架架构设计" class="headerlink" title="RPC框架架构设计"></a>RPC框架架构设计</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gys9sub3prj31940msabj.jpg" alt="Lark20210101-221749.png"></p>
+<p>大概有三个部分的组件，1. 客户端 2. 注册中心 3. 服务端</p>
+<h3 id="服务注册与发现"><a href="#服务注册与发现" class="headerlink" title="服务注册与发现"></a>服务注册与发现</h3><p>使用注册中心来实现服务注册和发现的功能。</p>
+<p>服务端节点上线以后自行向注册中心注册服务列表，节点下线时需要从注册中心将节点数据移除。</p>
+<p>客户端向服务端发起调用时，自己从注册中心获取到服务端的服务列表，然后通过负载均衡算法选择其中一个服务节点进行调用。</p>
+<p><strong>问题</strong>：服务端节点下线时如何移除节点数据，尤其是异常下线的情况。</p>
+<p>方式：主动通知+心跳检测</p>
+<p>当服务端下线时会主动通知注册节点下线移除数据，同时注册中心会对服务节点进行探活。</p>
+<h2 id="通信协议与序列化："><a href="#通信协议与序列化：" class="headerlink" title="通信协议与序列化："></a>通信协议与序列化：</h2><p>因为RPC框架对于性能要求较高，所以通信协议越简单越好。</p>
+<p>主流的是TPC,HTTP，gRPC使用的HTTP2。需要稳定可靠的协议。</p>
+<p>数据和序列化：如果是一般的框架会选用通用且高效的序列化方式，比如Json,Protocbuf等待，如果是特定场景下使用的话，可以使用特定的序列化方式，这样会更加高效。</p>
+<h2 id="RPC的调用方式："><a href="#RPC的调用方式：" class="headerlink" title="RPC的调用方式："></a>RPC的调用方式：</h2><p>一般支持的调用方式：</p>
+<ol>
+<li>同步Sync：客户端发起RPC调用后，当前线程会一直阻塞，指定服务端返回结果或者超时。</li>
+<li>异步Future：客户端发起调用以后不会阻塞等待，而是拿到RPC框架的Future对象，调用结果会被服务端缓存，客户端自行决定何时拿到返回结果，主动获取结果的过程是阻塞等待的。</li>
+<li>回调Callback：客户端发起调用时，将Callback对象传递给RPC框架，无需同步等待，直接返回。当获取到服务端响应结果或者超时，再执行用户注册的Callback回调。这种Callback接口一般包含了onResponse和onException两个方法</li>
+<li>单向Oneway：客户端发起请求后直接返回，忽略结果</li>
+</ol>
+<h2 id="线程模型："><a href="#线程模型：" class="headerlink" title="线程模型："></a>线程模型：</h2><p>使用主从Reactor线程模型，其中Boss和Worker线程池可以看做IO线程，IO线程用于处理网络数据，比如事件轮询，编解码，数据传输等。业务逻辑使用业务线程执行。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gysaijfmhoj317q0onn2d.jpg" alt="Lark20210101-221822.png"></p>
+<h2 id="负载均衡："><a href="#负载均衡：" class="headerlink" title="负载均衡："></a>负载均衡：</h2><p>常见的负载均衡的策略：</p>
+<p><strong>Round-Robin 轮询</strong>。Round-Robin 是最简单有效的负载均衡策略，并没有考虑服务端节点的实际负载水平，而是依次轮询服务端节点。</p>
+<p><strong>Weighted Round-Robin 权重轮询</strong>。对不同负载水平的服务端节点增加权重系数，这样可以通过权重系数降低性能较差或者配置较低的节点流量。权重系数可以根据服务端负载水平实时进行调整，使集群达到相对均衡的状态。</p>
+<p><strong>Least Connections 最少连接数</strong>。客户端根据服务端节点当前的连接数进行负载均衡，客户端会选择连接数最少的一台服务器进行调用。Least Connections 策略只是服务端其中一种维度，我们可以演化出最少请求数、CPU 利用率最低等其他维度的负载均衡方案。</p>
+<p><strong>Consistent Hash 一致性 Hash</strong>。目前主流推荐的负载均衡策略，Consistent Hash 是一种特殊的 Hash 算法，在服务端节点扩容或者下线时，尽可能保证客户端请求还是固定分配到同一台服务器节点。Consistent Hash 算法是采用哈希环来实现的，通过 Hash 函数将对象和服务器节点放置在哈希环上，一般来说服务器可以选择 IP + Port 进行 Hash，然后为对象选择对应的服务器节点，在哈希环中顺时针查找距离对象 Hash 值最近的服务器节点。</p>
+<h2 id="代理："><a href="#代理：" class="headerlink" title="代理："></a>代理：</h2><p>RPC框架如果要做到像调用本地接口一样调用远端服务，需要创建代理对象，在代理对象中完成数据报文编码，然后发起调用数据给服务方，以此来屏蔽RPC框架的调用细节。可以通过动态代理的方式生成桩类（代理类），gRPC则是通过定义好的DSL，使用DSL来生成桩类和代理方法。</p>
+<h2 id="基本框架"><a href="#基本框架" class="headerlink" title="基本框架"></a>基本框架</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// rpc-facade # HelloFacade</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloFacade</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">hello</span><span class="params">(String name)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// rpc-provider # HelloFacadeImpl</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RpcService(serviceInterface = HelloFacade.class, serviceVersion = &quot;1.0.0&quot;)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloFacadeImpl</span> <span class="keyword">implements</span> <span class="title">HelloFacade</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello&quot;</span> + name;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// rpc-consumer # HelloController</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RpcReference(serviceVersion = &quot;1.0.0&quot;, timeout = 3000)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> HelloFacade helloFacade;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping(value = &quot;/hello&quot;, method = RequestMethod.GET)</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> helloFacade.hello(<span class="string">&quot;mini rpc&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务方"><a href="#服务方" class="headerlink" title="服务方"></a>服务方</h3><ol>
+<li>服务提供者启动服务，并暴露服务端口；</li>
+<li>启动时扫描需要对外发布的服务，并将服务元数据信息发布到注册中心；</li>
+<li>接收 RPC 请求，解码后得到请求消息；</li>
+<li>提交请求至自定义线程池进行处理，并将处理结果写回客户端。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zhongsongzhi97.github.io/tags/RPC/" rel="tag"># RPC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/01/24/%E5%9F%BA%E4%BA%8E%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%93%8D%E5%BA%94%E6%A8%A1%E5%BC%8F/" rel="prev" title="基于线程和事件驱动的响应模式">
+                  <i class="fa fa-chevron-left"></i> 基于线程和事件驱动的响应模式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/01/29/MySQL-%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" rel="next" title="MySQL - 查询优化">
+                  MySQL - 查询优化 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
