@@ -135,12 +135,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/zhongsongzhi97.github.io/categories/">
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/zhongsongzhi97.github.io/tags/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -178,7 +178,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/29/Netty%E5%B0%8F%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/10/MQ%E5%B0%8F%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
@@ -191,7 +191,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2022/01/29/Netty%E5%B0%8F%E7%BB%93/" class="post-title-link" itemprop="url">Netty小结</a>
+          <a href="/zhongsongzhi97.github.io/2022/02/10/MQ%E5%B0%8F%E7%BB%93/" class="post-title-link" itemprop="url">MQ小结</a>
         </h2>
 
         <div class="post-meta-container">
@@ -203,7 +203,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2022-01-29 18:42:04 / Modified: 18:44:54" itemprop="dateCreated datePublished" datetime="2022-01-29T18:42:04+08:00">2022-01-29</time>
+      <time title="Created: 2022-02-10 20:50:39 / Modified: 20:51:07" itemprop="dateCreated datePublished" datetime="2022-02-10T20:50:39+08:00">2022-02-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -211,7 +211,7 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/zhongsongzhi97.github.io/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
+          <a href="/zhongsongzhi97.github.io/categories/MQ/" itemprop="url" rel="index"><span itemprop="name">MQ</span></a>
         </span>
     </span>
 
@@ -225,7 +225,167 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Netty小结"><a href="#Netty小结" class="headerlink" title="Netty小结"></a>Netty小结</h1>
+          <h1 id="MQ"><a href="#MQ" class="headerlink" title="MQ"></a>MQ</h1><h2 id="消费模型"><a href="#消费模型" class="headerlink" title="消费模型"></a>消费模型</h2><ol>
+<li>队列模型</li>
+<li>发布-订阅模型：消息的发送者，消息的接受者，服务端存放消息的容器(Topic)。发布者将消息发送到主题中，订阅者在接收消息前需要先订阅”Topic“，每份订阅，订阅者可以收到主题的所有消息。</li>
+</ol>
+<p>区别：发布-订阅模型中，一个消息可以被多次消费。</p>
+<h2 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h2><p>使用”请求-确认“机制确保消息不会丢失</p>
+<ol>
+<li><p>生成端：</p>
+<p>生产者先将消息发送给服务端(Broker)，Broker收到消息后将消息写入Topic后再给生产者发送确认响应。如果没有收到响应则会重复发送消息。</p>
+</li>
+<li><p>消费端：</p>
+<p>消费者在收到消息并完成消费业务逻辑后，也会向服务端发送消费成功的确认。（注：应该在完成消费业务逻辑以后再进行确认）</p>
+</li>
+<li><p>存储阶段：</p>
+<p>如果Broker是多个节点组成的集群，需要将Broker集群配置成：至少将消息发送到2个以上的节点在回复确认。</p>
+</li>
+</ol>
+<p>由于”请求-确认“机制，为了确保消息的有序性，一条消息被成功消费前，下一条消息是不能被消费的。所有扩容Consumer时需要扩容Consumer Queue</p>
+<h2 id="事务消息"><a href="#事务消息" class="headerlink" title="事务消息"></a>事务消息</h2><h3 id="2PC"><a href="#2PC" class="headerlink" title="2PC"></a>2PC</h3><p>解决 -&gt; 在分布式系统中保持一致性</p>
+<p>成员：协调者，参与者</p>
+<ol>
+<li>投票阶段：协调者向参与者询问是否可以指向操作，参与者执行完(agreement/abort)并且记录redo/undo日志。当所有参与者都执行完进行提交阶段。</li>
+<li>提交阶段：如果都同意，则协调者发送commit，否则rollback。参与者完成操作后返回消息，如果协调者收到所有的返回消息则结束事务，否则回滚。</li>
+</ol>
+<p>EG：</p>
+<p>订单系统创建订单后，发消息给购物车系统，将已下单的商品从购物车删除（使用消息队列异步清理购物车）。需要保证本地事务和发消息这两步要么都成功，要么都失败。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8phzrxhaj32g70u0q7b.jpg" alt="img"></p>
+<ol>
+<li>订单系统在消息队列上开启一个事务。然后订单系统给消息服务器发送一个“半消息”，这个半消息不是说消息内容不完整，它包含的内容就是完整的消息内容，半消息和普通消息的唯一区别是，在事务提交之前，对于消费者来说，这个消息是不可见的。</li>
+<li>半消息发送成功后，订单系统就可以执行本地事务了，在订单库中创建一条订单记录，并提交订单库的数据库事务。然后根据本地事务的执行结果决定提交或者回滚事务消息。如果订单创建成功，那就提交事务消息，购物车系统就可以消费到这条消息继续后续的流程。如果订单创建失败，那就回滚事务消息，购物车系统就不会收到这条消息。</li>
+</ol>
+<h2 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h2><p>RocketMQ的存储以Broker为单位，Broker(ConsumerLog消息文件&amp;N*ConsumerQueue索引文件)，</p>
+<ol>
+<li>写入消息：Broker上所有Topic，队列的消息都按照自然顺序追加写入到同一个消息文件中</li>
+<li>查找消息：根据队列的消息序号，计算索引的全局位置(索引序号 x 索引固定长度20)，直接读取这条索引，然后根据索引查找到消息的位置</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/10/%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%B0%8F%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/02/10/%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%B0%8F%E7%BB%93/" class="post-title-link" itemprop="url">序列化和反序列化小结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-10 16:40:37 / Modified: 17:22:07" itemprop="dateCreated datePublished" datetime="2022-02-10T16:40:37+08:00">2022-02-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/%E5%BA%8F%E5%88%97%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">序列化</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="序列化和反序列化小结"><a href="#序列化和反序列化小结" class="headerlink" title="序列化和反序列化小结"></a>序列化和反序列化小结</h1><p>序列化是指把数据结构或对象转化为可存储或可传输的结构，这种结构可以用于重建数据结构或对象。</p>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>类型</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Json</td>
+<td>文本</td>
+<td>1. 人可读 2. 属性顺序对序列化反序列化无影响</td>
+<td>1. 丢弃了类型信息，eg: “num”:100，这里对于num的类型信息是不可知的，解析存在二义性 2. 不支持二进制数据类型</td>
+</tr>
+<tr>
+<td>Protobuf</td>
+<td>二进制</td>
+<td>性能高</td>
+<td>1. 不宜读 2. 向后兼容有约定限制</td>
+</tr>
+</tbody></table>
+<h2 id="Json"><a href="#Json" class="headerlink" title="Json"></a>Json</h2><p>JSON建构于两种结构：</p>
+<ul>
+<li>“Key/Value”对的集合，在不同语言中，可以作为对象，字典，结构体等</li>
+<li>值的有序列表。通常可以理解为数组。</li>
+</ul>
+<p>以上两种结构在大多数语言中都存在，所以在不同语言中使用JSON进行交流非常自然。</p>
+<p>形式：</p>
+<ol>
+<li>对象是一个无序的’key/value’对集合。一个对象以”{“开始，”}”结束。键值对”key:value”表示。键值对之间使用”,”分隔</li>
+<li>值的有序集合：一个数组以”[“开始,”]”结束，值之间使用”,”分隔</li>
+<li>值value:可以为string-&gt;”abc”，number-&gt;1,Bool-&gt;true/false,null,对象或数组，同时结构可以嵌套</li>
+</ol>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><ol>
+<li>传输数据量较小，且实时性要求比较低的服务</li>
+<li>JSON的前后兼容性比较强，对于接口经常变化，对可调性要求高的场景比较适合，比如移动端和服务端通讯</li>
+<li>JSON的典型场景： JSON+HTTP</li>
+</ol>
+<p>JSON的性能和序列化的额外空间开销比较大，对于大数据量服务或持久化来说，会有巨大的开销。同时JSON本身没有使用IDL约束参与方，尽管在大多数语言中它的形式都可以兼容，但是还是会存在问题，需要通过文档方式进行约束，对调试会带来不便。</p>
+<h2 id="Protobuf"><a href="#Protobuf" class="headerlink" title="Protobuf"></a>Protobuf</h2><p>protobuf有许多作为优秀的序列化协议的众多优点：</p>
+<ol>
+<li>使用了标志的IDL</li>
+<li>序列化数据紧凑，空间开销小</li>
+<li>序列化反序列化速度很快</li>
+</ol>
+<p>protobuf产生与Google，其支持多种语言，支持的数据类型相对较少，常见与一下rpc框架中使用。</p>
+<h3 id="典型使用场景"><a href="#典型使用场景" class="headerlink" title="典型使用场景"></a>典型使用场景</h3><p>protobuf的空间开销小，加上解析性能高，使用与RPC调用的场景。protobuf提供了标志的IDL，IDL对于各方都有比较强的约束。此外对于应用层对象持久化来说，也比较适合。</p>
+<p>缺点在于调试比较麻烦</p>
+<h2 id="使用ANTLR设计自己的序列化协议-TODO"><a href="#使用ANTLR设计自己的序列化协议-TODO" class="headerlink" title="使用ANTLR设计自己的序列化协议 TODO"></a>使用ANTLR设计自己的序列化协议 TODO</h2><h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2015/02/26/serialization-vs-deserialization.html">https://tech.meituan.com/2015/02/26/serialization-vs-deserialization.html</a></p>
+
       
     </div>
 
@@ -1251,105 +1411,6 @@
 </li>
 </ol>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>网络轮询器并不是一个独立运行的，调度器和系统调用都会通过netpoll与网络循环器交换信息，获取待执行的GoRoutine列表，并将待执行的Goroutine加入运行队列等待处理</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/10/MQ/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2022/01/10/MQ/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-01-10 00:37:10" itemprop="dateCreated datePublished" datetime="2022-01-10T00:37:10+08:00">2022-01-10</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="MQ"><a href="#MQ" class="headerlink" title="MQ"></a>MQ</h1><h2 id="消费模型"><a href="#消费模型" class="headerlink" title="消费模型"></a>消费模型</h2><ol>
-<li>队列模型</li>
-<li>发布-订阅模型：消息的发送者，消息的接受者，服务端存放消息的容器(Topic)。发布者将消息发送到主题中，订阅者在接收消息前需要先订阅”Topic“，每份订阅，订阅者可以收到主题的所有消息。</li>
-</ol>
-<p>区别：发布-订阅模型中，一个消息可以被多次消费。</p>
-<h2 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h2><p>使用”请求-确认“机制确保消息不会丢失</p>
-<ol>
-<li><p>生成端：</p>
-<p>生产者先将消息发送给服务端(Broker)，Broker收到消息后将消息写入Topic后再给生产者发送确认响应。如果没有收到响应则会重复发送消息。</p>
-</li>
-<li><p>消费端：</p>
-<p>消费者在收到消息并完成消费业务逻辑后，也会向服务端发送消费成功的确认。（注：应该在完成消费业务逻辑以后再进行确认）</p>
-</li>
-<li><p>存储阶段：</p>
-<p>如果Broker是多个节点组成的集群，需要将Broker集群配置成：至少将消息发送到2个以上的节点在回复确认。</p>
-</li>
-</ol>
-<p>由于”请求-确认“机制，为了确保消息的有序性，一条消息被成功消费前，下一条消息是不能被消费的。所有扩容Consumer时需要扩容Consumer Queue</p>
-<h2 id="事务消息"><a href="#事务消息" class="headerlink" title="事务消息"></a>事务消息</h2><h3 id="2PC"><a href="#2PC" class="headerlink" title="2PC"></a>2PC</h3><p>解决 -&gt; 在分布式系统中保持一致性</p>
-<p>成员：协调者，参与者</p>
-<ol>
-<li>投票阶段：协调者向参与者询问是否可以指向操作，参与者执行完(agreement/abort)并且记录redo/undo日志。当所有参与者都执行完进行提交阶段。</li>
-<li>提交阶段：如果都同意，则协调者发送commit，否则rollback。参与者完成操作后返回消息，如果协调者收到所有的返回消息则结束事务，否则回滚。</li>
-</ol>
-<p>EG：</p>
-<p>订单系统创建订单后，发消息给购物车系统，将已下单的商品从购物车删除（使用消息队列异步清理购物车）。需要保证本地事务和发消息这两步要么都成功，要么都失败。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy49h2qvl7j32g70u0n1j.jpg" alt="img"></p>
-<ol>
-<li>订单系统在消息队列上开启一个事务。然后订单系统给消息服务器发送一个“半消息”，这个半消息不是说消息内容不完整，它包含的内容就是完整的消息内容，半消息和普通消息的唯一区别是，在事务提交之前，对于消费者来说，这个消息是不可见的。</li>
-<li>半消息发送成功后，订单系统就可以执行本地事务了，在订单库中创建一条订单记录，并提交订单库的数据库事务。然后根据本地事务的执行结果决定提交或者回滚事务消息。如果订单创建成功，那就提交事务消息，购物车系统就可以消费到这条消息继续后续的流程。如果订单创建失败，那就回滚事务消息，购物车系统就不会收到这条消息。</li>
-</ol>
-<h2 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h2><p>RocketMQ的存储以Broker为单位，Broker(ConsumerLog消息文件&amp;N*ConsumerQueue索引文件)，</p>
-<ol>
-<li>写入消息：Broker上所有Topic，队列的消息都按照自然顺序追加写入到同一个消息文件中</li>
-<li>查找消息：根据队列的消息序号，计算索引的全局位置(索引序号 x 索引固定长度20)，直接读取这条索引，然后根据索引查找到消息的位置</li>
-</ol>
 
       
     </div>
