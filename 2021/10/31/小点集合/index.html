@@ -28,7 +28,7 @@
 <meta property="og:description" content="小Tips集合 二维数组理解: 123456Matrix  &amp;#123;&amp;#123;a,b,c,d&amp;#125;,&amp;#123;a,b,c,d&amp;#125;&amp;#125;matrix[行][列数] len(matrix) &#x3D; 2 行数&#x3D;2 len(matrix[0])&#x3D;4 列数&#x3D;4(0,1)(1,1)(2,1)(3,1)  matrix[1][0] matrix[1][1] matrix[1][2] ma">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-31T11:47:27.000Z">
-<meta property="article:modified_time" content="2021-10-31T12:49:00.620Z">
+<meta property="article:modified_time" content="2022-02-10T12:57:45.405Z">
 <meta property="article:author" content="Dylan Zhong">
 <meta property="article:tag" content="others">
 <meta name="twitter:card" content="summary">
@@ -120,7 +120,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8FTips%E9%9B%86%E5%90%88"><span class="nav-number">1.</span> <span class="nav-text">小Tips集合</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8FTips%E9%9B%86%E5%90%88"><span class="nav-number">1.</span> <span class="nav-text">小Tips集合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ASCII-UniCode%E5%92%8CUTF-8"><span class="nav-number">2.</span> <span class="nav-text">ASCII, UniCode和UTF-8</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ASCII%E7%A0%81"><span class="nav-number">2.1.</span> <span class="nav-text">ASCII码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unicode"><span class="nav-number">2.2.</span> <span class="nav-text">Unicode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UTF-8"><span class="nav-number">2.3.</span> <span class="nav-text">UTF-8</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -135,7 +135,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/zhongsongzhi97.github.io/archives/">
-          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -208,9 +208,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2021-10-31 19:47:27 / Modified: 20:49:00" itemprop="dateCreated datePublished" datetime="2021-10-31T19:47:27+08:00">2021-10-31</time>
+      <time title="Created: 2021-10-31 19:47:27" itemprop="dateCreated datePublished" datetime="2021-10-31T19:47:27+08:00">2021-10-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-02-10 20:57:45" itemprop="dateModified" datetime="2022-02-10T20:57:45+08:00">2022-02-10</time>
     </span>
 
   
@@ -226,8 +232,13 @@
         <h1 id="小Tips集合"><a href="#小Tips集合" class="headerlink" title="小Tips集合"></a>小Tips集合</h1><ol>
 <li><p>二维数组理解:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Matrix  &#123;&#123;a,b,c,d&#125;,&#123;a,b,c,d&#125;&#125;</span><br><span class="line"></span><br><span class="line">matrix[行][列数] len(matrix) = 2 行数=2 len(matrix[0])=4 列数=4</span><br><span class="line"></span><br><span class="line">(0,1)(1,1)(2,1)(3,1)  matrix[1][0] matrix[1][1] matrix[1][2] matrix[1][3]</span><br><span class="line">(0,0)(1,0)(2,0)(3,0)  matrix[0][0] matrix[0][1] matrix[0][2] matrix[0][3]</span><br></pre></td></tr></table></figure></li>
-<li></li>
 </ol>
+<h1 id="ASCII-UniCode和UTF-8"><a href="#ASCII-UniCode和UTF-8" class="headerlink" title="ASCII, UniCode和UTF-8"></a>ASCII, UniCode和UTF-8</h1><h2 id="ASCII码"><a href="#ASCII码" class="headerlink" title="ASCII码"></a>ASCII码</h2><p>对于英语字符与二进制之间的关系，做了统一的规定，即ASCII码。共128个字符</p>
+<h2 id="Unicode"><a href="#Unicode" class="headerlink" title="Unicode"></a>Unicode</h2><p>由于不同的语言使用了不同的编码，存在多套编码体系，所以有Unicode码包含所有的符号。</p>
+<p>Unicode作为一个符号集，规定了所有符号的二进制代码，</p>
+<p>问题：Unicode编码规定了符号的二进制代码，但是没有规定其如何存储，对于具体不同的符号如何存储存在多种存储方式。</p>
+<h2 id="UTF-8"><a href="#UTF-8" class="headerlink" title="UTF-8"></a>UTF-8</h2><p>UTF-8是互联网上使用最广的Unicode实现方式，还有UTF-16(字符用2/4字节存储)和UTF-32（4字节存储）。</p>
+<p>UTF-8是一种变长的编码方式，用1~4个字节表示一个符号，不同的符号长度不同。</p>
 
     </div>
 
@@ -249,8 +260,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/zhongsongzhi97.github.io/2021/11/02/gRPC%E5%8F%8C%E5%B7%A5%E6%9C%8D%E5%8A%A1/" rel="next" title="gRPC双工服务">
-                  gRPC双工服务 <i class="fa fa-chevron-right"></i>
+                <a href="/zhongsongzhi97.github.io/2021/11/05/go%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E7%B1%BB%E5%9E%8B%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93/" rel="next" title="go基础 - 数组与切片">
+                  go基础 - 数组与切片 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>

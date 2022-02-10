@@ -129,7 +129,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/zhongsongzhi97.github.io/archives/">
-          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -169,217 +169,6 @@
 
 
     <div class="main-inner index posts-expand">
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/22/go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/11/22/go%E5%9F%BA%E7%A1%80-%E6%8C%87%E9%92%88/" class="post-title-link" itemprop="url">go基础 - 指针</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2021-11-22 01:07:25 / Modified: 01:25:16" itemprop="dateCreated datePublished" datetime="2021-11-22T01:07:25+08:00">2021-11-22</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h1><p>Go中的指针类似Java中的指针，不能进行偏移和运算。</p>
-<p>使用：&amp;（取地址）和 *（根据地址取值）</p>
-<h2 id="取变量指针："><a href="#取变量指针：" class="headerlink" title="取变量指针："></a>取变量指针：</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ptr := &amp;v    <span class="comment">// v的类型为T</span></span><br><span class="line">v:代表被取地址的变量，类型为T</span><br><span class="line">ptr:用于接收地址的变量，ptr的类型就为*T，称做T的指针类型。*代表指针。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="指针取值"><a href="#指针取值" class="headerlink" title="指针取值"></a>指针取值</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//指针取值</span></span><br><span class="line">    a := <span class="number">10</span></span><br><span class="line">    b := &amp;a <span class="comment">// 取变量a的地址，将指针保存到b中</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;type of b:%T\n&quot;</span>, b)</span><br><span class="line">    c := *b <span class="comment">// 指针取值（根据指针去内存取值）</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;type of c:%T\n&quot;</span>, c)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;value of c:%v\n&quot;</span>, c)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//out</span></span><br><span class="line"><span class="keyword">type</span> of b:*<span class="keyword">int</span></span><br><span class="line"><span class="keyword">type</span> of c:<span class="keyword">int</span></span><br><span class="line">value of c:<span class="number">10</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>对变量进行取地址（&amp;）操作，可以获得这个变量的指针变量。</span><br><span class="line"><span class="number">2.</span>指针变量的值是指针地址。</span><br><span class="line"><span class="number">3.</span>对指针变量进行取值（*）操作，可以获得指针变量指向的原变量的值。</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">modify1</span><span class="params">(x <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    x = <span class="number">100</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">modify2</span><span class="params">(x *<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    *x = <span class="number">100</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := <span class="number">10</span></span><br><span class="line">    modify1(a)</span><br><span class="line">    fmt.Println(a) <span class="comment">// 10</span></span><br><span class="line">    modify2(&amp;a)</span><br><span class="line">    fmt.Println(a) <span class="comment">// 100</span></span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
-
-<h2 id="空指针"><a href="#空指针" class="headerlink" title="空指针"></a>空指针</h2><ul>
-<li>当一个指针被定义后没有分配到任何变量时，它的值为 nil</li>
-<li>空指针的判断 p == nil</li>
-</ul>
-<h2 id="new和make"><a href="#new和make" class="headerlink" title="new和make"></a>new和make</h2><ol>
-<li><p>new - 用于分配内存</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">new</span><span class="params">(Type)</span> *<span class="title">Type</span></span></span><br><span class="line"></span><br><span class="line"><span class="number">1.</span>Type表示类型，<span class="built_in">new</span>函数只接受一个参数，这个参数是一个类型</span><br><span class="line"><span class="number">2.</span>*Type表示类型指针，<span class="built_in">new</span>函数返回一个指向该类型内存地址的指针。</span><br><span class="line"></span><br><span class="line"><span class="built_in">new</span>函数不太常用，使用<span class="built_in">new</span>函数得到的是一个类型的指针，并且该指针对应的值为该类型的零值。</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := <span class="built_in">new</span>(<span class="keyword">int</span>)</span><br><span class="line">    b := <span class="built_in">new</span>(<span class="keyword">bool</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;%T\n&quot;</span>, a) <span class="comment">// *int</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;%T\n&quot;</span>, b) <span class="comment">// *bool</span></span><br><span class="line">    fmt.Println(*a)       <span class="comment">// 0</span></span><br><span class="line">    fmt.Println(*b)       <span class="comment">// false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>Make - 用于分配内存</p>
-<p>make也是用于内存分配的，区别于new，它只用于slice、map以及chan的内存创建，而且它返回的类型就是这三个类型本身，而不是他们的指针类型，因为这三种类型就是引用类型。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">make</span><span class="params">(t Type, size ...IntegerType)</span> <span class="title">Type</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> b <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span></span><br><span class="line">    b = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>, <span class="number">10</span>)</span><br><span class="line">    b[<span class="string">&quot;测试&quot;</span>] = <span class="number">100</span></span><br><span class="line">    fmt.Println(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>对比：</p>
-</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>二者都是用来做内存分配的。</span><br><span class="line"><span class="number">2.</span><span class="built_in">make</span>只用于slice、<span class="keyword">map</span>以及channel的初始化，返回的还是这三个引用类型本身；</span><br><span class="line"><span class="number">3.</span>而<span class="built_in">new</span>用于类型的内存分配，并且内存对应的值为类型零值，返回的是指向类型的指针。</span><br></pre></td></tr></table></figure>
-
-
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/21/go%E5%9F%BA%E7%A1%80-Slice%E5%AE%9E%E7%8E%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/11/21/go%E5%9F%BA%E7%A1%80-Slice%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">go基础 - Slice实现</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-11-21 22:09:57" itemprop="dateCreated datePublished" datetime="2021-11-21T22:09:57+08:00">2021-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-11-22 01:06:51" itemprop="dateModified" datetime="2021-11-22T01:06:51+08:00">2021-11-22</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Slice底层实现"><a href="#Slice底层实现" class="headerlink" title="Slice底层实现"></a>Slice底层实现</h1><h2 id="切片与数组的对比"><a href="#切片与数组的对比" class="headerlink" title="切片与数组的对比"></a>切片与数组的对比</h2><p>切片是引用类型，数组是值类型，大数组的传递会消耗较多的内存，且性能差，这种场景下使用切片更合适。</p>
-<p>反例：</p>
-<p>因为切片底层数组可能会在堆上分配内存，小数组在栈上拷贝的消耗不一定比make大</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// go test -bench . -benchmem -gcflags &quot;-N -l&quot;</span></span><br><span class="line"><span class="comment">// 禁用内联和优化</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;testing&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">array</span><span class="params">()</span> [1024]<span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> x [<span class="number">1024</span>]<span class="keyword">int</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(x); i++ &#123;</span><br><span class="line">        x[i] = i</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">slice</span><span class="params">()</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">    x := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">1024</span>)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(x); i++ &#123;</span><br><span class="line">        x[i] = i</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkArray</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">        array()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkSlice</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">        slice()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">结果：</span><br><span class="line">在测试 Array 的时候，用的是4核，循环次数是500000，平均每次执行时间是3637 ns，每次执行堆上分配内存总量是0，分配次数也是0 。</span><br><span class="line"></span><br><span class="line">而切片的结果就“差”一点，同样也是用的是4核，循环次数是300000，平均每次执行时间是4055 ns，但是每次执行一次，堆上分配内存总量是8192，分配次数也是1 。</span><br></pre></td></tr></table></figure>
-
-<h2 id="切片的数据结构"><a href="#切片的数据结构" class="headerlink" title="切片的数据结构"></a>切片的数据结构</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//切片是对数组的一个连续片段的引用</span></span><br><span class="line"><span class="keyword">type</span> slice <span class="keyword">struct</span> &#123;</span><br><span class="line">    array unsafe.Pointer <span class="comment">//指向一个数组的指针</span></span><br><span class="line">    <span class="built_in">len</span>   <span class="keyword">int</span> <span class="comment">//当前切片长度</span></span><br><span class="line">    <span class="built_in">cap</span>   <span class="keyword">int</span> <span class="comment">//当前切片容量 cap &gt;= len</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">s := make([]byte, 200)</span><br><span class="line">	ptr := unsafe.Pointer(&amp;s[0]) //从slice获取到一块内存地址</span><br><span class="line">	fmt.Println(ptr)</span><br><span class="line"></span><br><span class="line">	//从go的内存地址构造一个slice</span><br><span class="line">	var ptr1 unsafe.Pointer</span><br><span class="line">	length := 10</span><br><span class="line">	var s1 = struct &#123;</span><br><span class="line">		addr unsafe.Pointer</span><br><span class="line">		len int</span><br><span class="line">		cap int</span><br><span class="line">	&#125;&#123;ptr1, length,length&#125;</span><br><span class="line">	s2 := *(*[]byte)(unsafe.Pointer(&amp;s1))</span><br><span class="line">	fmt.Println(s2)</span><br><span class="line"></span><br><span class="line">	//使用反射构造一个slice</span><br><span class="line">	 a  := [...]int&#123;1,2,3&#125;</span><br><span class="line">	var o []byte</span><br><span class="line">	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&amp;o))</span><br><span class="line">	sliceHeader.Cap = length</span><br><span class="line">	sliceHeader.Len = length</span><br><span class="line">	sliceHeader.Data = uintptr(o)</span><br><span class="line">	fmt.Println(sliceHeader)</span><br></pre></td></tr></table></figure>
-
-<h2 id="切片创建"><a href="#切片创建" class="headerlink" title="切片创建"></a>切片创建</h2><p>make和切片字面量创建切片</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeslice</span><span class="params">(et *_type, <span class="built_in">len</span>, <span class="built_in">cap</span> <span class="keyword">int</span>)</span> <span class="title">slice</span></span> &#123;</span><br><span class="line">    <span class="comment">// 根据切片的数据类型，获取切片的最大容量</span></span><br><span class="line">    maxElements := maxSliceCap(et.size)</span><br><span class="line">    <span class="comment">// 比较切片的长度，长度值域应该在[0,maxElements]之间</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span> &lt; <span class="number">0</span> || <span class="keyword">uintptr</span>(<span class="built_in">len</span>) &gt; maxElements &#123;</span><br><span class="line">        <span class="built_in">panic</span>(errorString(<span class="string">&quot;makeslice: len out of range&quot;</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 比较切片的容量，容量值域应该在[len,maxElements]之间</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">cap</span> &lt; <span class="built_in">len</span> || <span class="keyword">uintptr</span>(<span class="built_in">cap</span>) &gt; maxElements &#123;</span><br><span class="line">        <span class="built_in">panic</span>(errorString(<span class="string">&quot;makeslice: cap out of range&quot;</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 根据切片的容量申请内存</span></span><br><span class="line">    p := mallocgc(et.size*<span class="keyword">uintptr</span>(<span class="built_in">cap</span>), et, <span class="literal">true</span>)</span><br><span class="line">    <span class="comment">// 返回申请好内存的切片的首地址</span></span><br><span class="line">    <span class="keyword">return</span> slice&#123;p, <span class="built_in">len</span>, <span class="built_in">cap</span>&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwn96wm5gwj317e0k0t9m.jpg" alt="img"></p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwn97gztd6j317e0k0t9q.jpg" alt="img"></p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwn97nii2oj319e0rumyq.jpg" alt="img"></p>
-<h2 id="nil和空切片"><a href="#nil和空切片" class="headerlink" title="nil和空切片"></a>nil和空切片</h2><p>nil 切片被用在很多标准库和内置函数中，描述一个不存在的切片的时候，就需要用到 nil 切片。比如函数在发生异常的时候，返回的切片就是 nil 切片。nil 切片的指针指向 nil。</p>
-<p>空切片一般会用来表示一个空的集合。比如数据库查询，一条结果也没有查到，那么就可以返回一个空切片。</p>
-<p>区别：空切片指向的地址不是nil，而是指向一个内存地址，但是没有分配内存空间</p>
-<p>但是无法nil还是空切片，使用append，len，cap的效果是一样的</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwn98nlhb1j30sb0ecq31.jpg" alt="img"></p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwn98vhvktj30sb0ec0t2.jpg" alt="img"></p>
-<h2 id="切片的扩容策略："><a href="#切片的扩容策略：" class="headerlink" title="切片的扩容策略："></a>切片的扩容策略：</h2><ol>
-<li><p>切片如果容量小于1024个元素，会在扩容是翻倍增加容量，超过1024个时，会每次增加1/4。</p>
-</li>
-<li><p>扩容都是对当前容量来说。</p>
-</li>
-<li><p>新数组还是老数组：如果原数组还有容量可以扩容，执行append以后会直接在原数组执行</p>
-</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">growslice</span><span class="params">(et *_type, old slice, <span class="built_in">cap</span> <span class="keyword">int</span>)</span> <span class="title">slice</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> raceenabled &#123;</span><br><span class="line">        callerpc := getcallerpc(unsafe.Pointer(&amp;et))</span><br><span class="line">        racereadrangepc(old.array, <span class="keyword">uintptr</span>(old.<span class="built_in">len</span>*<span class="keyword">int</span>(et.size)), callerpc, funcPC(growslice))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> msanenabled &#123;</span><br><span class="line">        msanread(old.array, <span class="keyword">uintptr</span>(old.<span class="built_in">len</span>*<span class="keyword">int</span>(et.size)))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> et.size == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="comment">// 如果新要扩容的容量比原来的容量还要小，这代表要缩容了，那么可以直接报panic了。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">cap</span> &lt; old.<span class="built_in">cap</span> &#123;</span><br><span class="line">            <span class="built_in">panic</span>(errorString(<span class="string">&quot;growslice: cap out of range&quot;</span>))</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果当前切片的大小为0，还调用了扩容方法，那么就新生成一个新的容量的切片返回。</span></span><br><span class="line">        <span class="keyword">return</span> slice&#123;unsafe.Pointer(&amp;zerobase), old.<span class="built_in">len</span>, <span class="built_in">cap</span>&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 这里就是扩容的策略</span></span><br><span class="line">    newcap := old.<span class="built_in">cap</span></span><br><span class="line">    doublecap := newcap + newcap</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">cap</span> &gt; doublecap &#123;</span><br><span class="line">        newcap = <span class="built_in">cap</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> old.<span class="built_in">len</span> &lt; <span class="number">1024</span> &#123;</span><br><span class="line">            newcap = doublecap</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> newcap &lt; <span class="built_in">cap</span> &#123;</span><br><span class="line">                newcap += newcap / <span class="number">4</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算新的切片的容量，长度。</span></span><br><span class="line">    <span class="keyword">var</span> lenmem, newlenmem, capmem <span class="keyword">uintptr</span></span><br><span class="line">    <span class="keyword">const</span> ptrSize = unsafe.Sizeof((*<span class="keyword">byte</span>)(<span class="literal">nil</span>))</span><br><span class="line">    <span class="keyword">switch</span> et.size &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        lenmem = <span class="keyword">uintptr</span>(old.<span class="built_in">len</span>)</span><br><span class="line">        newlenmem = <span class="keyword">uintptr</span>(<span class="built_in">cap</span>)</span><br><span class="line">        capmem = roundupsize(<span class="keyword">uintptr</span>(newcap))</span><br><span class="line">        newcap = <span class="keyword">int</span>(capmem)</span><br><span class="line">    <span class="keyword">case</span> ptrSize:</span><br><span class="line">        lenmem = <span class="keyword">uintptr</span>(old.<span class="built_in">len</span>) * ptrSize</span><br><span class="line">        newlenmem = <span class="keyword">uintptr</span>(<span class="built_in">cap</span>) * ptrSize</span><br><span class="line">        capmem = roundupsize(<span class="keyword">uintptr</span>(newcap) * ptrSize)</span><br><span class="line">        newcap = <span class="keyword">int</span>(capmem / ptrSize)</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        lenmem = <span class="keyword">uintptr</span>(old.<span class="built_in">len</span>) * et.size</span><br><span class="line">        newlenmem = <span class="keyword">uintptr</span>(<span class="built_in">cap</span>) * et.size</span><br><span class="line">        capmem = roundupsize(<span class="keyword">uintptr</span>(newcap) * et.size)</span><br><span class="line">        newcap = <span class="keyword">int</span>(capmem / et.size)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 判断非法的值，保证容量是在增加，并且容量不超过最大容量</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">cap</span> &lt; old.<span class="built_in">cap</span> || <span class="keyword">uintptr</span>(newcap) &gt; maxSliceCap(et.size) &#123;</span><br><span class="line">        <span class="built_in">panic</span>(errorString(<span class="string">&quot;growslice: cap out of range&quot;</span>))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> p unsafe.Pointer</span><br><span class="line">    <span class="keyword">if</span> et.kind&amp;kindNoPointers != <span class="number">0</span> &#123;</span><br><span class="line">        <span class="comment">// 在老的切片后面继续扩充容量</span></span><br><span class="line">        p = mallocgc(capmem, <span class="literal">nil</span>, <span class="literal">false</span>)</span><br><span class="line">        <span class="comment">// 将 lenmem 这个多个 bytes 从 old.array地址 拷贝到 p 的地址处</span></span><br><span class="line">        memmove(p, old.array, lenmem)</span><br><span class="line">        <span class="comment">// 先将 P 地址加上新的容量得到新切片容量的地址，然后将新切片容量地址后面的 capmem-newlenmem 个 bytes 这块内存初始化。为之后继续 append() 操作腾出空间。</span></span><br><span class="line">        memclrNoHeapPointers(add(p, newlenmem), capmem-newlenmem)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 重新申请新的数组给新切片</span></span><br><span class="line">        <span class="comment">// 重新申请 capmen 这个大的内存地址，并且初始化为0值</span></span><br><span class="line">        p = mallocgc(capmem, et, <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">if</span> !writeBarrier.enabled &#123;</span><br><span class="line">            <span class="comment">// 如果还不能打开写锁，那么只能把 lenmem 大小的 bytes 字节从 old.array 拷贝到 p 的地址处</span></span><br><span class="line">            memmove(p, old.array, lenmem)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 循环拷贝老的切片的值</span></span><br><span class="line">            <span class="keyword">for</span> i := <span class="keyword">uintptr</span>(<span class="number">0</span>); i &lt; lenmem; i += et.size &#123;</span><br><span class="line">                typedmemmove(et, add(p, i), add(old.array, i))</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 返回最终新切片，容量更新为最新扩容之后的容量</span></span><br><span class="line">    <span class="keyword">return</span> slice&#123;p, old.<span class="built_in">len</span>, newcap&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>字面常量创建切片时，cap不等于执行数组的总容量时，通常可能会发生在原数组上扩容的情况：</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwn9hcf926j31d20u040j.jpg" alt="img"></p>
-<p>在这种情况下，扩容以后并没有新建一个新的数组，扩容前后的数组都是同一个，这也就导致了新的切片修改了一个值，也影响到了老的切片了。并且 append() 操作也改变了原来数组里面的值。</p>
-<h2 id="切片拷贝："><a href="#切片拷贝：" class="headerlink" title="切片拷贝："></a>切片拷贝：</h2><p>Slice的拷贝方法有两个：</p>
-<ol>
-<li>在slicecopy中，会把源切片值中的元素复制到目标切片，并返回复制的元素个数，copy类型必须一致，长度取决于较短的那个。</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">slicecopy</span><span class="params">(to, fm slice, width <span class="keyword">uintptr</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="comment">// 如果源切片或者目标切片有一个长度为0，那么就不需要拷贝，直接 return </span></span><br><span class="line">    <span class="keyword">if</span> fm.<span class="built_in">len</span> == <span class="number">0</span> || to.<span class="built_in">len</span> == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// n 记录下源切片或者目标切片较短的那一个的长度</span></span><br><span class="line">    n := fm.<span class="built_in">len</span></span><br><span class="line">    <span class="keyword">if</span> to.<span class="built_in">len</span> &lt; n &#123;</span><br><span class="line">        n = to.<span class="built_in">len</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果入参 width = 0，也不需要拷贝了，返回较短的切片的长度</span></span><br><span class="line">    <span class="keyword">if</span> width == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果开启了竞争检测</span></span><br><span class="line">    <span class="keyword">if</span> raceenabled &#123;</span><br><span class="line">        callerpc := getcallerpc(unsafe.Pointer(&amp;to))</span><br><span class="line">        pc := funcPC(slicecopy)</span><br><span class="line">        racewriterangepc(to.array, <span class="keyword">uintptr</span>(n*<span class="keyword">int</span>(width)), callerpc, pc)</span><br><span class="line">        racereadrangepc(fm.array, <span class="keyword">uintptr</span>(n*<span class="keyword">int</span>(width)), callerpc, pc)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果开启了 The memory sanitizer (msan)</span></span><br><span class="line">    <span class="keyword">if</span> msanenabled &#123;</span><br><span class="line">        msanwrite(to.array, <span class="keyword">uintptr</span>(n*<span class="keyword">int</span>(width)))</span><br><span class="line">        msanread(fm.array, <span class="keyword">uintptr</span>(n*<span class="keyword">int</span>(width)))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    size := <span class="keyword">uintptr</span>(n) * width</span><br><span class="line">    <span class="keyword">if</span> size == <span class="number">1</span> &#123; </span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> is this still worth it with new memmove impl?</span></span><br><span class="line">        <span class="comment">// 如果只有一个元素，那么指针直接转换即可</span></span><br><span class="line">        *(*<span class="keyword">byte</span>)(to.array) = *(*<span class="keyword">byte</span>)(fm.array) <span class="comment">// known to be a byte pointer</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 如果不止一个元素，那么就把 size 个 bytes 从 fm.array 地址开始，拷贝到 to.array 地址之后</span></span><br><span class="line">        memmove(to.array, fm.array, size)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwn9lneksyj31940u00v0.jpg" alt="img"></p>
-<ol start="2">
-<li>Slicestringcopy</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">slicestringcopy</span><span class="params">(to []<span class="keyword">byte</span>, fm <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="comment">// 如果源切片或者目标切片有一个长度为0，那么就不需要拷贝，直接 return </span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(fm) == <span class="number">0</span> || <span class="built_in">len</span>(to) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// n 记录下源切片或者目标切片较短的那一个的长度</span></span><br><span class="line">    n := <span class="built_in">len</span>(fm)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(to) &lt; n &#123;</span><br><span class="line">        n = <span class="built_in">len</span>(to)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果开启了竞争检测</span></span><br><span class="line">    <span class="keyword">if</span> raceenabled &#123;</span><br><span class="line">        callerpc := getcallerpc(unsafe.Pointer(&amp;to))</span><br><span class="line">        pc := funcPC(slicestringcopy)</span><br><span class="line">        racewriterangepc(unsafe.Pointer(&amp;to[<span class="number">0</span>]), <span class="keyword">uintptr</span>(n), callerpc, pc)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果开启了 The memory sanitizer (msan)</span></span><br><span class="line">    <span class="keyword">if</span> msanenabled &#123;</span><br><span class="line">        msanwrite(unsafe.Pointer(&amp;to[<span class="number">0</span>]), <span class="keyword">uintptr</span>(n))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 拷贝字符串至字节数组</span></span><br><span class="line">    memmove(unsafe.Pointer(&amp;to[<span class="number">0</span>]), stringStructOf(&amp;fm).str, <span class="keyword">uintptr</span>(n))</span><br><span class="line">    <span class="keyword">return</span> n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用range去遍历一个切片时"><a href="#使用range去遍历一个切片时" class="headerlink" title="使用range去遍历一个切片时"></a>使用range去遍历一个切片时</h2><p>如果用 range 的方式去遍历一个切片，拿到的 Value 其实是切片里面的值拷贝。所以每次打印 Value 的地址都不变。由于 Value 是值拷贝的，并非引用传递，所以直接改 Value 是达不到更改原切片值的目的的，需要通过 &amp;slice[index] 获取真实的地址。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    slice := []<span class="keyword">int</span>&#123;<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>&#125;</span><br><span class="line">    <span class="keyword">for</span> index, value := <span class="keyword">range</span> slice &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;value = %d , value-addr = %x , slice-addr = %x\n&quot;</span>, value, &amp;value, &amp;slice[index])</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//out</span></span><br><span class="line">    value = <span class="number">10</span> , value-addr = c4200aedf8 , slice-addr = c4200b0320</span><br><span class="line">    value = <span class="number">20</span> , value-addr = c4200aedf8 , slice-addr = c4200b0328</span><br><span class="line">    value = <span class="number">30</span> , value-addr = c4200aedf8 , slice-addr = c4200b0330</span><br><span class="line">    value = <span class="number">40</span> , value-addr = c4200aedf8 , slice-addr = c4200b0338</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwn9p0ndlij314a0u0wh6.jpg" alt="img"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
 
     
 
@@ -508,151 +297,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/03/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/11/03/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81/" class="post-title-link" itemprop="url">字符编码</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2021-11-03 01:20:15 / Modified: 01:29:37" itemprop="dateCreated datePublished" datetime="2021-11-03T01:20:15+08:00">2021-11-03</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="ASCII-UniCode和UTF-8"><a href="#ASCII-UniCode和UTF-8" class="headerlink" title="ASCII, UniCode和UTF-8"></a>ASCII, UniCode和UTF-8</h1><h2 id="ASCII码"><a href="#ASCII码" class="headerlink" title="ASCII码"></a>ASCII码</h2><p>对于英语字符与二进制之间的关系，做了统一的规定，即ASCII码。共128个字符</p>
-<h2 id="Unicode"><a href="#Unicode" class="headerlink" title="Unicode"></a>Unicode</h2><p>由于不同的语言使用了不同的编码，存在多套编码体系，所以有Unicode码包含所有的符号。</p>
-<p>Unicode作为一个符号集，规定了所有符号的二进制代码，</p>
-<p>问题：Unicode编码规定了符号的二进制代码，但是没有规定其如何存储，对于具体不同的符号如何存储存在多种存储方式。</p>
-<h2 id="UTF-8"><a href="#UTF-8" class="headerlink" title="UTF-8"></a>UTF-8</h2><p>UTF-8是互联网上使用最广的Unicode实现方式，还有UTF-16(字符用2/4字节存储)和UTF-32（4字节存储）。</p>
-<p>UTF-8是一种变长的编码方式，用1~4个字节表示一个符号，不同的符号长度不同。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/02/gRPC%E5%8F%8C%E5%B7%A5%E6%9C%8D%E5%8A%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/11/02/gRPC%E5%8F%8C%E5%B7%A5%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">gRPC双工服务</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-11-02 16:14:19" itemprop="dateCreated datePublished" datetime="2021-11-02T16:14:19+08:00">2021-11-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-11-22 20:10:13" itemprop="dateModified" datetime="2021-11-22T20:10:13+08:00">2021-11-22</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="gRPC-流式处理"><a href="#gRPC-流式处理" class="headerlink" title="gRPC 流式处理"></a>gRPC 流式处理</h1><p>处理多个广告对象:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">#if gRPC_Enable_Android</span><br><span class="line">using UnityTool;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">namespace ByteDance.Union</span><br><span class="line">&#123;</span><br><span class="line">    using static AndroidGrpsToolsReflection;</span><br><span class="line">    public class LGAndroidgRPCBannerAd : LGAbsBannerAd</span><br><span class="line">    &#123;</span><br><span class="line">        private static string TAG_BANNER = AD_TAG + &quot;Banner&quot;;</span><br><span class="line">        </span><br><span class="line">        // private BannerAdLoadCallback adLoadListener;</span><br><span class="line">        //</span><br><span class="line">        // private BannerAdInteractionCallback adInteractionListener;</span><br><span class="line"></span><br><span class="line">        private readonly int contextId;</span><br><span class="line">        private bool disposed;</span><br><span class="line"></span><br><span class="line">        public LGAndroidgRPCBannerAd()</span><br><span class="line">        &#123;</span><br><span class="line">            contextId = LGAndroidgRPCBannerAdBridge.CreateContext(this);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ~LGAndroidgRPCBannerAd()</span><br><span class="line">        &#123;</span><br><span class="line">            Dispose();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        public override void Dispose()</span><br><span class="line">        &#123;</span><br><span class="line">            if (disposed != true)</span><br><span class="line">            &#123;</span><br><span class="line">                LGAndroidgRPCBannerAdBridge.DisposeContext(contextId);</span><br><span class="line">                disposed = true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line">public class LGiOSgRPCBannerAdBridge</span><br><span class="line">    &#123;</span><br><span class="line">        private delegate void DelegateTypeIntStringInt(int arg1, string arg2, int arg3);</span><br><span class="line"></span><br><span class="line">        private delegate void DelegateTypeInt(int arg1);</span><br><span class="line"></span><br><span class="line">        private delegate void DelegateTypeStringStringInt(string arg1, string arg2, int arg3);</span><br><span class="line"></span><br><span class="line">        private static readonly Dictionary&lt;int, LGiOSgRPCBannerAd&gt; BannerAds = new Dictionary&lt;int, LGiOSgRPCBannerAd&gt;();</span><br><span class="line"></span><br><span class="line">        private static int _contextId = 200;</span><br><span class="line"></span><br><span class="line">        static LGiOSgRPCBannerAdBridge()</span><br><span class="line">        &#123;</span><br><span class="line">            // 将回调函数发送给原生</span><br><span class="line">            //  LGMapBannerCallback_OnError(OnLoadError_Method);</span><br><span class="line">            //  LGMapBannerCallback_OnBannerAdLoaded(OnBannerAdLoaded_Method);</span><br><span class="line">            //</span><br><span class="line">            //  LGMapBannerCallback_OnAdShow_Interaction(OnAdShow_Interaction_Method);</span><br><span class="line">            //  LGMapBannerCallback_OnAdClicked_Interaction(OnAdClicked_Interaction_Method);</span><br><span class="line">            //  LGMapBannerCallback_OnAdClosed_Interaction(OnAdClosed_Interaction_Method);</span><br><span class="line">            //  LGMapBannerCallback_OnAdOpened_Interaction(OnAdOpened_Interaction_Method);</span><br><span class="line">            //  LGMapBannerCallback_WillDismissFullScreenModal_Interaction(WillDismissFullScreenModal_Interaction_Method);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public static int CreatContext(LGiOSgRPCBannerAd bannerAd)</span><br><span class="line">        &#123;</span><br><span class="line">            int context = _contextId++;</span><br><span class="line">            BannerAds.Add(context, bannerAd);</span><br><span class="line">            grpcClient.LGCreateBannerContext_iOS(context);</span><br><span class="line">            return context;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public static void DisposeContext(int contextId)</span><br><span class="line">        &#123;</span><br><span class="line">            BannerAds.Remove(contextId);</span><br><span class="line">            grpcClient.LGDisposeBannerContext_iOS(contextId);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        #region Callback</span><br><span class="line"></span><br><span class="line">        public static void OnLoadError_Method(int code, string message, int contextId)</span><br><span class="line">        &#123;</span><br><span class="line">            UnityDispatcher.PostTask(() =&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                if (BannerAds.TryGetValue(contextId, out var banner))</span><br><span class="line">                &#123;</span><br><span class="line">                    banner.OnLoadError.Invoke(code, message);</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    Log.E(&quot;Banner OnLoadError_method--- can not find the context.&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public static void OnBannerAdLoaded_Method(int contextId)</span><br><span class="line">        &#123;</span><br><span class="line">            UnityDispatcher.PostTask(() =&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                if (BannerAds.TryGetValue(contextId, out var banner))</span><br><span class="line">                &#123;</span><br><span class="line">                    banner.OnBannerAdLoaded.Invoke();</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    Log.E(&quot;Banner OnBannerAdLoaded_Method--- can not find the context.&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public static void OnAdShow_Interaction_Method(int contextId)</span><br><span class="line">        &#123;</span><br><span class="line">            UnityDispatcher.PostTask(() =&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                if (BannerAds.TryGetValue(contextId, out var banner))</span><br><span class="line">                &#123;</span><br><span class="line">                    banner.OnAdShow_Interaction.Invoke();</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    Log.E(&quot;Banner OnAdShow_Interaction_Method--- can not find the context.&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public static void OnAdClicked_Interaction_Method(int contextId)</span><br><span class="line">        &#123;</span><br><span class="line">            UnityDispatcher.PostTask(() =&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                if (BannerAds.TryGetValue(contextId, out var banner))</span><br><span class="line">                &#123;</span><br><span class="line">                    banner.OnAdClicked_Interaction.Invoke();</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    Log.E(&quot;Banner OnAdClicked_Interaction_Method--- can not find the context.&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public static void OnAdClosed_Interaction_Method(string s, string s2, int contextId)</span><br><span class="line">        &#123;</span><br><span class="line">            UnityDispatcher.PostTask(() =&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                if (BannerAds.TryGetValue(contextId, out var banner))</span><br><span class="line">                &#123;</span><br><span class="line">                    banner.OnAdClosed_Interaction.Invoke(s, s2);</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    Log.E(&quot;Banner OnAdClosed_Interaction_Method--- can not find the context.&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public static void OnAdOpened_Interaction_Method(int contextId)</span><br><span class="line">        &#123;</span><br><span class="line">            UnityDispatcher.PostTask(() =&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                if (BannerAds.TryGetValue(contextId, out var banner))</span><br><span class="line">                &#123;</span><br><span class="line">                    banner.OnAdOpened_Interaction.Invoke();</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    Log.E(&quot;Banner OnAdOpened_Interaction_Method--- can not find the context.&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public static void WillDismissFullScreenModal_Interaction_Method(int contextId)</span><br><span class="line">        &#123;</span><br><span class="line">            UnityDispatcher.PostTask(() =&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                if (BannerAds.TryGetValue(contextId, out var banner))</span><br><span class="line">                &#123;</span><br><span class="line">                    banner.iOSOnWillDismissAdDetail_Interaction.Invoke();</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    Log.E(&quot;Banner WillDismissFullScreenModal_Interaction_Method--- can not find the context.&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        #endregion</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/10/31/%E5%B0%8F%E7%82%B9%E9%9B%86%E5%90%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -676,9 +320,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2021-10-31 19:47:27 / Modified: 20:49:00" itemprop="dateCreated datePublished" datetime="2021-10-31T19:47:27+08:00">2021-10-31</time>
+      <time title="Created: 2021-10-31 19:47:27" itemprop="dateCreated datePublished" datetime="2021-10-31T19:47:27+08:00">2021-10-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-02-10 20:57:45" itemprop="dateModified" datetime="2022-02-10T20:57:45+08:00">2022-02-10</time>
     </span>
 
   
@@ -694,8 +344,13 @@
           <h1 id="小Tips集合"><a href="#小Tips集合" class="headerlink" title="小Tips集合"></a>小Tips集合</h1><ol>
 <li><p>二维数组理解:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Matrix  &#123;&#123;a,b,c,d&#125;,&#123;a,b,c,d&#125;&#125;</span><br><span class="line"></span><br><span class="line">matrix[行][列数] len(matrix) = 2 行数=2 len(matrix[0])=4 列数=4</span><br><span class="line"></span><br><span class="line">(0,1)(1,1)(2,1)(3,1)  matrix[1][0] matrix[1][1] matrix[1][2] matrix[1][3]</span><br><span class="line">(0,0)(1,0)(2,0)(3,0)  matrix[0][0] matrix[0][1] matrix[0][2] matrix[0][3]</span><br></pre></td></tr></table></figure></li>
-<li></li>
 </ol>
+<h1 id="ASCII-UniCode和UTF-8"><a href="#ASCII-UniCode和UTF-8" class="headerlink" title="ASCII, UniCode和UTF-8"></a>ASCII, UniCode和UTF-8</h1><h2 id="ASCII码"><a href="#ASCII码" class="headerlink" title="ASCII码"></a>ASCII码</h2><p>对于英语字符与二进制之间的关系，做了统一的规定，即ASCII码。共128个字符</p>
+<h2 id="Unicode"><a href="#Unicode" class="headerlink" title="Unicode"></a>Unicode</h2><p>由于不同的语言使用了不同的编码，存在多套编码体系，所以有Unicode码包含所有的符号。</p>
+<p>Unicode作为一个符号集，规定了所有符号的二进制代码，</p>
+<p>问题：Unicode编码规定了符号的二进制代码，但是没有规定其如何存储，对于具体不同的符号如何存储存在多种存储方式。</p>
+<h2 id="UTF-8"><a href="#UTF-8" class="headerlink" title="UTF-8"></a>UTF-8</h2><p>UTF-8是互联网上使用最广的Unicode实现方式，还有UTF-16(字符用2/4字节存储)和UTF-32（4字节存储）。</p>
+<p>UTF-8是一种变长的编码方式，用1~4个字节表示一个符号，不同的符号长度不同。</p>
 
       
     </div>
