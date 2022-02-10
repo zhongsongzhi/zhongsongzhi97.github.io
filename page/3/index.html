@@ -135,12 +135,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/zhongsongzhi97.github.io/categories/">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/zhongsongzhi97.github.io/tags/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -178,7 +178,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/28/go-runtime-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/04/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
@@ -191,7 +191,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/11/28/go-runtime-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/" class="post-title-link" itemprop="url">Untitled</a>
+          <a href="/zhongsongzhi97.github.io/2021/12/04/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">内存管理 - go栈内存管理</a>
         </h2>
 
         <div class="post-meta-container">
@@ -202,14 +202,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2021-11-28 20:10:39" itemprop="dateCreated datePublished" datetime="2021-11-28T20:10:39+08:00">2021-11-28</time>
+      <time title="Created: 2021-12-04 17:56:30" itemprop="dateCreated datePublished" datetime="2021-12-04T17:56:30+08:00">2021-12-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-12-08 16:57:07" itemprop="dateModified" datetime="2021-12-08T16:57:07+08:00">2021-12-08</time>
+      <time title="Modified: 2021-12-08 16:50:41" itemprop="dateModified" datetime="2021-12-08T16:50:41+08:00">2021-12-08</time>
     </span>
 
   
@@ -222,265 +222,82 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="内存分配器"><a href="#内存分配器" class="headerlink" title="内存分配器"></a>内存分配器</h1><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx6j27txd4j30u00vygpo.jpg" alt="内存分配器"></p>
-<p>程序中的数据和变量都会被分配到程序所在的虚拟内存中，内存空间包含两个重要区域：栈区（Stack）和堆区（Heap）。</p>
-<p>栈：函数调用的参数、返回值以及局部变量大都会被分配到栈上，这部分内存会由编译器进行管理；</p>
-<p>堆：不同编程语言使用不同的方法管理堆区的内存，C++ 等编程语言会由工程师主动申请和释放内存，Go 以及 Java 等编程语言会由工程师和编译器共同管理，堆中的对象由内存分配器分配并由垃圾收集器回收。</p>
-<h2 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h2><p>当用户程序申请内存时，它会通过内存分配器申请新内存，而分配器会负责从堆中初始化相应的内存区域。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwzzuklofzj30xc0h8dgg.jpg" alt="mutator-allocator-collector"></p>
-<p>分配方法：一般编程语言的内存分配器包括两种，一种是线性分配器，还有一种是空闲列表分配器。</p>
-<h3 id="线性分配器"><a href="#线性分配器" class="headerlink" title="线性分配器"></a>线性分配器</h3><p>使用线性分配器时，只需要在内存中维护一个指向内存特定位置的指针，如果用户程序向分配器申请内存，分配器只需要检查剩余的空闲内存、返回分配的内存区域并修改指针在内存中的位置</p>
-<p>问题：线性分配器无法在内存被释放时重用内存。</p>
-<p>因为线性分配器具有上述特性，所以需要与合适的垃圾回收算法配合使用，例如：标记压缩（Mark-Compact）、复制回收（Copying GC）和分代回收（Generational GC）等算法，它们可以通过拷贝的方式整理存活对象的碎片，将空闲内存定期合并，这样就能利用线性分配器的效率提升内存分配器的性能了。</p>
-<p>因为线性分配器需要与具有拷贝特性的垃圾回收算法配合，所以 C 和 C++ 等需要直接对外暴露指针的语言就无法使用该策略</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwzzyghypaj30xc082t8w.jpg" alt="bump-allocator"></p>
-<h3 id="空闲列表分配器"><a href="#空闲列表分配器" class="headerlink" title="空闲列表分配器"></a>空闲列表分配器</h3><p>类似与早期操作系统的，使用链表管理内存的结构。</p>
-<p>这种方式的分配器可以重新利用回收的资源，但是因为分配内存时需要遍历链表，所以它的时间复杂度是 𝑂(𝑛)。</p>
-<p>选择策略上有4种:</p>
-<ol>
-<li>首次适应</li>
-<li>循环首次适应</li>
-<li>最优适应</li>
-<li>隔离适应</li>
+          <h1 id="栈空间管理"><a href="#栈空间管理" class="headerlink" title="栈空间管理"></a>栈空间管理</h1><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx6iw2lc9sj30hi0bgmxn.jpg" alt="栈"></p>
+<h2 id="堆与栈的区别"><a href="#堆与栈的区别" class="headerlink" title="堆与栈的区别"></a>堆与栈的区别</h2><ol>
+<li>功能不同：函数调用的参数、返回值以及局部变量都会分配到栈上。</li>
+<li>共享性不同：栈是线程私有，堆是共享</li>
+<li>栈的空间一般远远小于堆</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwzzzjuq0pj30xc08wdga.jpg" alt="free-list-allocator"></p>
-<h3 id="Go采用的方式-空闲列表分配器配合类似隔离适应"><a href="#Go采用的方式-空闲列表分配器配合类似隔离适应" class="headerlink" title="Go采用的方式 - 空闲列表分配器配合类似隔离适应"></a>Go采用的方式 - 空闲列表分配器配合类似隔离适应</h3><h4 id="基本数据结构："><a href="#基本数据结构：" class="headerlink" title="基本数据结构："></a>基本数据结构：</h4><p>该策略会将内存分割成由 4、8、16、32 字节的内存块组成的链表，当我们向内存分配器申请 8 字节的内存时，它会在上图中找到满足条件的空闲内存块并返回。隔离适应的分配策略减少了需要遍历的内存块数量，提高了内存分配的效率。即先找到合适的链表，再去找合适的内存块。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx003dwnrxj30xc0gedgs.jpg" alt="segregated-list"></p>
-<h4 id="分级分配："><a href="#分级分配：" class="headerlink" title="分级分配："></a>分级分配：</h4><p>线程缓存分配（Thread-Caching Malloc，TCMalloc）是用于分配内存的机制，它比 glibc 中的 <code>malloc</code> 还要快很多。Go 语言的内存分配器就借鉴了 TCMalloc 的设计实现高速的内存分配，它的核心理念是使用多级缓存将对象根据大小分类，并按照类别实施不同的分配策略。</p>
-<p>运行时根据对象的大小将对象分成微对象、小对象和大对象三种：</p>
-<table>
-<thead>
-<tr>
-<th align="center">类别</th>
-<th align="center">大小</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">微对象</td>
-<td align="center"><code>(0, 16B)</code></td>
-</tr>
-<tr>
-<td align="center">小对象</td>
-<td align="center"><code>[16B, 32KB]</code></td>
-</tr>
-<tr>
-<td align="center">大对象</td>
-<td align="center"><code>(32KB, +∞)</code></td>
-</tr>
-</tbody></table>
-<p><strong>表 7-1 对象的类别和大小</strong></p>
-<p>因为程序中的绝大多数对象的大小都在 32KB 以下，而申请的内存大小影响 Go 语言运行时分配内存的过程和开销，所以分别处理大对象和小对象有利于提高内存分配器的性能。</p>
-<h4 id="多级缓存"><a href="#多级缓存" class="headerlink" title="多级缓存"></a>多级缓存</h4><p>内存分成不同的级别分别管理，线程缓存（Thread Cache）、中心缓存（Central Cache）和页堆（Page Heap）三个组件分级管理内存</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx008emudtj30xc0hs3zj.jpg" alt="multi-level-cache"></p>
-<p>32KB以上的对象，内存分配器会直接分配到页堆，线程缓存不足时，会使用中心缓存进行补充</p>
-<h4 id="虚拟内存布局"><a href="#虚拟内存布局" class="headerlink" title="虚拟内存布局"></a>虚拟内存布局</h4><p>稀疏内存：</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx29xhzis0j30xj0dmaar.jpg" alt="heap-after-go-1-11"></p>
-<p>稀疏内存是 Go 语言在 1.11 中提出的方案，使用稀疏的内存布局不仅能移除堆大小的上限，还能解决 C 和 Go 混合使用时的地址空间冲突问题，不过因为基于稀疏内存的内存管理失去了内存的连续性这一假设，这也使内存管理变得更加复杂。</p>
-<p>如图所示，使用二维的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.heapArena"><code>runtime.heapArena</code></a> 数组管理所有的内存，每个单元都会管理 64MB 的内存空间。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> heapArena <span class="keyword">struct</span> &#123;</span><br><span class="line">	bitmap       [heapArenaBitmapBytes]<span class="keyword">byte</span></span><br><span class="line">	spans        [pagesPerArena]*mspan</span><br><span class="line">	pageInUse    [pagesPerArena / <span class="number">8</span>]<span class="keyword">uint8</span></span><br><span class="line">	pageMarks    [pagesPerArena / <span class="number">8</span>]<span class="keyword">uint8</span></span><br><span class="line">	pageSpecials [pagesPerArena / <span class="number">8</span>]<span class="keyword">uint8</span></span><br><span class="line">	checkmarks   *checkmarksMap</span><br><span class="line">	zeroedBase   <span class="keyword">uintptr</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>bitmap</code> 用于标识 <code>arena</code> 区域中的那些地址保存了对象，位图中的每个字节都会表示堆区中的 32 字节是否空闲；</p>
-<p><code>arena</code> 区域是真正的堆区，运行时会将 8KB 看做一页，这些内存页中存储了所有在堆上初始化的对象；</p>
-<p><code>zeroedBase</code> 字段指向了该结构体管理的内存的基地址。</p>
-<h3 id="内存管理组件"><a href="#内存管理组件" class="headerlink" title="内存管理组件"></a>内存管理组件</h3><p>最重要的几种组件：runtime.mspan, runtime.mcache, runtime.mcentral, runtime.mheap</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2a4fmmlbj30xj0oqtaq.jpg" alt="go-memory-layout"></p>
-<p>Go 语言程序都会在启动时初始化如上图所示的内存布局，每一个处理器都会分配一个线程缓存 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache"><code>runtime.mcache</code></a> 用于处理微对象和小对象的分配，它们会持有内存管理单元 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a>。</p>
-<p>每个类型的内存管理单元都会管理特定大小的对象，当内存管理单元中不存在空闲对象时，它们会从 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap"><code>runtime.mheap</code></a> 持有的 134 个中心缓存 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcentral"><code>runtime.mcentral</code></a> 中获取新的内存单元，中心缓存属于全局的堆结构体 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap"><code>runtime.mheap</code></a>，它会从操作系统中申请内存。</p>
-<h4 id="内存管理单元runtime-mspan"><a href="#内存管理单元runtime-mspan" class="headerlink" title="内存管理单元runtime.mspan"></a>内存管理单元runtime.mspan</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mspan <span class="keyword">struct</span> &#123;</span><br><span class="line">	next *mspan</span><br><span class="line">	prev *mspan</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>mspan是Go语言内存管理的基本单元，它们会构成双向链表的形式，运行时使用mSpanList来使用</p>
-<p>每个mspan都管理着npages个大小为8KB的页（操作系统内存页的整数倍）</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mspan <span class="keyword">struct</span> &#123;</span><br><span class="line">	startAddr <span class="keyword">uintptr</span> <span class="comment">// 起始地址</span></span><br><span class="line">	npages    <span class="keyword">uintptr</span> <span class="comment">// 页数</span></span><br><span class="line">	freeindex <span class="keyword">uintptr</span></span><br><span class="line"></span><br><span class="line">	allocBits  *gcBits</span><br><span class="line">	gcmarkBits *gcBits</span><br><span class="line">	allocCache <span class="keyword">uint64</span></span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">startAddr 和 npages — 确定该结构体管理的多个页所在的内存，每个页的大小都是 <span class="number">8</span>KB；</span><br><span class="line">freeindex — 扫描页中空闲对象的初始索引；</span><br><span class="line">allocBits 和 gcmarkBits — 分别用于标记内存的占用和回收情况；</span><br><span class="line">allocCache — allocBits 的补码，可以用于快速查找内存中未被使用的内存；</span><br></pre></td></tr></table></figure>
-
-<p>mspan管理内存：</p>
-<ol>
-<li><p>当结构体管理的内存不足时，运行时会以页为单位向堆申请内存：</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2ah0tzpuj30xj0gemxn.jpg" alt="mspan-and-pages"></p>
-</li>
-<li><p>当用户程序或者线程向 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a> 申请内存时，它会使用 <code>allocCache</code> 字段以对象为单位在管理的内存中快速查找待分配的空间。如果我们能在内存中找到空闲的内存单元会直接返回，当内存中不包含空闲的内存时，上一级的组件 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache"><code>runtime.mcache</code></a> 会为调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache.refill"><code>runtime.mcache.refill</code></a> 更新内存管理单元以满足为更多对象分配内存的需求。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2ah7gfxlj30xj0d2mxx.jpg" alt="mspan-and-objects"></p>
-</li>
-</ol>
-<p>每个内存管理单元的状态使用mSpanStateBox管理</p>
-<p>该状态可能处于 <code>mSpanDead</code>、<code>mSpanInUse</code>、<code>mSpanManual</code> 和 <code>mSpanFree</code> 四种情况。当 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a> 在空闲堆中，它会处于 <code>mSpanFree</code> 状态；当 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a> 已经被分配时，它会处于 <code>mSpanInUse</code>、<code>mSpanManual</code> 状态，运行时会遵循下面的规则转换该状态：</p>
+<h2 id="设计原理"><a href="#设计原理" class="headerlink" title="设计原理"></a>设计原理</h2><p>应用程序的内存一般会分成堆区和栈区，程序在运行期间可以主动从堆区申请内存空间，这些内存由内存分配器分配并由垃圾收集器负责回收。</p>
+<p>栈区的内存由编译器自动分配和释放，其中存储的是函数的入参和局部变量。</p>
+<p>总结：Go的栈使用连续栈进行管理，对象或结构体是分配到栈还是堆，由逃逸分析决定，栈是线程私有，Go的栈是以Goroutine作为context，为了高效管理栈，使用了2个寄存器BP,SP来表明其基址和栈顶。</p>
+<h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><p>栈寄存器是 CPU 寄存器中的一种，它的主要作用是跟踪函数的调用栈，Go 语言的汇编代码包含 BP 和 SP 两个栈寄存器，它们分别存储了栈的基址指针和栈顶的地址。BP 和 SP 之间的内存就是当前函数的调用栈。</p>
+<p>栈区内存都是从高地址向低地址扩展的，当应用程序申请或者释放栈内存时只需要修改 SP 寄存器的值，这种线性的内存分配方式与堆内存相比更加快速，仅会带来极少的额外开销。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx1yjgbzr2j30xj0e6aab.jpg" alt="stack-registers"></p>
+<h3 id="线程栈"><a href="#线程栈" class="headerlink" title="线程栈"></a>线程栈</h3><p>创建一个线程时，系统会根据架构不同选择不同的默认栈大小，一般为2~4MB左右，用户程序可以在栈上存储函数参数和局部变量。</p>
+<p>对于Go:由于Go设计时以协程实现，所以其再用户态实现Goroutine作为执行上下文。</p>
+<h3 id="逃逸分析"><a href="#逃逸分析" class="headerlink" title="逃逸分析"></a>逃逸分析</h3><p>在手动管理内存的语言中，可以选择将对象或结构体分配到栈或者堆上，但是这样会存在2个问题：</p>
 <ul>
-<li>在垃圾回收的任意阶段，可能从 <code>mSpanFree</code> 转换到 <code>mSpanInUse</code> 和 <code>mSpanManual</code>；</li>
-<li>在垃圾回收的清除阶段，可能从 <code>mSpanInUse</code> 和 <code>mSpanManual</code> 转换到 <code>mSpanFree</code>；</li>
-<li>在垃圾回收的标记阶段，不能从 <code>mSpanInUse</code> 和 <code>mSpanManual</code> 转换到 <code>mSpanFree</code>；</li>
+<li>不需要分配到堆上的对象分配到了堆上 — 浪费内存空间；</li>
+<li>需要分配到堆上的对象分配到了栈上 — 悬挂指针、影响内存安全；</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mspan <span class="keyword">struct</span> &#123;</span><br><span class="line">	...</span><br><span class="line">	state       mSpanStateBox</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Eg:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> *<span class="title">dangling_pointer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> &amp;i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//当 dangling_pointer 函数返回后，它的本地变量会被编译器回收，调用方获取的是危险的悬挂指针</span></span><br></pre></td></tr></table></figure>
 
-<h5 id="跨度类"><a href="#跨度类" class="headerlink" title="跨度类"></a>跨度类</h5><p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.spanClass"><code>runtime.spanClass</code></a> 是 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a> 的跨度类，它决定了内存管理单元中存储的对象大小和个数。</p>
-<p>Go 语言的内存管理模块中一共包含 67 种跨度类，每一个跨度类都会存储特定大小的对象并且包含特定数量的页数以及对象，所有的数据都会被预选计算好并存储在 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.class_to_size"><code>runtime.class_to_size</code></a> 和 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.class_to_allocnpages"><code>runtime.class_to_allocnpages</code></a> 等变量中。</p>
-<p><strong>跨度类的数据</strong></p>
-<p>会有ID为0的跨度类管理超过32KB的对象</p>
-<table>
-<thead>
-<tr>
-<th align="center">class</th>
-<th align="right">bytes/obj</th>
-<th align="right">bytes/span</th>
-<th align="right">objects</th>
-<th align="center">tail waste</th>
-<th align="center">max waste</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">1</td>
-<td align="right">8</td>
-<td align="right">8192</td>
-<td align="right">1024</td>
-<td align="center">0</td>
-<td align="center">87.50%</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="right">16</td>
-<td align="right">8192</td>
-<td align="right">512</td>
-<td align="center">0</td>
-<td align="center">43.75%</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="right">24</td>
-<td align="right">8192</td>
-<td align="right">341</td>
-<td align="center">0</td>
-<td align="center">29.24%</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="right">32</td>
-<td align="right">8192</td>
-<td align="right">256</td>
-<td align="center">0</td>
-<td align="center">46.88%</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="right">48</td>
-<td align="right">8192</td>
-<td align="right">170</td>
-<td align="center">32</td>
-<td align="center">31.52%</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="right">64</td>
-<td align="right">8192</td>
-<td align="right">128</td>
-<td align="center">0</td>
-<td align="center">23.44%</td>
-</tr>
-<tr>
-<td align="center">7</td>
-<td align="right">80</td>
-<td align="right">8192</td>
-<td align="right">102</td>
-<td align="center">32</td>
-<td align="center">19.07%</td>
-</tr>
-<tr>
-<td align="center">…</td>
-<td align="right">…</td>
-<td align="right">…</td>
-<td align="right">…</td>
-<td align="center">…</td>
-<td align="center">…</td>
-</tr>
-<tr>
-<td align="center">67</td>
-<td align="right">32768</td>
-<td align="right">32768</td>
-<td align="right">1</td>
-<td align="center">0</td>
-<td align="center">12.50%</td>
-</tr>
-</tbody></table>
-<h4 id="线程缓存"><a href="#线程缓存" class="headerlink" title="线程缓存"></a>线程缓存</h4><p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache"><code>runtime.mcache</code></a> 是 Go 语言中的线程缓存，它会与线程上的处理器一一绑定，主要用来缓存用户程序申请的微小对象。每一个线程缓存都持有 68 * 2 个 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a>，这些内存管理单元都存储在结构体的 <code>alloc</code> 字段中，线程缓存在刚刚被初始化时是不包含 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a> 的，只有当用户程序申请内存时才会从上一级组件获取新的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a> 满足内存分配的需求。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2at81uv6j30xj0b4dgd.jpg" alt="mcache-and-mspans"></p>
+<p>Go 语言的逃逸分析遵循以下两个不变性：</p>
 <ol>
-<li><p>初始化：在初始化处理器时，在系统栈中使用mheap的线程缓存分配器初始化，mcache</p>
-</li>
-<li><p>替换：<a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache.refill"><code>runtime.mcache.refill</code></a> 会为线程缓存获取一个指定跨度类的内存管理单元，被替换的单元不能包含空闲的内存空间，而获取的单元中需要至少包含一个空闲对象用于分配内存：</p>
-</li>
-<li><p>微分配器：线程缓存中还包含几个用于分配微对象的字段，下面的这三个字段组成了微对象分配器，专门管理 16 字节以下的对象。微分配器只会用于分配非指针类型的内存，上述三个字段中 <code>tiny</code> 会指向堆中的一片内存，<code>tinyOffset</code> 是下一个空闲内存所在的偏移量，最后的 <code>local_tinyallocs</code> 会记录内存分配器中分配的对象个数。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mcache <span class="keyword">struct</span> &#123;</span><br><span class="line">	tiny             <span class="keyword">uintptr</span></span><br><span class="line">	tinyoffset       <span class="keyword">uintptr</span></span><br><span class="line">	local_tinyallocs <span class="keyword">uintptr</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>指向栈对象的指针不能存在于堆中；</li>
+<li>指向栈对象的指针不能在栈对象回收后存活；</li>
 </ol>
-<h4 id="中心缓存"><a href="#中心缓存" class="headerlink" title="中心缓存"></a>中心缓存</h4><p>每个中心缓存都会管理某个跨度类的内存管理单元，它会同时持有两个 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.spanSet"><code>runtime.spanSet</code></a>，分别存储包含空闲对象和不包含空闲对象的内存管理单元。</p>
-<h4 id="页堆"><a href="#页堆" class="headerlink" title="页堆"></a>页堆</h4><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2b0hrqenj30xj0aa74v.jpg" alt="mheap-and-mcentrals"></p>
-<p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap"><code>runtime.mheap</code></a> 是内存分配的核心结构体，Go 语言程序会将其作为全局变量存储，而堆上初始化的所有对象都由该结构体统一管理，该结构体中包含两组非常重要的字段，其中一个是全局的中心缓存列表 <code>central</code>，另一个是管理堆区内存区域的 <code>arenas</code> 以及相关字段。</p>
-<p>页堆中包含一个长度为 136 的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcentral"><code>runtime.mcentral</code></a> 数组，其中 68 个为跨度类需要 <code>scan</code> 的中心缓存，另外的 68 个是 <code>noscan</code> 的中心缓存。</p>
-<ol>
-<li><p>内存管理单元：</p>
-<p>mspan获取新的单元是通过mheap.alloc获取的</p>
-<p>先调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap.reclaim"><code>runtime.mheap.reclaim</code></a> 方法回收一部分内存，随后运行时通过 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap.allocSpan"><code>runtime.mheap.allocSpan</code></a> 分配新的内存管理单元</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *mheap)</span> <span class="title">alloc</span><span class="params">(npages <span class="keyword">uintptr</span>, spanclass spanClass, needzero <span class="keyword">bool</span>)</span> *<span class="title">mspan</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> s *mspan</span><br><span class="line">	systemstack(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> h.sweepdone == <span class="number">0</span> &#123;</span><br><span class="line">			h.reclaim(npages)</span><br><span class="line">		&#125;</span><br><span class="line">		s = h.allocSpan(npages, <span class="literal">false</span>, spanclass, &amp;memstats.heap_inuse)</span><br><span class="line">	&#125;)</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>扩容：</p>
-<p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap.grow"><code>runtime.mheap.grow</code></a> 会向操作系统申请更多的内存空间，传入的页数经过对齐可以得到期望的内存大小，我们可以将该方法的执行过程分成以下几个部分：</p>
-<ol>
-<li>通过传入的页数获取期望分配的内存空间大小以及内存的基地址；</li>
-<li>如果 <code>arena</code> 区域没有足够的空间，调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap.sysAlloc"><code>runtime.mheap.sysAlloc</code></a> 从操作系统中申请更多的内存；</li>
-<li>扩容 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap"><code>runtime.mheap</code></a> 持有的 <code>arena</code> 区域并更新页分配器的元信息；</li>
-<li>在某些场景下，调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.pageAlloc.scavenge"><code>runtime.pageAlloc.scavenge</code></a> 回收不再使用的空闲内存页；</li>
-</ol>
-</li>
-</ol>
-<h4 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h4><p>堆上所有的对象都是通过runtime.newobject分配内存的，其会调用runtime.mallocgc分配</p>
-<p>可以看到，其会按照对象大小来按不同的方式进行内存分配</p>
-<p><strong>三种对象</strong></p>
+<p>Go 语言的编译器使用逃逸分析决定哪些变量应该在栈上分配，哪些变量应该在堆上分配，其中包括使用 <code>new</code>、<code>make</code> 和字面量等方法隐式分配的内存。为了保证内存的绝对安全，编译器可能会将一些变量错误地分配到堆上，但是因为堆也会被垃圾收集器扫描，所以不会造成内存泄露以及悬挂指针等安全问题。</p>
+<p><strong>逃逸分析的实现：</strong></p>
+<p>逃逸分析是静态分析的一种，在编译器活动抽象语法树以后，可以通过抽象语法树分析静态的数据流。</p>
 <ul>
-<li>微对象 <code>(0, 16B)</code> — 先使用微型分配器，再依次尝试线程缓存、中心缓存和堆分配内存；</li>
-<li>小对象 <code>[16B, 32KB]</code> — 依次尝试使用线程缓存、中心缓存和堆分配内存；</li>
-<li>大对象 <code>(32KB, +∞)</code> — 直接在堆上分配内存；</li>
+<li>构建带权重的有向图，其中顶点表示被分配的变量，边表示变量之间的分配关系，权重表示寻址和取地址的次数；</li>
+<li>遍历对象分配图并查找违反两条不变性的变量分配关系，如果堆上的变量指向了栈上的变量，那么该变量需要分配在堆上；</li>
+<li>记录从函数的调用参数到堆以及返回值的数据流，增强函数参数的逃逸分析；</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mallocgc</span><span class="params">(size <span class="keyword">uintptr</span>, typ *_type, needzero <span class="keyword">bool</span>)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">	mp := acquirem()</span><br><span class="line">	mp.mallocing = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">	c := gomcache()</span><br><span class="line">	<span class="keyword">var</span> x unsafe.Pointer</span><br><span class="line">	noscan := typ == <span class="literal">nil</span> || typ.ptrdata == <span class="number">0</span></span><br><span class="line">	<span class="keyword">if</span> size &lt;= maxSmallSize &#123;</span><br><span class="line">		<span class="keyword">if</span> noscan &amp;&amp; size &lt; maxTinySize &#123;</span><br><span class="line">			<span class="comment">// 微对象分配</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">// 小对象分配</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// 大对象分配</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	publicationBarrier()</span><br><span class="line">	mp.mallocing = <span class="number">0</span></span><br><span class="line">	releasem(mp)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="栈内存空间"><a href="#栈内存空间" class="headerlink" title="栈内存空间"></a>栈内存空间</h3><p>Go 语言使用用户态线程 Goroutine 作为执行上下文，它的额外开销和默认栈大小都比线程小很多</p>
+<p>在1.3版本以后，都是有连续栈，最小栈空间在1.4版本，为2KB</p>
+<p>连续栈：</p>
+<p>核心原理是每当程序的栈空间不足时，初始化一片更大的栈空间并将原栈中的所有值都迁移到新栈中，新的局部变量或者函数调用就有充足的内存空间。</p>
+<p>步骤：</p>
+<ol>
+<li>在内存空间中分配更大的栈内存空间；</li>
+<li>将旧栈中的所有内容复制到新栈中；</li>
+<li><strong>将指向旧栈对应变量的指针重新指向新栈</strong>；</li>
+<li>销毁并回收旧栈的内存空间；</li>
+</ol>
+<p>因为需要拷贝变量和调整指针，连续栈增加了栈扩容时的额外开销，但是通过合理栈缩容机制就能避免热分裂带来的性能问题，即在GC时期合理调整栈的大小。 GC 期间如果 Goroutine 使用了栈内存的四分之一，那就将其内存减少一半，这样在栈内存几乎充满时也只会扩容一次，不会因为函数调用频繁扩缩容。</p>
+<h2 id="栈操作"><a href="#栈操作" class="headerlink" title="栈操作"></a>栈操作</h2><h4 id="栈初始化"><a href="#栈初始化" class="headerlink" title="栈初始化"></a>栈初始化</h4><p>运行时使用全局的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackpool"><code>runtime.stackpool</code></a> 和线程缓存中的空闲链表分配 32KB 以下的栈内存，使用全局的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackLarge"><code>runtime.stackLarge</code></a> 和堆内存分配 32KB 以上的栈内存，提高本地分配栈内存的性能。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx263w3xb5j30xc096gma.jpg" alt="stack-memory"></p>
+<p>栈空间在运行时中包含两个重要的全局变量，分别是 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackpool"><code>runtime.stackpool</code></a> 和 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackLarge"><code>runtime.stackLarge</code></a>，这两个变量分别表示全局的栈缓存和大栈缓存，前者可以分配小于 32KB 的内存，后者用来分配大于 32KB 的栈空间：</p>
+<p>每一个线程缓存 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache"><code>runtime.mcache</code></a> 中也都加入了栈缓存减少锁竞争影响。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> stackpool [_NumStackOrders]<span class="keyword">struct</span> &#123;</span><br><span class="line">	item stackpoolItem</span><br><span class="line">	_    [cpu.CacheLinePadSize - unsafe.Sizeof(stackpoolItem&#123;&#125;)%cpu.CacheLinePadSize]<span class="keyword">byte</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stackpoolItem <span class="keyword">struct</span> &#123;</span><br><span class="line">	mu   mutex</span><br><span class="line">	span mSpanList</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> stackLarge <span class="keyword">struct</span> &#123;</span><br><span class="line">	lock mutex</span><br><span class="line">	free [heapAddrBits - pageShift]mSpanList</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="微对象"><a href="#微对象" class="headerlink" title="微对象"></a>微对象</h4><p>小于 16 字节的对象划分为微对象，它会使用线程缓存上的微分配器提高微对象分配的性能，我们主要使用它来分配较小的字符串以及逃逸的临时变量。微分配器可以将多个较小的内存分配请求合入同一个内存块中，只有当内存块中的所有对象都需要被回收时，整片内存才可能被回收。</p>
-<p>微分配器管理的对象不可以是指针类型，管理多个对象的内存块大小 <code>maxTinySize</code> 是可以调整的，在默认情况下，内存块的大小为 16 字节。<code>maxTinySize</code> 的值越大，组合多个对象的可能性就越高，内存浪费也就越严重；<code>maxTinySize</code> 越小，内存浪费就会越少，不过无论如何调整，8 的倍数都是一个很好的选择。</p>
-<ul>
-<li>微分配器</li>
-</ul>
-<h4 id="小对象"><a href="#小对象" class="headerlink" title="小对象"></a>小对象</h4><p>小对象是指大小为 16 字节到 32,768 字节的对象以及所有小于 16 字节的指针类型的对象，小对象的分配可以被分成以下的三个步骤：</p>
+<p>Go语言的栈内存都是分配到堆上的，运行时初始化会调用<a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackinit"><code>runtime.stackinit</code></a> 初始化这些全局变量。</p>
+<h4 id="栈分配"><a href="#栈分配" class="headerlink" title="栈分配"></a>栈分配</h4><p>运行时会在 Goroutine 的初始化函数 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.malg"><code>runtime.malg</code></a> 中调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackalloc"><code>runtime.stackalloc</code></a> 分配一个大小足够栈内存空间，根据线程缓存和申请栈的大小，该函数会通过三种不同的方法分配栈空间：</p>
 <ol>
-<li>确定分配对象的大小以及跨度类 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.spanClass"><code>runtime.spanClass</code></a>；</li>
-<li>从线程缓存、中心缓存或者堆中获取内存管理单元并从内存管理单元找到空闲的内存空间；</li>
-<li>调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.memclrNoHeapPointers"><code>runtime.memclrNoHeapPointers</code></a> 清空空闲内存中的所有数据；</li>
+<li>如果栈空间较小，使用全局栈缓存或者线程缓存上固定大小的空闲链表分配内存；</li>
+<li>如果栈空间较大，从全局的大栈缓存 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackLarge"><code>runtime.stackLarge</code></a> 中获取内存空间；</li>
+<li>如果栈空间较大并且 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackLarge"><code>runtime.stackLarge</code></a> 空间不足，在堆上申请一片大小足够内存空间；</li>
 </ol>
-<h4 id="大对象"><a href="#大对象" class="headerlink" title="大对象"></a>大对象</h4><p>运行时对于大于 32KB 的大对象会单独处理，我们不会从线程缓存或者中心缓存中获取内存管理单元，而是直接调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache.allocLarge"><code>runtime.mcache.allocLarge</code></a> 分配大片内存</p>
-<h4 id="内存分配算法TCMalloc"><a href="#内存分配算法TCMalloc" class="headerlink" title="内存分配算法TCMalloc"></a>内存分配算法TCMalloc</h4><p>在 TCMalloc 内存管理内部分为两个部分：线程内存（thread memory)和页堆（page heap）。</p>
+<h4 id="栈扩容"><a href="#栈扩容" class="headerlink" title="栈扩容"></a>栈扩容</h4><p>编译器会在函数调用中插入运行时检查，检查函数调用当前Goroutine的栈空间是否充足，当需要扩容时，会保存一些栈的信息并调用runtime.newstack创建新栈进行扩容</p>
+<p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.newstack"><code>runtime.newstack</code></a> 会先做一些准备工作并检查当前 Goroutine 是否发出了抢占请求。如果当前 Goroutine 不需要被抢占，意味着我们需要新的栈空间来支持函数调用和本地变量的初始化，运行时会先检查目标大小的栈是否会溢出。</p>
+<p>如果目标栈的大小没有超出程序的限制，我们会将 Goroutine 切换至 <code>_Gcopystack</code> 状态并调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.copystack"><code>runtime.copystack</code></a> 开始栈拷贝。在拷贝栈内存之前，运行时会通过 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackalloc"><code>runtime.stackalloc</code></a> 分配新的栈空间：</p>
+<p>分配好以后开始拷贝栈空间</p>
+<p>同上的连续栈扩容</p>
+<h4 id="栈缩容"><a href="#栈缩容" class="headerlink" title="栈缩容"></a>栈缩容</h4><p>GC时，使用率为1/4时，缩容为之前的一半，也会coptyStack</p>
+<h3 id="栈内容扩展"><a href="#栈内容扩展" class="headerlink" title="栈内容扩展"></a>栈内容扩展</h3><h4 id="栈的汇编分析"><a href="#栈的汇编分析" class="headerlink" title="栈的汇编分析"></a>栈的汇编分析</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> x =<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> c = <span class="number">0</span>;</span><br><span class="line">    c = a + b + x;</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    ret = foo(<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">foo:</span><br><span class="line">.LFB0:</span><br><span class="line">    .file <span class="number">1</span> <span class="string">&quot;call_no_stack.c&quot;</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">4</span> <span class="number">0</span></span><br><span class="line">    .cfi_startproc</span><br><span class="line">    pushq    %rbp             <span class="comment">//rbp入栈 （rsp-8）</span></span><br><span class="line">    .cfi_def_cfa_offset <span class="number">16</span></span><br><span class="line">    .cfi_offset <span class="number">6</span>, <span class="number">-16</span></span><br><span class="line">    movq    %rsp, %rbp       <span class="comment">//rsp 赋值给 rbp，这里rsp并没有移动，可能是因为这里是最后一个函数调用，所以不需要移动rsp</span></span><br><span class="line">    .cfi_def_cfa_register <span class="number">6</span></span><br><span class="line">    movl    %edi, <span class="number">-20</span>(%rbp)  <span class="comment">//这里通过rbp来访问栈，将main函数中的实参2放入rbp-20内存</span></span><br><span class="line">    movl    %esi, <span class="number">-24</span>(%rbp)  <span class="comment">//这里表示栈空间分配了24字节，猜测：函数中的参数值从栈顶开始存储</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">5</span> <span class="number">0</span></span><br><span class="line">    movb    $<span class="number">1</span>, <span class="number">-5</span>(%rbp)     <span class="comment">//局部变量x入栈，x占用1个字节，相当于x后入栈：栈的地址是向下减少的</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">6</span> <span class="number">0</span></span><br><span class="line">    movl    $<span class="number">0</span>, <span class="number">-4</span>(%rbp)     <span class="comment">//局部变量c入栈，放在rbp-4处</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">7</span> <span class="number">0</span></span><br><span class="line">    movl    <span class="number">-20</span>(%rbp), %edx   </span><br><span class="line">    movl    <span class="number">-24</span>(%rbp), %eax</span><br><span class="line">    addl    %eax, %edx      <span class="comment">//相加操作</span></span><br><span class="line">    movsbl    <span class="number">-5</span>(%rbp), %eax </span><br><span class="line">    addl    %edx, %eax</span><br><span class="line">    movl    %eax, <span class="number">-4</span>(%rbp)</span><br><span class="line">    .loc <span class="number">1</span> <span class="number">8</span> <span class="number">0</span></span><br><span class="line">    movl    <span class="number">-4</span>(%rbp), %eax  <span class="comment">//将c变量的结果保存到eax寄存器，以便函数返回</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">9</span> <span class="number">0</span></span><br><span class="line">    popq    %rbp            <span class="comment">//将堆栈pop，此时栈顶保存着调用函数的rbp值，将栈顶元素赋予rbp寄存器（恢复rbp寄存器）</span></span><br><span class="line">    .cfi_def_cfa <span class="number">7</span>, <span class="number">8</span></span><br><span class="line">    ret                     <span class="comment">//跳转回上一层处继续执行</span></span><br><span class="line">    .cfi_endproc</span><br><span class="line">.LFE0:</span><br><span class="line">    .size    foo, .-foo</span><br><span class="line">    .globl    main</span><br><span class="line">    .type    main, @function</span><br><span class="line">main:</span><br><span class="line">.LFB1:</span><br><span class="line">    .loc <span class="number">1</span> <span class="number">12</span> <span class="number">0</span></span><br><span class="line">    .cfi_startproc</span><br><span class="line">    pushq    %rbp              <span class="comment">//rbp：64位寄存器——指向栈底，将rbp寄存器内的值入栈-pushq操作会改变rsp的值</span></span><br><span class="line">    .cfi_def_cfa_offset <span class="number">16</span></span><br><span class="line">    .cfi_offset <span class="number">6</span>, <span class="number">-16</span></span><br><span class="line">    movq    %rsp, %rbp         <span class="comment">//rsp：64位堆栈指针寄存器——指向栈顶，将rsp值存入rbp寄存器内</span></span><br><span class="line">    .cfi_def_cfa_register <span class="number">6</span></span><br><span class="line">    subq    $<span class="number">16</span>, %rsp          <span class="comment">//rsp-16，这里讲栈顶指针向下移动16字节，相当于为main函数预留了16字节的栈空间-保存局部变量包括实参</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">13</span> <span class="number">0</span></span><br><span class="line">    movl    $<span class="number">0</span>, <span class="number">-4</span>(%rbp)       <span class="comment">//对应局部变量ret = 0</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">14</span> <span class="number">0</span></span><br><span class="line">    movl    $<span class="number">3</span>, %esi           <span class="comment">//这里直接将实参存入esi寄存器而不是放入堆栈，可加快访问速度</span></span><br><span class="line">    movl    $<span class="number">2</span>, %edi</span><br><span class="line">    call    foo                <span class="comment">//调用foo函数:call指令有另个作用：1，将call指令的下一条指令入栈-并改变rsp 2，修改程序计数器eip，跳转到foo函数的开头执行</span></span><br><span class="line">    movl    %eax, <span class="number">-4</span>(%rbp)     <span class="comment">//eax寄存器保存着返回值，这里将eax赋值给rbp-4的位置，也就是ret</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">15</span> <span class="number">0</span></span><br><span class="line">    movl    $<span class="number">0</span>, %eax</span><br><span class="line">    .loc <span class="number">1</span> <span class="number">16</span> <span class="number">0</span></span><br><span class="line">    leave                     <span class="comment">//leave指令是函数开头的pushq %rbp和movq %rsp,%rbp的逆操作,　　　　　　　　　　　　　　　　　　//有两个作用：1，把rbp赋值给rsp 2,然后把该函数栈栈顶保存的rbp值恢复到rbp寄存器中,同时rsp+4(第二部的操作相当于pop栈顶元素)</span></span><br><span class="line">    .cfi_def_cfa <span class="number">7</span>, <span class="number">8</span></span><br><span class="line">    ret                       <span class="comment">//现在栈顶元素保存的是下一条执行的指令，ret的作用就是pop栈顶元素，并将栈顶元素赋值给程序计数器bip，然后程序跳转回bip所在地址继续执行</span></span><br><span class="line">    .cfi_endproc</span><br><span class="line">.LFE1:</span><br><span class="line">    .size    main, .-main</span><br></pre></td></tr></table></figure>
+
 <ol>
-<li>每一个线程都可以获得一个用于无锁分配小对象的缓存，这样可以让并行程序分配小对象（&lt;=32KB）非常高效。PS, java 中叫TLAB：Thread Local Allocation Buffer。Go 中叫mcache（挂在每一个P上）</li>
-<li>TCMalloc 管理的堆由一组页组成，<strong>一组连续的页面被表示为 span</strong>。当分配的对象大于 32KB，将使用页堆（Page Heap）进行内存分配。</li>
+<li>变量存储会按照会根据类型，在汇编的得出其偏移量来操作</li>
+<li>只有两个寄存器bp,sp来管理当前栈帧，之前已经入栈的栈帧的相关信息，会存储到其上下文中</li>
 </ol>
-<p>Go 的内存分配器基于 Thread-Cache Malloc (tcmalloc) ，tcmalloc 为每个线程实现了一个本地缓存， 区分了小对象（小于 32kb）和大对象分配两种分配类型，其管理的内存单元称为 span。但与 tcmalloc 存在一定差异。 这个差异来源于 Go 语言被设计为没有显式的内存分配与释放， 完全依靠编译器与运行时的配合来自动处理，因此也就造就了内存分配器、垃圾回收器两大组件。统一管理内存会提前分配或一次性释放一大块内存， 进而减少与操作系统沟通造成的开销，进而提高程序的运行性能。 支持内存管理另一个优势就是能够更好的支持垃圾回收。</p>
-<h4 id="内存分配器的核心组件："><a href="#内存分配器的核心组件：" class="headerlink" title="内存分配器的核心组件："></a>内存分配器的核心组件：</h4><ol>
-<li><p>heapArena: 保留整个虚拟地址空间</p>
-</li>
-<li><p>mheap：分配的堆，在页大小为 8KB 的粒度上进行管理</p>
-</li>
-<li><p>mspan：是 mheap 上管理的一连串的页</p>
-</li>
-<li><p>mcentral：收集了给定大小等级的所有 span</p>
-</li>
-<li><p>mcache：为 per-P 的缓存。</p>
-</li>
-</ol>
-<p><strong>go 基于上述 struct 提供了 runtime.newobject 用于goroutine 代码申请内存，由gc 负责回收</strong>。runtime.newobject 就是内存分配的核心入口</p>
-<p>页是向操作系统申请内存的最小单位，目前设计为 8KB。传统意义上的栈被 Go 的运行时霸占，不开放给用户态代码；而传统意义上的堆内存，又被 Go 运行时划分为了两个部分， 一个是 Go 运行时自身所需的堆内存，即堆外内存；另一部分则用于 Go 用户态代码所使用的堆内存，也叫做 Go 堆。 Go 堆负责了用户态对象的存放以及 goroutine 的执行栈。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx01et2bvvj337v0u00yu.jpg" alt="img"></p>
-<p>Go 内存管理的一般思想是使用不同的内存结构为不同大小的对象使用不同的内存缓存级别来分配内存。将一个从操作系统接收的连续地址的块切分到多级缓存来减少锁的使用，同时<strong>根据object的大小</strong>分配内存减少内存碎片以提高内存分配的效率和在内存释放之后加快 GC 运行的速度。mcache ==&gt; mcentral ==&gt; mheap（向堆申请一个arena） ==&gt; 堆</p>
-<ol>
-<li>大于 32K 的大对象直接从 mheap 分配。</li>
-<li>小于 16B 的使用 mcache 的微型分配器分配</li>
-<li>对象大小在 16B ~ 32K 之间的的，首先通过计算使用的大小规格，然后使用 mcache 中对应大小规格的块分配</li>
-<li>如果对应的大小规格在 mcache 中没有可用的块，则向 mcentral 申请</li>
-<li>如果 mcentral 中没有可用的块，则向 mheap 申请，并根据 BestFit 算法找到最合适的 mspan。如果申请到的 mspan 超出申请大小，将会根据需求进行切分，以返回用户所需的页数。剩余的页构成一个新的 mspan 放回 mheap 的空闲列表。</li>
-<li>如果 mheap 中没有可用 span，则向操作系统申请一系列新的页（最小 1MB）。 Go 会在操作系统分配超大的页（称作 arena）。分配一大批页会减少和操作系统通信的成本。</li>
-</ol>
-<p>参考文章：</p>
-<p><a target="_blank" rel="noopener" href="https://draveness.me/golang/docs/part3-runtime/ch07-memory/golang-memory-allocator/">https://draveness.me/golang/docs/part3-runtime/ch07-memory/golang-memory-allocator/</a></p>
+<h4 id="栈空间对齐"><a href="#栈空间对齐" class="headerlink" title="栈空间对齐"></a>栈空间对齐</h4><p>栈的字节对齐，实际是指栈顶指针必须是16字节的整数倍，栈对齐是为了尽可能少的内存访问周期读取数据，保证性能 - 任何内存分配函数(alloca, malloc, calloc)生成的块的起始地址必须为16的整数倍。大多数函数的栈帧的边界必须为16的整数倍。</p>
+<h2 id="相关文章"><a href="#相关文章" class="headerlink" title="相关文章"></a>相关文章</h2><p>C语言函数栈帧实例：<a target="_blank" rel="noopener" href="https://gitbook.coder.cat/function-call-principle/content/c-stack-frame-example.html">https://gitbook.coder.cat/function-call-principle/content/c-stack-frame-example.html</a></p>
 
       
     </div>

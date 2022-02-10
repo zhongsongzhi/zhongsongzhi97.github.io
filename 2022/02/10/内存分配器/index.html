@@ -22,40 +22,40 @@
 <script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
 <meta name="description" content="内存分配器 程序中的数据和变量都会被分配到程序所在的虚拟内存中，内存空间包含两个重要区域：栈区（Stack）和堆区（Heap）。 栈：函数调用的参数、返回值以及局部变量大都会被分配到栈上，这部分内存会由编译器进行管理； 堆：不同编程语言使用不同的方法管理堆区的内存，C++ 等编程语言会由工程师主动申请和释放内存，Go 以及 Java 等编程语言会由工程师和编译器共同管理，堆中的对象由内存分配器分配">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Dylan Zhong&#96;s Blog">
-<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/28/go-runtime-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/index.html">
+<meta property="og:title" content="内存分配器">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/10/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/index.html">
 <meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
 <meta property="og:description" content="内存分配器 程序中的数据和变量都会被分配到程序所在的虚拟内存中，内存空间包含两个重要区域：栈区（Stack）和堆区（Heap）。 栈：函数调用的参数、返回值以及局部变量大都会被分配到栈上，这部分内存会由编译器进行管理； 堆：不同编程语言使用不同的方法管理堆区的内存，C++ 等编程语言会由工程师主动申请和释放内存，Go 以及 Java 等编程语言会由工程师和编译器共同管理，堆中的对象由内存分配器分配">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx6j27txd4j30u00vygpo.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gwzzuklofzj30xc0h8dgg.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gwzzyghypaj30xc082t8w.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gwzzzjuq0pj30xc08wdga.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx003dwnrxj30xc0gedgs.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx008emudtj30xc0hs3zj.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx29xhzis0j30xj0dmaar.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx2a4fmmlbj30xj0oqtaq.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx2ah0tzpuj30xj0gemxn.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx2ah7gfxlj30xj0d2mxx.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx2at81uv6j30xj0b4dgd.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx2b0hrqenj30xj0aa74v.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx01et2bvvj337v0u00yu.jpg">
-<meta property="article:published_time" content="2021-11-28T12:10:39.000Z">
-<meta property="article:modified_time" content="2021-12-08T08:57:07.534Z">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv6nhr2j30u00vyae4.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv57r7wj30xc0h8dgg.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv5p7g4j30xc082t8w.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv6596yj30xc08wdga.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv74k4aj30xc0gedgs.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv4rcpzj30xc0hs3zj.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv92p1nj30xj0dmaar.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv9hn3pj30xj0oqtaq.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv9ye3pj30xj0gemxn.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv84qmlj30xj0d2mxx.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv8lr0vj30xj0b4dgd.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv4dp1mj30xj0aa74v.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv7mc99j337v0u0wkl.jpg">
+<meta property="article:published_time" content="2022-02-10T13:02:56.000Z">
+<meta property="article:modified_time" content="2022-02-10T13:03:57.084Z">
 <meta property="article:author" content="Dylan Zhong">
-<meta property="article:tag" content="go - Runtime">
+<meta property="article:tag" content="内存管理">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gx6j27txd4j30u00vygpo.jpg">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv6nhr2j30u00vyae4.jpg">
 
 
-<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/28/go-runtime-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/">
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/10/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/28/go-runtime-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/","path":"2021/11/28/go-runtime-内存分配器/","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/10/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/","path":"2022/02/10/内存分配器/","title":"内存分配器"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title> | Dylan Zhong`s Blog</title>
+<title>内存分配器 | Dylan Zhong`s Blog</title>
   
 
 
@@ -155,12 +155,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/zhongsongzhi97.github.io/categories/">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/zhongsongzhi97.github.io/tags/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -199,7 +199,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/28/go-runtime-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/10/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
@@ -212,7 +212,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          内存分配器
         </h1>
 
         <div class="post-meta-container">
@@ -222,15 +222,18 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2021-11-28 20:10:39" itemprop="dateCreated datePublished" datetime="2021-11-28T20:10:39+08:00">2021-11-28</time>
+      <time title="Created: 2022-02-10 21:02:56 / Modified: 21:03:57" itemprop="dateCreated datePublished" datetime="2022-02-10T21:02:56+08:00">2022-02-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
+        <i class="far fa-folder"></i>
       </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-12-08 16:57:07" itemprop="dateModified" datetime="2021-12-08T16:57:07+08:00">2021-12-08</time>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">内存管理</span></a>
+        </span>
     </span>
 
   
@@ -243,18 +246,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="内存分配器"><a href="#内存分配器" class="headerlink" title="内存分配器"></a>内存分配器</h1><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx6j27txd4j30u00vygpo.jpg" alt="内存分配器"></p>
+        <h1 id="内存分配器"><a href="#内存分配器" class="headerlink" title="内存分配器"></a>内存分配器</h1><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv6nhr2j30u00vyae4.jpg" alt="内存分配器"></p>
 <p>程序中的数据和变量都会被分配到程序所在的虚拟内存中，内存空间包含两个重要区域：栈区（Stack）和堆区（Heap）。</p>
 <p>栈：函数调用的参数、返回值以及局部变量大都会被分配到栈上，这部分内存会由编译器进行管理；</p>
 <p>堆：不同编程语言使用不同的方法管理堆区的内存，C++ 等编程语言会由工程师主动申请和释放内存，Go 以及 Java 等编程语言会由工程师和编译器共同管理，堆中的对象由内存分配器分配并由垃圾收集器回收。</p>
 <h2 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h2><p>当用户程序申请内存时，它会通过内存分配器申请新内存，而分配器会负责从堆中初始化相应的内存区域。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwzzuklofzj30xc0h8dgg.jpg" alt="mutator-allocator-collector"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv57r7wj30xc0h8dgg.jpg" alt="mutator-allocator-collector"></p>
 <p>分配方法：一般编程语言的内存分配器包括两种，一种是线性分配器，还有一种是空闲列表分配器。</p>
 <h3 id="线性分配器"><a href="#线性分配器" class="headerlink" title="线性分配器"></a>线性分配器</h3><p>使用线性分配器时，只需要在内存中维护一个指向内存特定位置的指针，如果用户程序向分配器申请内存，分配器只需要检查剩余的空闲内存、返回分配的内存区域并修改指针在内存中的位置</p>
 <p>问题：线性分配器无法在内存被释放时重用内存。</p>
 <p>因为线性分配器具有上述特性，所以需要与合适的垃圾回收算法配合使用，例如：标记压缩（Mark-Compact）、复制回收（Copying GC）和分代回收（Generational GC）等算法，它们可以通过拷贝的方式整理存活对象的碎片，将空闲内存定期合并，这样就能利用线性分配器的效率提升内存分配器的性能了。</p>
 <p>因为线性分配器需要与具有拷贝特性的垃圾回收算法配合，所以 C 和 C++ 等需要直接对外暴露指针的语言就无法使用该策略</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwzzyghypaj30xc082t8w.jpg" alt="bump-allocator"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv5p7g4j30xc082t8w.jpg" alt="bump-allocator"></p>
 <h3 id="空闲列表分配器"><a href="#空闲列表分配器" class="headerlink" title="空闲列表分配器"></a>空闲列表分配器</h3><p>类似与早期操作系统的，使用链表管理内存的结构。</p>
 <p>这种方式的分配器可以重新利用回收的资源，但是因为分配内存时需要遍历链表，所以它的时间复杂度是 𝑂(𝑛)。</p>
 <p>选择策略上有4种:</p>
@@ -264,9 +267,9 @@
 <li>最优适应</li>
 <li>隔离适应</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwzzzjuq0pj30xc08wdga.jpg" alt="free-list-allocator"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv6596yj30xc08wdga.jpg" alt="free-list-allocator"></p>
 <h3 id="Go采用的方式-空闲列表分配器配合类似隔离适应"><a href="#Go采用的方式-空闲列表分配器配合类似隔离适应" class="headerlink" title="Go采用的方式 - 空闲列表分配器配合类似隔离适应"></a>Go采用的方式 - 空闲列表分配器配合类似隔离适应</h3><h4 id="基本数据结构："><a href="#基本数据结构：" class="headerlink" title="基本数据结构："></a>基本数据结构：</h4><p>该策略会将内存分割成由 4、8、16、32 字节的内存块组成的链表，当我们向内存分配器申请 8 字节的内存时，它会在上图中找到满足条件的空闲内存块并返回。隔离适应的分配策略减少了需要遍历的内存块数量，提高了内存分配的效率。即先找到合适的链表，再去找合适的内存块。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx003dwnrxj30xc0gedgs.jpg" alt="segregated-list"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv74k4aj30xc0gedgs.jpg" alt="segregated-list"></p>
 <h4 id="分级分配："><a href="#分级分配：" class="headerlink" title="分级分配："></a>分级分配：</h4><p>线程缓存分配（Thread-Caching Malloc，TCMalloc）是用于分配内存的机制，它比 glibc 中的 <code>malloc</code> 还要快很多。Go 语言的内存分配器就借鉴了 TCMalloc 的设计实现高速的内存分配，它的核心理念是使用多级缓存将对象根据大小分类，并按照类别实施不同的分配策略。</p>
 <p>运行时根据对象的大小将对象分成微对象、小对象和大对象三种：</p>
 <table>
@@ -292,10 +295,10 @@
 <p><strong>表 7-1 对象的类别和大小</strong></p>
 <p>因为程序中的绝大多数对象的大小都在 32KB 以下，而申请的内存大小影响 Go 语言运行时分配内存的过程和开销，所以分别处理大对象和小对象有利于提高内存分配器的性能。</p>
 <h4 id="多级缓存"><a href="#多级缓存" class="headerlink" title="多级缓存"></a>多级缓存</h4><p>内存分成不同的级别分别管理，线程缓存（Thread Cache）、中心缓存（Central Cache）和页堆（Page Heap）三个组件分级管理内存</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx008emudtj30xc0hs3zj.jpg" alt="multi-level-cache"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv4rcpzj30xc0hs3zj.jpg" alt="multi-level-cache"></p>
 <p>32KB以上的对象，内存分配器会直接分配到页堆，线程缓存不足时，会使用中心缓存进行补充</p>
 <h4 id="虚拟内存布局"><a href="#虚拟内存布局" class="headerlink" title="虚拟内存布局"></a>虚拟内存布局</h4><p>稀疏内存：</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx29xhzis0j30xj0dmaar.jpg" alt="heap-after-go-1-11"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv92p1nj30xj0dmaar.jpg" alt="heap-after-go-1-11"></p>
 <p>稀疏内存是 Go 语言在 1.11 中提出的方案，使用稀疏的内存布局不仅能移除堆大小的上限，还能解决 C 和 Go 混合使用时的地址空间冲突问题，不过因为基于稀疏内存的内存管理失去了内存的连续性这一假设，这也使内存管理变得更加复杂。</p>
 <p>如图所示，使用二维的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.heapArena"><code>runtime.heapArena</code></a> 数组管理所有的内存，每个单元都会管理 64MB 的内存空间。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> heapArena <span class="keyword">struct</span> &#123;</span><br><span class="line">	bitmap       [heapArenaBitmapBytes]<span class="keyword">byte</span></span><br><span class="line">	spans        [pagesPerArena]*mspan</span><br><span class="line">	pageInUse    [pagesPerArena / <span class="number">8</span>]<span class="keyword">uint8</span></span><br><span class="line">	pageMarks    [pagesPerArena / <span class="number">8</span>]<span class="keyword">uint8</span></span><br><span class="line">	pageSpecials [pagesPerArena / <span class="number">8</span>]<span class="keyword">uint8</span></span><br><span class="line">	checkmarks   *checkmarksMap</span><br><span class="line">	zeroedBase   <span class="keyword">uintptr</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -304,7 +307,7 @@
 <p><code>arena</code> 区域是真正的堆区，运行时会将 8KB 看做一页，这些内存页中存储了所有在堆上初始化的对象；</p>
 <p><code>zeroedBase</code> 字段指向了该结构体管理的内存的基地址。</p>
 <h3 id="内存管理组件"><a href="#内存管理组件" class="headerlink" title="内存管理组件"></a>内存管理组件</h3><p>最重要的几种组件：runtime.mspan, runtime.mcache, runtime.mcentral, runtime.mheap</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2a4fmmlbj30xj0oqtaq.jpg" alt="go-memory-layout"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv9hn3pj30xj0oqtaq.jpg" alt="go-memory-layout"></p>
 <p>Go 语言程序都会在启动时初始化如上图所示的内存布局，每一个处理器都会分配一个线程缓存 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache"><code>runtime.mcache</code></a> 用于处理微对象和小对象的分配，它们会持有内存管理单元 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a>。</p>
 <p>每个类型的内存管理单元都会管理特定大小的对象，当内存管理单元中不存在空闲对象时，它们会从 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap"><code>runtime.mheap</code></a> 持有的 134 个中心缓存 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcentral"><code>runtime.mcentral</code></a> 中获取新的内存单元，中心缓存属于全局的堆结构体 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap"><code>runtime.mheap</code></a>，它会从操作系统中申请内存。</p>
 <h4 id="内存管理单元runtime-mspan"><a href="#内存管理单元runtime-mspan" class="headerlink" title="内存管理单元runtime.mspan"></a>内存管理单元runtime.mspan</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mspan <span class="keyword">struct</span> &#123;</span><br><span class="line">	next *mspan</span><br><span class="line">	prev *mspan</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -316,10 +319,10 @@
 <p>mspan管理内存：</p>
 <ol>
 <li><p>当结构体管理的内存不足时，运行时会以页为单位向堆申请内存：</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2ah0tzpuj30xj0gemxn.jpg" alt="mspan-and-pages"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv9ye3pj30xj0gemxn.jpg" alt="mspan-and-pages"></p>
 </li>
 <li><p>当用户程序或者线程向 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a> 申请内存时，它会使用 <code>allocCache</code> 字段以对象为单位在管理的内存中快速查找待分配的空间。如果我们能在内存中找到空闲的内存单元会直接返回，当内存中不包含空闲的内存时，上一级的组件 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache"><code>runtime.mcache</code></a> 会为调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache.refill"><code>runtime.mcache.refill</code></a> 更新内存管理单元以满足为更多对象分配内存的需求。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2ah7gfxlj30xj0d2mxx.jpg" alt="mspan-and-objects"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv84qmlj30xj0d2mxx.jpg" alt="mspan-and-objects"></p>
 </li>
 </ol>
 <p>每个内存管理单元的状态使用mSpanStateBox管理</p>
@@ -420,7 +423,7 @@
 </tr>
 </tbody></table>
 <h4 id="线程缓存"><a href="#线程缓存" class="headerlink" title="线程缓存"></a>线程缓存</h4><p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache"><code>runtime.mcache</code></a> 是 Go 语言中的线程缓存，它会与线程上的处理器一一绑定，主要用来缓存用户程序申请的微小对象。每一个线程缓存都持有 68 * 2 个 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a>，这些内存管理单元都存储在结构体的 <code>alloc</code> 字段中，线程缓存在刚刚被初始化时是不包含 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a> 的，只有当用户程序申请内存时才会从上一级组件获取新的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mspan"><code>runtime.mspan</code></a> 满足内存分配的需求。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2at81uv6j30xj0b4dgd.jpg" alt="mcache-and-mspans"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv8lr0vj30xj0b4dgd.jpg" alt="mcache-and-mspans"></p>
 <ol>
 <li><p>初始化：在初始化处理器时，在系统栈中使用mheap的线程缓存分配器初始化，mcache</p>
 </li>
@@ -430,7 +433,7 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mcache <span class="keyword">struct</span> &#123;</span><br><span class="line">	tiny             <span class="keyword">uintptr</span></span><br><span class="line">	tinyoffset       <span class="keyword">uintptr</span></span><br><span class="line">	local_tinyallocs <span class="keyword">uintptr</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h4 id="中心缓存"><a href="#中心缓存" class="headerlink" title="中心缓存"></a>中心缓存</h4><p>每个中心缓存都会管理某个跨度类的内存管理单元，它会同时持有两个 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.spanSet"><code>runtime.spanSet</code></a>，分别存储包含空闲对象和不包含空闲对象的内存管理单元。</p>
-<h4 id="页堆"><a href="#页堆" class="headerlink" title="页堆"></a>页堆</h4><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx2b0hrqenj30xj0aa74v.jpg" alt="mheap-and-mcentrals"></p>
+<h4 id="页堆"><a href="#页堆" class="headerlink" title="页堆"></a>页堆</h4><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv4dp1mj30xj0aa74v.jpg" alt="mheap-and-mcentrals"></p>
 <p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mheap"><code>runtime.mheap</code></a> 是内存分配的核心结构体，Go 语言程序会将其作为全局变量存储，而堆上初始化的所有对象都由该结构体统一管理，该结构体中包含两组非常重要的字段，其中一个是全局的中心缓存列表 <code>central</code>，另一个是管理堆区内存区域的 <code>arenas</code> 以及相关字段。</p>
 <p>页堆中包含一个长度为 136 的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcentral"><code>runtime.mcentral</code></a> 数组，其中 68 个为跨度类需要 <code>scan</code> 的中心缓存，另外的 68 个是 <code>noscan</code> 的中心缓存。</p>
 <ol>
@@ -490,7 +493,7 @@
 </ol>
 <p><strong>go 基于上述 struct 提供了 runtime.newobject 用于goroutine 代码申请内存，由gc 负责回收</strong>。runtime.newobject 就是内存分配的核心入口</p>
 <p>页是向操作系统申请内存的最小单位，目前设计为 8KB。传统意义上的栈被 Go 的运行时霸占，不开放给用户态代码；而传统意义上的堆内存，又被 Go 运行时划分为了两个部分， 一个是 Go 运行时自身所需的堆内存，即堆外内存；另一部分则用于 Go 用户态代码所使用的堆内存，也叫做 Go 堆。 Go 堆负责了用户态对象的存放以及 goroutine 的执行栈。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx01et2bvvj337v0u00yu.jpg" alt="img"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gz8pv7mc99j337v0u0wkl.jpg" alt="img"></p>
 <p>Go 内存管理的一般思想是使用不同的内存结构为不同大小的对象使用不同的内存缓存级别来分配内存。将一个从操作系统接收的连续地址的块切分到多级缓存来减少锁的使用，同时<strong>根据object的大小</strong>分配内存减少内存碎片以提高内存分配的效率和在内存释放之后加快 GC 运行的速度。mcache ==&gt; mcentral ==&gt; mheap（向堆申请一个arena） ==&gt; 堆</p>
 <ol>
 <li>大于 32K 的大对象直接从 mheap 分配。</li>
@@ -511,21 +514,18 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/zhongsongzhi97.github.io/tags/go-Runtime/" rel="tag"># go - Runtime</a>
+              <a href="/zhongsongzhi97.github.io/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="tag"># 内存管理</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/zhongsongzhi97.github.io/2021/11/28/Go%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B2/" rel="prev" title="Go多线程编程2">
-                  <i class="fa fa-chevron-left"></i> Go多线程编程2
+                <a href="/zhongsongzhi97.github.io/2022/02/10/MQ%E5%B0%8F%E7%BB%93/" rel="prev" title="MQ小结">
+                  <i class="fa fa-chevron-left"></i> MQ小结
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/zhongsongzhi97.github.io/2021/12/04/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="next" title="内存管理 - go栈内存管理">
-                  内存管理 - go栈内存管理 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>

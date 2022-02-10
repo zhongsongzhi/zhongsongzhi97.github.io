@@ -135,12 +135,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/zhongsongzhi97.github.io/categories/">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/zhongsongzhi97.github.io/tags/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -169,6 +169,121 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/10/%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/01/10/%E7%BD%91%E7%BB%9C%E8%BD%AE%E8%AF%A2%E5%99%A8/" class="post-title-link" itemprop="url">网络轮询器</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-01-10 00:37:38 / Modified: 02:30:20" itemprop="dateCreated datePublished" datetime="2022-01-10T00:37:38+08:00">2022-01-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="IO与网络轮询器"><a href="#IO与网络轮询器" class="headerlink" title="IO与网络轮询器"></a>IO与网络轮询器</h1><p>如今的大部分服务都是I/O密集型的，应用会花费大量的时间等待I/O操作完成。Go使用了网络轮询器用于处理I/O操作，底层使用了操作系统的多路复用机制epoll</p>
+<p>通常的IO多路模型是通过回调机制进行控制的，Go的话将其隐藏在了runtime中了，Go开发者无需关注socket是否是 non-block的，也无需亲自注册文件描述符的回调，只需在每个连接对应的goroutine中以“block I/O”的方式对待socket处理即可。</p>
+<h2 id="原理和前言"><a href="#原理和前言" class="headerlink" title="原理和前言"></a>原理和前言</h2><p>作用：监控网络I/O，文件I/O</p>
+<p>I/O模型“</p>
+<h3 id="阻塞I-O模型："><a href="#阻塞I-O模型：" class="headerlink" title="阻塞I/O模型："></a>阻塞I/O模型：</h3><h3 id="非阻塞I-O模型："><a href="#非阻塞I-O模型：" class="headerlink" title="非阻塞I/O模型："></a>非阻塞I/O模型：</h3><h3 id="I-O多路复用："><a href="#I-O多路复用：" class="headerlink" title="I/O多路复用："></a>I/O多路复用：</h3><h2 id="网络轮询器："><a href="#网络轮询器：" class="headerlink" title="网络轮询器："></a>网络轮询器：</h2><p><a target="_blank" rel="noopener" href="https://draveness.me/golang/docs/part3-runtime/ch06-concurrency/golang-netpoller/#662-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">网络轮询器</a></p>
+<ol>
+<li>多路复用依赖于epoll 机制</li>
+<li>epoll 机制包含两个fd:epfd 和 待读写数据的fd（比如socket）。先创建efpd，然后向epfd 注册fd事件， 之后触发epoll_wait 轮询注册在epfd 的fd 事件发生了没有。</li>
+<li>netpoller 负责将 操作系统 提供的nio 转换为 goroutine 支持的blocking io。为屏蔽linux、windows 等底层nio 接口的差异，netpoller 定义一个虚拟接口来封装底层接口。</li>
+</ol>
+<h3 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollinit</span><span class="params">()</span> //单例，初始化轮询器</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollopen</span><span class="params">(fd <span class="keyword">uintptr</span>, pd *pollDesc)</span> <span class="title">int32</span> //监听<span class="title">FD</span>的事件，创建事件并加入监听</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpoll</span><span class="params">(delta <span class="keyword">int64</span>)</span> <span class="title">gList</span> //轮询网络并返回一组已经准备就绪的<span class="title">Goroutine</span> &lt;0 无限期等待 =0 非阻塞轮询 &gt;0 阻塞特定时间轮询</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollBreak</span><span class="params">()</span> //中断轮询器</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollIsPollDescriptor</span><span class="params">(fd <span class="keyword">uintptr</span>)</span> <span class="title">bool</span> //判断<span class="title">FD</span>是否被轮询器使用</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy7xf9y6qzj30xj08caae.jpg" alt="poll-desc-list"></p>
+<p>pollCache是一个运行时包的全局变量，包含一个互斥锁和一个链表（pollDesc链表),pollDesc是对fd的封装</p>
+<p>初始化和释放：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *pollCache)</span> <span class="title">alloc</span><span class="params">()</span> *<span class="title">pollDesc</span></span> &#123;</span><br><span class="line">	lock(&amp;c.lock)</span><br><span class="line">	<span class="keyword">if</span> c.first == <span class="literal">nil</span> &#123; <span class="comment">//初次初始化时，会进行批量初始化以增加吞吐量</span></span><br><span class="line">		<span class="keyword">const</span> pdSize = unsafe.Sizeof(pollDesc&#123;&#125;)</span><br><span class="line">		n := pollBlockSize / pdSize</span><br><span class="line">		<span class="keyword">if</span> n == <span class="number">0</span> &#123;</span><br><span class="line">			n = <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		mem := persistentalloc(n*pdSize, <span class="number">0</span>, &amp;memstats.other_sys)</span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">uintptr</span>(<span class="number">0</span>); i &lt; n; i++ &#123;</span><br><span class="line">			pd := (*pollDesc)(add(mem, i*pdSize))</span><br><span class="line">			pd.link = c.first</span><br><span class="line">			c.first = pd</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	pd := c.first <span class="comment">//返回的是链表头的没有使用过的pollDesc</span></span><br><span class="line">	c.first = pd.link</span><br><span class="line">	unlock(&amp;c.lock)</span><br><span class="line">	<span class="keyword">return</span> pd</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>已经用过的pollDesc会在运行时调用free释放</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *pollCache)</span> <span class="title">free</span><span class="params">(pd *pollDesc)</span></span> &#123;</span><br><span class="line">	lock(&amp;c.lock)</span><br><span class="line">	pd.link = c.first <span class="comment">//释放时将其出队</span></span><br><span class="line">	c.first = pd</span><br><span class="line">	unlock(&amp;c.lock)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h3><h4 id="网络轮询器的初始化"><a href="#网络轮询器的初始化" class="headerlink" title="网络轮询器的初始化"></a>网络轮询器的初始化</h4><p>调用 <code>internal/poll.pollDesc.init</code> 初始化文件描述符时不止会初始化网络轮询器，会通过 <code>runtime.poll_runtime_pollOpen</code> 函数重置轮询信息 <code>runtime.pollDesc</code> 并调用 <code>runtime.netpollopen</code> 初始化轮询事件。<code>runtime.netpollopen</code> 会调用 epollctl 向全局的轮询文件描述符 epfd 中加入新的轮询事件监听文件描述符的可读和可写状态</p>
+<h4 id="如何向网络轮询器加入待监控的任务"><a href="#如何向网络轮询器加入待监控的任务" class="headerlink" title="如何向网络轮询器加入待监控的任务"></a>如何向网络轮询器加入待监控的任务</h4><h4 id="如何从网络轮询器获取触发的事件"><a href="#如何从网络轮询器获取触发的事件" class="headerlink" title="如何从网络轮询器获取触发的事件"></a>如何从网络轮询器获取触发的事件</h4><h4 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环"></a>事件循环</h4><ol>
+<li><p>等待事件：在fd执行读写操作，如果fd不可读或者不可写，当前Goroutine会执行pollWait让出线程</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">poll_runtime_pollWait</span><span class="params">(pd *pollDesc, mode <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">for</span> !netpollblock(pd, <span class="keyword">int32</span>(mode), <span class="literal">false</span>) &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollblock</span><span class="params">(pd *pollDesc, mode <span class="keyword">int32</span>, waitio <span class="keyword">bool</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	gpp := &amp;pd.rg <span class="comment">//检查pollDesc状态</span></span><br><span class="line">	<span class="keyword">if</span> mode == <span class="string">&#x27;w&#x27;</span> &#123;</span><br><span class="line">		gpp = &amp;pd.wg</span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> waitio || netpollcheckerr(pd, mode) == <span class="number">0</span> &#123; </span><br><span class="line">		gopark(netpollblockcommit, unsafe.Pointer(gpp), waitReasonIOWait, traceEvGoBlockNet, <span class="number">5</span>) <span class="comment">//让出当前线程，Goroutine转换到休眠状态并等待运行时唤醒</span></span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>轮询等待</p>
+<p>Go的runtime会在调度或系统监控中调用netpoll轮询网络</p>
+<p>步骤：</p>
+<ul>
+<li>根据传入的delay计算epoll系统调用需要等待的时间</li>
+<li>调用epollwait等待可读或可写事件</li>
+<li>在循环中依次处理epollevent事件</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> events [<span class="number">128</span>]epollevent</span><br><span class="line">retry:</span><br><span class="line">	n := epollwait(epfd, &amp;events[<span class="number">0</span>], <span class="keyword">int32</span>(<span class="built_in">len</span>(events)), waitms) <span class="comment">//等待fd可读或可写</span></span><br><span class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123; <span class="comment">//epoll返回负值，返回空gList或者重试</span></span><br><span class="line">		<span class="keyword">if</span> waitms &gt; <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> gList&#123;&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">goto</span> retry</span><br><span class="line">	&#125;</span><br><span class="line"><span class="comment">//如果大于0，则在循环中处理事件</span></span><br><span class="line"><span class="keyword">var</span> toRun gList</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">int32</span>(<span class="number">0</span>); i &lt; n; i++ &#123;</span><br><span class="line">		ev := &amp;events[i]</span><br><span class="line">    <span class="comment">//netpollBreak的事件，中断网络轮询器</span></span><br><span class="line">		<span class="keyword">if</span> *(**<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;ev.data)) == &amp;netpollBreakRd &#123;</span><br><span class="line">			...</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//正常的读写事件，通过netpollready进行处理</span></span><br><span class="line">		<span class="keyword">var</span> mode <span class="keyword">int32</span></span><br><span class="line">		<span class="keyword">if</span> ev.events&amp;(_EPOLLIN|_EPOLLRDHUP|_EPOLLHUP|_EPOLLERR) != <span class="number">0</span> &#123;</span><br><span class="line">			mode += <span class="string">&#x27;r&#x27;</span></span><br><span class="line">		&#125;</span><br><span class="line">		...</span><br><span class="line">		<span class="keyword">if</span> mode != <span class="number">0</span> &#123;</span><br><span class="line">			pd := *(**pollDesc)(unsafe.Pointer(&amp;ev.data))</span><br><span class="line">			pd.everr = <span class="literal">false</span></span><br><span class="line">			netpollready(&amp;toRun, pd, mode)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> toRun</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">netpollready</span><span class="params">(toRun *gList, pd *pollDesc, mode <span class="keyword">int32</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> rg, wg *g</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> mode == <span class="string">&#x27;w&#x27;</span> || mode == <span class="string">&#x27;r&#x27;</span>+<span class="string">&#x27;w&#x27;</span> &#123;</span><br><span class="line">		wg = netpollunblock(pd, <span class="string">&#x27;w&#x27;</span>, <span class="literal">true</span>) <span class="comment">//将pd中的读写信号转换为pdReady，并返回pd的Goroutine</span></span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> wg != <span class="literal">nil</span> &#123;</span><br><span class="line">		toRun.push(wg) <span class="comment">//加入待执行列表，Goroutine列表会被加入到处理器或者全局运行队列</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="截止日期"><a href="#截止日期" class="headerlink" title="截止日期"></a>截止日期</h4><p>计时器依赖于网络轮询器唤醒，文件和网络I/O的截止日期也由其负责处理。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//用于设置截止日期</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">poll_runtime_pollSetDeadline</span><span class="params">(pd *pollDesc, d <span class="keyword">int64</span>, mode <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	rd0, wd0 := pd.rd, pd.wd</span><br><span class="line">	<span class="keyword">if</span> d &gt; <span class="number">0</span> &#123;</span><br><span class="line">		d += nanotime()</span><br><span class="line">	&#125;</span><br><span class="line">	pd.rd = d <span class="comment">//先使用截止日期计算过期的时间点</span></span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> pd.rt.f == <span class="literal">nil</span> &#123; <span class="comment">//如果没有设置执行的函数</span></span><br><span class="line">		<span class="keyword">if</span> pd.rd &gt; <span class="number">0</span> &#123;</span><br><span class="line">			pd.rt.f = netpollReadDeadline  <span class="comment">//设置计时器到期执行的函数</span></span><br><span class="line">			pd.rt.arg = pd</span><br><span class="line">			pd.rt.seq = pd.rseq</span><br><span class="line">			resettimer(&amp;pd.rt, pd.rd) <span class="comment">//重置计时器</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> pd.rd != rd0 &#123; <span class="comment">//如果截止日期已改变</span></span><br><span class="line">		pd.rseq++</span><br><span class="line">		<span class="keyword">if</span> pd.rd &gt; <span class="number">0</span> &#123; <span class="comment">//新截止日期 &gt; 0 ，修改计时器</span></span><br><span class="line">			modtimer(&amp;pd.rt, pd.rd, <span class="number">0</span>, rtf, pd, pd.rseq)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123; <span class="comment">//新日期 &lt; 0 ，删除计时器, 并会在后面直接唤醒对应的Goroutine</span></span><br><span class="line">			deltimer(&amp;pd.rt)</span><br><span class="line">			pd.rt.f = <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行时会在计时器到期时调用netpolldeadlineimpl,直接使用netpollgoready唤醒对应的Goroutine，Goroutine被唤醒后，会意识到当前I/O操作已经超时，选择重试或者终止调用</p>
+<h2 id="IO前后的GPM"><a href="#IO前后的GPM" class="headerlink" title="IO前后的GPM"></a>IO前后的GPM</h2><ol>
+<li>G1 正在 M 上执行，还有 3 个 Goroutine 在 LRQ 上等待执行。网络轮询器空闲着，什么都没干。</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy7zf09e2xj30h508vmxk.jpg" alt="img"></p>
+<ol start="2">
+<li><p>G1 想要进行网络系统调用，因此它被移动到网络轮询器并且处理异步网络系统调用。然后，M 可以从LRQ 执行另外的 Goroutine。此时，G2 就被上下文切换到 M 上了。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy7zgho21oj313f0krmyp.jpg" alt="img"></p>
+</li>
+<li><p>异步网络系统调用由网络轮询器完成，G1 被移回到 P 的 LRQ 中。一旦 G1 可以在 M 上进行上下文切换，它负责的 Go 相关代码就可以再次执行。执行网络系统调用不需要额外的 M。网络轮询器使用系统线程，它时刻处理一个有效的事件循环/eventloop。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy7zh0rzj3j30if09kt94.jpg" alt="img"></p>
+</li>
+</ol>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>网络轮询器并不是一个独立运行的，调度器和系统调用都会通过netpoll与网络循环器交换信息，获取待执行的GoRoutine列表，并将待执行的Goroutine加入运行队列等待处理</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1633,152 +1748,6 @@
 <p>可以调用 runtime.GC来手动的触发 GC。但实际上，触发 GC 的入口一般不会手动调用。正常触发 GC 应该是在申请内存时会调用 <code>runtime.mallocgc</code>或者是 Go 后台的监控线程 sysmon 定时检查调用 <code>runtime.forcegchelper</code></p>
 </li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/04/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/12/04/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">内存管理 - go栈内存管理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-12-04 17:56:30" itemprop="dateCreated datePublished" datetime="2021-12-04T17:56:30+08:00">2021-12-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-12-08 16:50:41" itemprop="dateModified" datetime="2021-12-08T16:50:41+08:00">2021-12-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="栈空间管理"><a href="#栈空间管理" class="headerlink" title="栈空间管理"></a>栈空间管理</h1><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx6iw2lc9sj30hi0bgmxn.jpg" alt="栈"></p>
-<h2 id="堆与栈的区别"><a href="#堆与栈的区别" class="headerlink" title="堆与栈的区别"></a>堆与栈的区别</h2><ol>
-<li>功能不同：函数调用的参数、返回值以及局部变量都会分配到栈上。</li>
-<li>共享性不同：栈是线程私有，堆是共享</li>
-<li>栈的空间一般远远小于堆</li>
-</ol>
-<h2 id="设计原理"><a href="#设计原理" class="headerlink" title="设计原理"></a>设计原理</h2><p>应用程序的内存一般会分成堆区和栈区，程序在运行期间可以主动从堆区申请内存空间，这些内存由内存分配器分配并由垃圾收集器负责回收。</p>
-<p>栈区的内存由编译器自动分配和释放，其中存储的是函数的入参和局部变量。</p>
-<p>总结：Go的栈使用连续栈进行管理，对象或结构体是分配到栈还是堆，由逃逸分析决定，栈是线程私有，Go的栈是以Goroutine作为context，为了高效管理栈，使用了2个寄存器BP,SP来表明其基址和栈顶。</p>
-<h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><p>栈寄存器是 CPU 寄存器中的一种，它的主要作用是跟踪函数的调用栈，Go 语言的汇编代码包含 BP 和 SP 两个栈寄存器，它们分别存储了栈的基址指针和栈顶的地址。BP 和 SP 之间的内存就是当前函数的调用栈。</p>
-<p>栈区内存都是从高地址向低地址扩展的，当应用程序申请或者释放栈内存时只需要修改 SP 寄存器的值，这种线性的内存分配方式与堆内存相比更加快速，仅会带来极少的额外开销。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx1yjgbzr2j30xj0e6aab.jpg" alt="stack-registers"></p>
-<h3 id="线程栈"><a href="#线程栈" class="headerlink" title="线程栈"></a>线程栈</h3><p>创建一个线程时，系统会根据架构不同选择不同的默认栈大小，一般为2~4MB左右，用户程序可以在栈上存储函数参数和局部变量。</p>
-<p>对于Go:由于Go设计时以协程实现，所以其再用户态实现Goroutine作为执行上下文。</p>
-<h3 id="逃逸分析"><a href="#逃逸分析" class="headerlink" title="逃逸分析"></a>逃逸分析</h3><p>在手动管理内存的语言中，可以选择将对象或结构体分配到栈或者堆上，但是这样会存在2个问题：</p>
-<ul>
-<li>不需要分配到堆上的对象分配到了堆上 — 浪费内存空间；</li>
-<li>需要分配到堆上的对象分配到了栈上 — 悬挂指针、影响内存安全；</li>
-</ul>
-<p>Eg:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> *<span class="title">dangling_pointer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> &amp;i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//当 dangling_pointer 函数返回后，它的本地变量会被编译器回收，调用方获取的是危险的悬挂指针</span></span><br></pre></td></tr></table></figure>
-
-<p>Go 语言的逃逸分析遵循以下两个不变性：</p>
-<ol>
-<li>指向栈对象的指针不能存在于堆中；</li>
-<li>指向栈对象的指针不能在栈对象回收后存活；</li>
-</ol>
-<p>Go 语言的编译器使用逃逸分析决定哪些变量应该在栈上分配，哪些变量应该在堆上分配，其中包括使用 <code>new</code>、<code>make</code> 和字面量等方法隐式分配的内存。为了保证内存的绝对安全，编译器可能会将一些变量错误地分配到堆上，但是因为堆也会被垃圾收集器扫描，所以不会造成内存泄露以及悬挂指针等安全问题。</p>
-<p><strong>逃逸分析的实现：</strong></p>
-<p>逃逸分析是静态分析的一种，在编译器活动抽象语法树以后，可以通过抽象语法树分析静态的数据流。</p>
-<ul>
-<li>构建带权重的有向图，其中顶点表示被分配的变量，边表示变量之间的分配关系，权重表示寻址和取地址的次数；</li>
-<li>遍历对象分配图并查找违反两条不变性的变量分配关系，如果堆上的变量指向了栈上的变量，那么该变量需要分配在堆上；</li>
-<li>记录从函数的调用参数到堆以及返回值的数据流，增强函数参数的逃逸分析；</li>
-</ul>
-<h3 id="栈内存空间"><a href="#栈内存空间" class="headerlink" title="栈内存空间"></a>栈内存空间</h3><p>Go 语言使用用户态线程 Goroutine 作为执行上下文，它的额外开销和默认栈大小都比线程小很多</p>
-<p>在1.3版本以后，都是有连续栈，最小栈空间在1.4版本，为2KB</p>
-<p>连续栈：</p>
-<p>核心原理是每当程序的栈空间不足时，初始化一片更大的栈空间并将原栈中的所有值都迁移到新栈中，新的局部变量或者函数调用就有充足的内存空间。</p>
-<p>步骤：</p>
-<ol>
-<li>在内存空间中分配更大的栈内存空间；</li>
-<li>将旧栈中的所有内容复制到新栈中；</li>
-<li><strong>将指向旧栈对应变量的指针重新指向新栈</strong>；</li>
-<li>销毁并回收旧栈的内存空间；</li>
-</ol>
-<p>因为需要拷贝变量和调整指针，连续栈增加了栈扩容时的额外开销，但是通过合理栈缩容机制就能避免热分裂带来的性能问题，即在GC时期合理调整栈的大小。 GC 期间如果 Goroutine 使用了栈内存的四分之一，那就将其内存减少一半，这样在栈内存几乎充满时也只会扩容一次，不会因为函数调用频繁扩缩容。</p>
-<h2 id="栈操作"><a href="#栈操作" class="headerlink" title="栈操作"></a>栈操作</h2><h4 id="栈初始化"><a href="#栈初始化" class="headerlink" title="栈初始化"></a>栈初始化</h4><p>运行时使用全局的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackpool"><code>runtime.stackpool</code></a> 和线程缓存中的空闲链表分配 32KB 以下的栈内存，使用全局的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackLarge"><code>runtime.stackLarge</code></a> 和堆内存分配 32KB 以上的栈内存，提高本地分配栈内存的性能。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gx263w3xb5j30xc096gma.jpg" alt="stack-memory"></p>
-<p>栈空间在运行时中包含两个重要的全局变量，分别是 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackpool"><code>runtime.stackpool</code></a> 和 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackLarge"><code>runtime.stackLarge</code></a>，这两个变量分别表示全局的栈缓存和大栈缓存，前者可以分配小于 32KB 的内存，后者用来分配大于 32KB 的栈空间：</p>
-<p>每一个线程缓存 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.mcache"><code>runtime.mcache</code></a> 中也都加入了栈缓存减少锁竞争影响。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> stackpool [_NumStackOrders]<span class="keyword">struct</span> &#123;</span><br><span class="line">	item stackpoolItem</span><br><span class="line">	_    [cpu.CacheLinePadSize - unsafe.Sizeof(stackpoolItem&#123;&#125;)%cpu.CacheLinePadSize]<span class="keyword">byte</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stackpoolItem <span class="keyword">struct</span> &#123;</span><br><span class="line">	mu   mutex</span><br><span class="line">	span mSpanList</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> stackLarge <span class="keyword">struct</span> &#123;</span><br><span class="line">	lock mutex</span><br><span class="line">	free [heapAddrBits - pageShift]mSpanList</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Go语言的栈内存都是分配到堆上的，运行时初始化会调用<a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackinit"><code>runtime.stackinit</code></a> 初始化这些全局变量。</p>
-<h4 id="栈分配"><a href="#栈分配" class="headerlink" title="栈分配"></a>栈分配</h4><p>运行时会在 Goroutine 的初始化函数 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.malg"><code>runtime.malg</code></a> 中调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackalloc"><code>runtime.stackalloc</code></a> 分配一个大小足够栈内存空间，根据线程缓存和申请栈的大小，该函数会通过三种不同的方法分配栈空间：</p>
-<ol>
-<li>如果栈空间较小，使用全局栈缓存或者线程缓存上固定大小的空闲链表分配内存；</li>
-<li>如果栈空间较大，从全局的大栈缓存 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackLarge"><code>runtime.stackLarge</code></a> 中获取内存空间；</li>
-<li>如果栈空间较大并且 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackLarge"><code>runtime.stackLarge</code></a> 空间不足，在堆上申请一片大小足够内存空间；</li>
-</ol>
-<h4 id="栈扩容"><a href="#栈扩容" class="headerlink" title="栈扩容"></a>栈扩容</h4><p>编译器会在函数调用中插入运行时检查，检查函数调用当前Goroutine的栈空间是否充足，当需要扩容时，会保存一些栈的信息并调用runtime.newstack创建新栈进行扩容</p>
-<p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.newstack"><code>runtime.newstack</code></a> 会先做一些准备工作并检查当前 Goroutine 是否发出了抢占请求。如果当前 Goroutine 不需要被抢占，意味着我们需要新的栈空间来支持函数调用和本地变量的初始化，运行时会先检查目标大小的栈是否会溢出。</p>
-<p>如果目标栈的大小没有超出程序的限制，我们会将 Goroutine 切换至 <code>_Gcopystack</code> 状态并调用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.copystack"><code>runtime.copystack</code></a> 开始栈拷贝。在拷贝栈内存之前，运行时会通过 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.stackalloc"><code>runtime.stackalloc</code></a> 分配新的栈空间：</p>
-<p>分配好以后开始拷贝栈空间</p>
-<p>同上的连续栈扩容</p>
-<h4 id="栈缩容"><a href="#栈缩容" class="headerlink" title="栈缩容"></a>栈缩容</h4><p>GC时，使用率为1/4时，缩容为之前的一半，也会coptyStack</p>
-<h3 id="栈内容扩展"><a href="#栈内容扩展" class="headerlink" title="栈内容扩展"></a>栈内容扩展</h3><h4 id="栈的汇编分析"><a href="#栈的汇编分析" class="headerlink" title="栈的汇编分析"></a>栈的汇编分析</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> x =<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> c = <span class="number">0</span>;</span><br><span class="line">    c = a + b + x;</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    ret = foo(<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">foo:</span><br><span class="line">.LFB0:</span><br><span class="line">    .file <span class="number">1</span> <span class="string">&quot;call_no_stack.c&quot;</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">4</span> <span class="number">0</span></span><br><span class="line">    .cfi_startproc</span><br><span class="line">    pushq    %rbp             <span class="comment">//rbp入栈 （rsp-8）</span></span><br><span class="line">    .cfi_def_cfa_offset <span class="number">16</span></span><br><span class="line">    .cfi_offset <span class="number">6</span>, <span class="number">-16</span></span><br><span class="line">    movq    %rsp, %rbp       <span class="comment">//rsp 赋值给 rbp，这里rsp并没有移动，可能是因为这里是最后一个函数调用，所以不需要移动rsp</span></span><br><span class="line">    .cfi_def_cfa_register <span class="number">6</span></span><br><span class="line">    movl    %edi, <span class="number">-20</span>(%rbp)  <span class="comment">//这里通过rbp来访问栈，将main函数中的实参2放入rbp-20内存</span></span><br><span class="line">    movl    %esi, <span class="number">-24</span>(%rbp)  <span class="comment">//这里表示栈空间分配了24字节，猜测：函数中的参数值从栈顶开始存储</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">5</span> <span class="number">0</span></span><br><span class="line">    movb    $<span class="number">1</span>, <span class="number">-5</span>(%rbp)     <span class="comment">//局部变量x入栈，x占用1个字节，相当于x后入栈：栈的地址是向下减少的</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">6</span> <span class="number">0</span></span><br><span class="line">    movl    $<span class="number">0</span>, <span class="number">-4</span>(%rbp)     <span class="comment">//局部变量c入栈，放在rbp-4处</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">7</span> <span class="number">0</span></span><br><span class="line">    movl    <span class="number">-20</span>(%rbp), %edx   </span><br><span class="line">    movl    <span class="number">-24</span>(%rbp), %eax</span><br><span class="line">    addl    %eax, %edx      <span class="comment">//相加操作</span></span><br><span class="line">    movsbl    <span class="number">-5</span>(%rbp), %eax </span><br><span class="line">    addl    %edx, %eax</span><br><span class="line">    movl    %eax, <span class="number">-4</span>(%rbp)</span><br><span class="line">    .loc <span class="number">1</span> <span class="number">8</span> <span class="number">0</span></span><br><span class="line">    movl    <span class="number">-4</span>(%rbp), %eax  <span class="comment">//将c变量的结果保存到eax寄存器，以便函数返回</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">9</span> <span class="number">0</span></span><br><span class="line">    popq    %rbp            <span class="comment">//将堆栈pop，此时栈顶保存着调用函数的rbp值，将栈顶元素赋予rbp寄存器（恢复rbp寄存器）</span></span><br><span class="line">    .cfi_def_cfa <span class="number">7</span>, <span class="number">8</span></span><br><span class="line">    ret                     <span class="comment">//跳转回上一层处继续执行</span></span><br><span class="line">    .cfi_endproc</span><br><span class="line">.LFE0:</span><br><span class="line">    .size    foo, .-foo</span><br><span class="line">    .globl    main</span><br><span class="line">    .type    main, @function</span><br><span class="line">main:</span><br><span class="line">.LFB1:</span><br><span class="line">    .loc <span class="number">1</span> <span class="number">12</span> <span class="number">0</span></span><br><span class="line">    .cfi_startproc</span><br><span class="line">    pushq    %rbp              <span class="comment">//rbp：64位寄存器——指向栈底，将rbp寄存器内的值入栈-pushq操作会改变rsp的值</span></span><br><span class="line">    .cfi_def_cfa_offset <span class="number">16</span></span><br><span class="line">    .cfi_offset <span class="number">6</span>, <span class="number">-16</span></span><br><span class="line">    movq    %rsp, %rbp         <span class="comment">//rsp：64位堆栈指针寄存器——指向栈顶，将rsp值存入rbp寄存器内</span></span><br><span class="line">    .cfi_def_cfa_register <span class="number">6</span></span><br><span class="line">    subq    $<span class="number">16</span>, %rsp          <span class="comment">//rsp-16，这里讲栈顶指针向下移动16字节，相当于为main函数预留了16字节的栈空间-保存局部变量包括实参</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">13</span> <span class="number">0</span></span><br><span class="line">    movl    $<span class="number">0</span>, <span class="number">-4</span>(%rbp)       <span class="comment">//对应局部变量ret = 0</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">14</span> <span class="number">0</span></span><br><span class="line">    movl    $<span class="number">3</span>, %esi           <span class="comment">//这里直接将实参存入esi寄存器而不是放入堆栈，可加快访问速度</span></span><br><span class="line">    movl    $<span class="number">2</span>, %edi</span><br><span class="line">    call    foo                <span class="comment">//调用foo函数:call指令有另个作用：1，将call指令的下一条指令入栈-并改变rsp 2，修改程序计数器eip，跳转到foo函数的开头执行</span></span><br><span class="line">    movl    %eax, <span class="number">-4</span>(%rbp)     <span class="comment">//eax寄存器保存着返回值，这里将eax赋值给rbp-4的位置，也就是ret</span></span><br><span class="line">    .loc <span class="number">1</span> <span class="number">15</span> <span class="number">0</span></span><br><span class="line">    movl    $<span class="number">0</span>, %eax</span><br><span class="line">    .loc <span class="number">1</span> <span class="number">16</span> <span class="number">0</span></span><br><span class="line">    leave                     <span class="comment">//leave指令是函数开头的pushq %rbp和movq %rsp,%rbp的逆操作,　　　　　　　　　　　　　　　　　　//有两个作用：1，把rbp赋值给rsp 2,然后把该函数栈栈顶保存的rbp值恢复到rbp寄存器中,同时rsp+4(第二部的操作相当于pop栈顶元素)</span></span><br><span class="line">    .cfi_def_cfa <span class="number">7</span>, <span class="number">8</span></span><br><span class="line">    ret                       <span class="comment">//现在栈顶元素保存的是下一条执行的指令，ret的作用就是pop栈顶元素，并将栈顶元素赋值给程序计数器bip，然后程序跳转回bip所在地址继续执行</span></span><br><span class="line">    .cfi_endproc</span><br><span class="line">.LFE1:</span><br><span class="line">    .size    main, .-main</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li>变量存储会按照会根据类型，在汇编的得出其偏移量来操作</li>
-<li>只有两个寄存器bp,sp来管理当前栈帧，之前已经入栈的栈帧的相关信息，会存储到其上下文中</li>
-</ol>
-<h4 id="栈空间对齐"><a href="#栈空间对齐" class="headerlink" title="栈空间对齐"></a>栈空间对齐</h4><p>栈的字节对齐，实际是指栈顶指针必须是16字节的整数倍，栈对齐是为了尽可能少的内存访问周期读取数据，保证性能 - 任何内存分配函数(alloca, malloc, calloc)生成的块的起始地址必须为16的整数倍。大多数函数的栈帧的边界必须为16的整数倍。</p>
-<h2 id="相关文章"><a href="#相关文章" class="headerlink" title="相关文章"></a>相关文章</h2><p>C语言函数栈帧实例：<a target="_blank" rel="noopener" href="https://gitbook.coder.cat/function-call-principle/content/c-stack-frame-example.html">https://gitbook.coder.cat/function-call-principle/content/c-stack-frame-example.html</a></p>
 
       
     </div>
