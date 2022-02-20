@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zhongsongzhi97.github.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zhongsongzhi97.github.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zhongsongzhi97.github.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zhongsongzhi97.github.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/zhongsongzhi97.github.io/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
+<meta name="description" content="Netty小结Netty的逻辑架构 I&#x2F;O模型主从Reactor多线程模型  主从多线程模型由多个Reactor线程组成，每个Reactor线程都有独立的Selector对象。 MainReactor只负责处理客户端连接的Accept事件，连接建立成功后会将创建好的连接对象注册到SubReactor。 之后由SubReactor分配线程池中的I&#x2F;O线程与其连接绑定，由该I&#x2F;O线程负责连接生命周期内">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty小结">
+<meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/13/Netty%E5%B0%8F%E7%BB%93/index.html">
+<meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
+<meta property="og:description" content="Netty小结Netty的逻辑架构 I&#x2F;O模型主从Reactor多线程模型  主从多线程模型由多个Reactor线程组成，每个Reactor线程都有独立的Selector对象。 MainReactor只负责处理客户端连接的Accept事件，连接建立成功后会将创建好的连接对象注册到SubReactor。 之后由SubReactor分配线程池中的I&#x2F;O线程与其连接绑定，由该I&#x2F;O线程负责连接生命周期内">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gzbxnyxlioj30sa0o276s.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gzbxm0052oj31860qw42m.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gzby6ykcedj30zk0k0did.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gzbz1jzozgj31jw0tctb4.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gzbzcgobwbj31k60qiwgx.jpg">
+<meta property="article:published_time" content="2022-02-13T07:43:14.000Z">
+<meta property="article:modified_time" content="2022-02-13T08:58:24.897Z">
+<meta property="article:author" content="Dylan Zhong">
+<meta property="article:tag" content="Netty">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gzbxnyxlioj30sa0o276s.jpg">
+
+
+<link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/13/Netty%E5%B0%8F%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/13/Netty%E5%B0%8F%E7%BB%93/","path":"2022/02/13/Netty小结/","title":"Netty小结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Netty小结 | Dylan Zhong`s Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/zhongsongzhi97.github.io/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zhongsongzhi97.github.io/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dylan Zhong`s Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">对对对</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/zhongsongzhi97.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-标签"><a href="/zhongsongzhi97.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-分类"><a href="/zhongsongzhi97.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-归档"><a href="/zhongsongzhi97.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Netty%E5%B0%8F%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">Netty小结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty%E7%9A%84%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">Netty的逻辑架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">I&#x2F;O模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="nav-number">1.3.</span> <span class="nav-text">事件处理机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%BC%96%E6%8E%92%E5%B1%82"><span class="nav-number">1.4.</span> <span class="nav-text">服务编排层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%93%E7%94%A8%E6%80%A7API%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.5.</span> <span class="nav-text">易用性API接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%95%B0%E6%8D%AE%E5%8D%8F%E8%AE%AE%EF%BC%8C%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E6%94%AF%E6%8C%81"><span class="nav-number">1.6.</span> <span class="nav-text">对数据协议，序列化的支持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OS%E5%B1%82%E9%9D%A2%E7%9A%84%E9%9B%B6%E6%8B%B7%E8%B4%9D"><span class="nav-number">1.7.</span> <span class="nav-text">OS层面的零拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty%E7%9A%84%E9%9B%B6%E6%8B%B7%E8%B4%9D"><span class="nav-number">1.8.</span> <span class="nav-text">Netty的零拷贝</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dylan Zhong"
+      src="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Dylan Zhong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zhongsongzhi97.github.io/archives/">
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zhongsongzhi97.github.io/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zhongsongzhi97.github.io/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/13/Netty%E5%B0%8F%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Netty小结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-13 15:43:14 / Modified: 16:58:24" itemprop="dateCreated datePublished" datetime="2022-02-13T15:43:14+08:00">2022-02-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Netty小结"><a href="#Netty小结" class="headerlink" title="Netty小结"></a>Netty小结</h1><h2 id="Netty的逻辑架构"><a href="#Netty的逻辑架构" class="headerlink" title="Netty的逻辑架构"></a>Netty的逻辑架构</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzbxnyxlioj30sa0o276s.jpg" alt="Drawing 1.png"></p>
+<h2 id="I-O模型"><a href="#I-O模型" class="headerlink" title="I/O模型"></a>I/O模型</h2><p>主从Reactor多线程模型</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzbxm0052oj31860qw42m.jpg" alt="6.png"></p>
+<p>主从多线程模型由多个Reactor线程组成，每个Reactor线程都有独立的Selector对象。</p>
+<p>MainReactor只负责处理客户端连接的Accept事件，连接建立成功后会将创建好的连接对象注册到SubReactor。</p>
+<p>之后由SubReactor分配线程池中的I/O线程与其连接绑定，由该I/O线程负责连接生命周期内的所有I/O事件。</p>
+<p>步骤：</p>
+<ol>
+<li>连接注册：Channel建立后，注册到Reactor线程中的Selector选择器</li>
+<li>事件轮询：轮询Selector中注册的所有Channel的I/O事件</li>
+<li>事件分发：为准备就绪的I/O事件分配响应的处理线程</li>
+<li>任务处理：Reactor线程还负责任务队列中的非I/O任务，每个工作线程从各自维护的任务队列中取出任务异步执行。</li>
+</ol>
+<h2 id="事件处理机制"><a href="#事件处理机制" class="headerlink" title="事件处理机制"></a>事件处理机制</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzby6ykcedj30zk0k0did.jpg" alt="6.png"></p>
+<ol>
+<li>BossEventLoopGroup(包含一个或多个EventLoop)负责监听客户端上的Accept事件，事件触发时会将事件（即Channel）注册到WorkerEventLoopGroup(包含一个或多个EventLoop)中的某个EventLoop上。</li>
+<li>EventLoop在事件轮询时读到了Channel中的数据后，会调用绑定的ChannelPipeline进行事件传播，ChannelPipeline是线程安全的。数据传入到ChannelPipeline的第一个Handler，数据处理完成后会传递给下一个ChannelHandler，整个过程是串行化执行(增加吞吐量和降低业务难度)的。</li>
+</ol>
+<h2 id="服务编排层"><a href="#服务编排层" class="headerlink" title="服务编排层"></a>服务编排层</h2><p>问题：</p>
+<ul>
+<li>ChannelPipeline 与 ChannelHandler 的关系是什么？它们之间是如何协同工作的？</li>
+<li>ChannelHandler 的类型有哪些？有什么区别？</li>
+<li>Netty 中 I/O 事件是如何传播的？</li>
+</ul>
+<p>ChannelPipeline概述：</p>
+<p>Pipeline的意思是管道，它在Netty中的作用，就是把原始的网络字节流经过Pipeline，进一步加工包装</p>
+<h2 id="易用性API接口"><a href="#易用性API接口" class="headerlink" title="易用性API接口"></a>易用性API接口</h2><h2 id="对数据协议，序列化的支持"><a href="#对数据协议，序列化的支持" class="headerlink" title="对数据协议，序列化的支持"></a>对数据协议，序列化的支持</h2><h2 id="OS层面的零拷贝"><a href="#OS层面的零拷贝" class="headerlink" title="OS层面的零拷贝"></a>OS层面的零拷贝</h2><p>传统的数据拷贝：</p>
+<p>从文件中读取数据，然后将数据传输到网络上</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzbz1jzozgj31jw0tctb4.jpg" alt="Drawing 0.png"></p>
+<ol>
+<li>用户线程发起read()调用以后，上下文从用户态切换到内核态，从文件读取数据到内核缓冲区</li>
+<li>从内核态切换到用户态，将数据从内核态缓冲区拷贝到用户态缓冲区，然后返回给用户线程</li>
+<li>用户线程调用send()，用户态切换到内核态，请求数据从用户态缓冲区拷贝到内核态的Socket缓冲区</li>
+<li>最终send()结束，从内核态返回到用户态。发送了4次上下文切换和4次拷贝。</li>
+</ol>
+<p>问题：传统拷贝为何不是直接将数据传输到用户缓冲区？引入内核缓冲区可以充当缓存的作用，这样就可以实现文件数据的预读，提升 I/O 的性能</p>
+<p>比较好的流程：文件读取到内核缓冲区，然后从内核缓冲区直接传输到Socket缓冲区（）</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzbzcgobwbj31k60qiwgx.jpg" alt="Drawing 1.png"></p>
+<p>这里进行了3次拷贝，0次上下文切换</p>
+<p>还可以优化：就是不需要从内核缓冲区拷贝到Socket缓冲区，只在Socket缓冲区记录必要的信息，然后直接从内核缓冲区拷贝即可，这样就只有2次拷贝，这里就只有2次DMA拷贝，0次CPU拷贝了 -&gt; 所以是零拷贝</p>
+<h2 id="Netty的零拷贝"><a href="#Netty的零拷贝" class="headerlink" title="Netty的零拷贝"></a>Netty的零拷贝</h2><ol>
+<li>使用堆外内存 -&gt;  VM内部的数据需要拷贝到VM外部才能进行系统调用</li>
+<li>CompositeByteBuf</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zhongsongzhi97.github.io/tags/Netty/" rel="tag"># Netty</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/02/10/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/" rel="prev" title="内存分配器">
+                  <i class="fa fa-chevron-left"></i> 内存分配器
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zhongsongzhi97.github.io/2022/02/20/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="next" title="微服务">
+                  微服务 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan Zhong</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/zhongsongzhi97.github.io/js/comments.js"></script><script src="/zhongsongzhi97.github.io/js/utils.js"></script><script src="/zhongsongzhi97.github.io/js/motion.js"></script><script src="/zhongsongzhi97.github.io/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

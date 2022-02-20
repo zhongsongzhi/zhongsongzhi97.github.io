@@ -129,18 +129,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/zhongsongzhi97.github.io/archives/">
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/zhongsongzhi97.github.io/categories/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/zhongsongzhi97.github.io/tags/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -169,6 +169,349 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/20/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/02/20/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">微服务</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-20 14:55:14 / Modified: 21:05:32" itemprop="dateCreated datePublished" datetime="2022-02-20T14:55:14+08:00">2022-02-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" itemprop="url" rel="index"><span itemprop="name">微服务</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="微服务小结"><a href="#微服务小结" class="headerlink" title="微服务小结"></a>微服务小结</h1><h2 id="什么是微服务？"><a href="#什么是微服务？" class="headerlink" title="什么是微服务？"></a>什么是微服务？</h2><p>发展：由单体应用进化到服务化拆分部署，后期由于容器化技术的进步，微服务开始流行。</p>
+<p>定义：将复杂臃肿的单体进行细粒度化的服务化拆分，将每个拆分出来的服务各自独立打包部署，由小团队进行开发和维护。</p>
+<h2 id="如何将单体应用进行服务化拆分："><a href="#如何将单体应用进行服务化拆分：" class="headerlink" title="如何将单体应用进行服务化拆分："></a>如何将单体应用进行服务化拆分：</h2><ol>
+<li><p>什么时候进行服务化拆分：</p>
+<p>通常单体应用只在起步阶段使用，当功能开始复杂，人数变多就需要进行服务化拆分了</p>
+</li>
+<li><p>怎么进行拆分</p>
+<p>纵向拆分：从业务维度进行拆分，标准是按照业务的关联度来决定的。</p>
+<p>横向拆分：从公共且独立的功能维度拆分，标准按照是否有公共的被多个其他服务调用，且依赖的资源独立的功能。</p>
+</li>
+<li><p>服务化拆分的前置条件和问题：</p>
+<ul>
+<li>服务如何定义：通过接口，服务之间的调用通过接口描述来约定，约定的内容包括接口名，接口参数，接口返回值。</li>
+<li>服务如何发布和订阅：通过一个注册中心，能够记录每个服务提供者的地址以供服务调用者查询。</li>
+<li>服务如何监控：对于一个服务来说，需要关注的性能指标通常为QPS,AvgTime,P999这些指标，需要通用的监控方案，能够覆盖业务埋点，数据收集，数据处理到数据展示的全链路</li>
+<li>服务如何治理：服务的数量变多以后，如果一个服务的性能出现问题，依赖的服务都会受到影响，可以设置一个调用阈值，如果超过这个值就会直接返回</li>
+<li>故障如何定位：需要将用户请求进行标记，并在多个依赖服务系统之间继续传递，以便串联所有路径，从而进行故障定位。</li>
+</ul>
+</li>
+</ol>
+<h2 id="基本框架结构"><a href="#基本框架结构" class="headerlink" title="基本框架结构"></a>基本框架结构</h2><p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1gzk1r35gakj216u0qe778.jpg" alt="screenshot-20220220-161551"></p>
+<p>流程：服务提供者向注册中心注册服务，声明自己的服务以及服务的地址，然后消费者请求注册中心，查询要调用的服务的地址，然后发起请求，得到请求结果以后按照约定的协议解析结果。在服务调用过程中，服务的请求耗时，调用量，成功率等指标会被记录，调用链路的信息也会被记录。</p>
+<p>依赖的基本组件：</p>
+<ol>
+<li>服务描述</li>
+<li>注册中心</li>
+<li>服务框架</li>
+<li>服务监控</li>
+<li>服务追踪</li>
+<li>服务治理</li>
+</ol>
+<h3 id="服务描述"><a href="#服务描述" class="headerlink" title="服务描述"></a>服务描述</h3><p>常见的服务描述方式：1. RESTful API, XML, IDL</p>
+<p>RESTful API是基于HTTP协议的服务描述，通常使用Wiki或者Swagger进行管理。</p>
+<p>XML配置常用于RPC协议的服务描述，IDL通常在Thrift和gRPC这类跨语言服务调用框架中。</p>
+<h3 id="注册中心："><a href="#注册中心：" class="headerlink" title="注册中心："></a>注册中心：</h3><p>注册(服务提供者-&gt;注册中心)，订阅(服务消费者-&gt;注册中心)，返回（注册中心-&gt;服务消费者），通知（注册中心-&gt;服务消费者）</p>
+<h3 id="服务框架"><a href="#服务框架" class="headerlink" title="服务框架"></a>服务框架</h3><p>通信协议，序列化协议等</p>
+<h3 id="服务监控"><a href="#服务监控" class="headerlink" title="服务监控"></a>服务监控</h3><p>指标收集，数据处理，数据展示</p>
+<h3 id="服务追踪"><a href="#服务追踪" class="headerlink" title="服务追踪"></a>服务追踪</h3><ol>
+<li>服务消费者发起调用前，需要在本地按照一定规则生成一个requestId，发起调用以后将requestId作为请求参数的一部分传递给服务提供者</li>
+<li>服务提供者收到请求后，会记录下requestid，服务提供者继续请求其他服务，会生成一个自己的本地requestid然后也添加到参数中，这样就可以通过requestid串联整个调用链路了（需要监控链路，所以每个都要签一遍）</li>
+</ol>
+<h3 id="服务治理"><a href="#服务治理" class="headerlink" title="服务治理"></a>服务治理</h3><p>单机故障：自动摘除故障节点</p>
+<p>单IDC（互联网数据中心）故障：部署多IDC，自动切换IDC</p>
+<p>依赖服务不可用：当一个服务依赖了另一个服务，当一个服务出现问题后，服务治理会通过熔断机制，一段时间内停止发起调用而直接返回。</p>
+<h2 id="注册中心和注册中心原理"><a href="#注册中心和注册中心原理" class="headerlink" title="注册中心和注册中心原理"></a>注册中心和注册中心原理</h2><p>角色：1. 服务提供者(RPC Server)，服务消费者(RPC Client)，服务注册中心(Registry)</p>
+<p>RPC Server:在启动时，根据服务发布文件中的配置信息，向Registry注册服务，并定期发送心跳汇报存活状态</p>
+<p>RPC Client:调用服务时，根据服务引用文件中的配置信息，向Registry订阅服务，将Registry返回的服务节点缓存到本地，并与RPC Server建立连接</p>
+<p>Server变动：当Server节点变动时，Registry会同步变更，Client感知后会刷新本地的服务节点</p>
+<p>RPC发起调用时，会从本地的服务节点中，基于负载均衡算法选择一台RPC Server发起调用</p>
+<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1gzk3v649n7j21dw0u0wkp.jpg" alt="screenshot-20220220-172909"></p>
+<p>实现的方式：</p>
+<ol>
+<li><p>注册中心的API：</p>
+<ol>
+<li>服务注册 2. 服务注销 3. 心跳汇报 4. 服务订阅 5. 服务变更查询</li>
+</ol>
+</li>
+<li><p>集群部署:</p>
+<p>集群部署加上分布式一致性协议来保证高可用和数据一致性</p>
+<p>Zookeeper:Zab加上主从</p>
+</li>
+<li><p>目录存储：</p>
+<p>Zookeepre会采用层次化的目录结构。</p>
+</li>
+<li><p>服务健康状态检测：Zookeeper通过客户端和服务端的长连接和会话超时控制机制来检测健康状态</p>
+</li>
+<li><p>服务状态变更通知：有服务提供者加入或者删除，注册中心会立刻通知所有订阅了该服务的服务消费者</p>
+</li>
+<li><p>白名单机制：注册中心提供一个白名单，只有添加到白名单的RPC Server才可以调用注册中心的注册接口</p>
+</li>
+</ol>
+<p>Todo：Zookeeper</p>
+<h2 id="如何监控微服务的调用："><a href="#如何监控微服务的调用：" class="headerlink" title="如何监控微服务的调用："></a>如何监控微服务的调用：</h2><ol>
+<li><p>监控的对象：</p>
+<p>用户端监控，接口监控，资源监控，基础监控（CPU利用率，内存使用量，I/O读写量，网卡带宽）</p>
+</li>
+<li><p>监控的指标：</p>
+<p>请求量(QPS)，响应时间，错误率</p>
+</li>
+<li><p>监控的维度：</p>
+<p>分机房维度，单机维度，时间维度，核心维度（核心业务和非核心业务）</p>
+</li>
+</ol>
+<h2 id="监控系统原理"><a href="#监控系统原理" class="headerlink" title="监控系统原理"></a>监控系统原理</h2><ol>
+<li><p>数据采集：</p>
+<p>服务主动上报：在业务中加入数据收集代码逻辑</p>
+<p>代理收集：将调用的详细信息记录到本地日志，后面通过代理去解析本地日志，在上报服务</p>
+</li>
+<li><p>数据传输：</p>
+<p>UDP传输：</p>
+<p>消息队列传输：</p>
+</li>
+<li><p>数据处理：</p>
+<p>聚合：各种维度聚合（接口维度/机器维度）</p>
+<p>存储：各类数据库</p>
+</li>
+<li><p>数据展示:</p>
+<ol>
+<li>各种图形（曲线图，饼状图，格子图）</li>
+</ol>
+</li>
+</ol>
+<h3 id="如何追踪微服务调用"><a href="#如何追踪微服务调用" class="headerlink" title="如何追踪微服务调用"></a>如何追踪微服务调用</h3><ol>
+<li><p>为什么需要追踪微服务调用</p>
+<p>因为在微服务的架构下，一次请求会涉及多个服务方，整个业务链路很长，需要追踪微服务调用才能找到是什么导致的失败</p>
+</li>
+<li><p>微服务追踪可以用来做什么</p>
+<ol>
+<li>优化系统瓶颈（根据链路上的耗时）</li>
+<li>优化链路调用路径（减少服务依赖）</li>
+<li>生成网络拓扑（用于服务监控）</li>
+<li>透明传输数据（业务上可能需要将一些数据在整个微服务调用链路都带上）</li>
+</ol>
+</li>
+<li><p>服务追踪的原理：</p>
+<p>基于调用链：使用一个全局唯一的ID将分布在各个服务节点上的同一个请求串联</p>
+<p>格式eg: traceid(全局id)+spanid（服务方的链路组合）+annonation（业务方埋点）</p>
+<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1gzk93wcrvej21mc0mq767.jpg" alt="1921645360224_.pic"></p>
+</li>
+</ol>
+<h2 id="微服务治理的手段"><a href="#微服务治理的手段" class="headerlink" title="微服务治理的手段"></a>微服务治理的手段</h2><p>可能出现的问题：</p>
+<ol>
+<li>注册中心：宕机，和服务消费者或者服务提供者的网络不通</li>
+<li>服务提供者：节点宕机，节点性能变慢，短时间出现问题，与消费者网络不通，与注册中心网络不通</li>
+<li>服务消费者：与注册中心，提供者网络不通</li>
+</ol>
+<p>常见的服务治理的手段：</p>
+<ol>
+<li><p>节点管理：</p>
+<p>注册中心主动摘除：服务提供者和注册中心使用心跳机制，如果超时就会摘除并推送给消费者</p>
+<p>服务消费者摘除：探活机制放在服务消费端，如果消费者调用服务提供者节点失败，就将这个节点从内存的列表中移除</p>
+</li>
+<li><p>负载均衡：</p>
+<p>服务提供者一般是以集群的方式存在。</p>
+<ol>
+<li>随机算法 2.轮询算法 3. 最少活跃调用（消费方维护服务提供方的每一个节点的调用次数，按连接数倒序排）4. 一致性hash算法</li>
+</ol>
+</li>
+<li><p>服务路由：</p>
+<p>路由规则：按照一定的规则，比如条件表达式或者正则表达式来限定服务节点的选择范围</p>
+<ul>
+<li>业务存在灰度发布的需求：可以选择只让部分人使用变更的功能，比如按尾号进行灰度，只有符合要求的才能访问到服务节点</li>
+<li>多机房就近访问的需求：通过IP端来控制访问，优先选择就近的机房</li>
+</ul>
+<p>如何配置路由规则：1. 静态配置（在服务消费者本地存放，但是改动就不方便） 2.动态配置（路由规则存在注册中心，消费者定期去注册中心拉新的路由规则来保持同步）</p>
+</li>
+<li><p>服务容错：</p>
+<p>FailOver:失败自动切换，消费者调用失败或者超时以后，选择下一个节点重新发起调用。要求调用的操作时幂等的（即同一个调用返回结果相同），一般是读请求的场景</p>
+<p>FailBack:失败通知，调用失败或超时以后，不会重试，而是根据失败的详细信息来决定下一步的执行策略。对于非幂等的调用，如果失败或超时，需要去查看调用是否生效。</p>
+<p>FailCache:失败缓存，调用失败或超时后，不立即重试，而是隔一段时间再次尝试，也是幂等调用适合。</p>
+<p>FailFast:快速失败，调用失败以后不再重试，一般对于非核心业务调用会这样使用。快速失败，只记录一个失败日志。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/13/Netty%E5%B0%8F%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/02/13/Netty%E5%B0%8F%E7%BB%93/" class="post-title-link" itemprop="url">Netty小结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-13 15:43:14 / Modified: 16:58:24" itemprop="dateCreated datePublished" datetime="2022-02-13T15:43:14+08:00">2022-02-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Netty小结"><a href="#Netty小结" class="headerlink" title="Netty小结"></a>Netty小结</h1><h2 id="Netty的逻辑架构"><a href="#Netty的逻辑架构" class="headerlink" title="Netty的逻辑架构"></a>Netty的逻辑架构</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzbxnyxlioj30sa0o276s.jpg" alt="Drawing 1.png"></p>
+<h2 id="I-O模型"><a href="#I-O模型" class="headerlink" title="I/O模型"></a>I/O模型</h2><p>主从Reactor多线程模型</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzbxm0052oj31860qw42m.jpg" alt="6.png"></p>
+<p>主从多线程模型由多个Reactor线程组成，每个Reactor线程都有独立的Selector对象。</p>
+<p>MainReactor只负责处理客户端连接的Accept事件，连接建立成功后会将创建好的连接对象注册到SubReactor。</p>
+<p>之后由SubReactor分配线程池中的I/O线程与其连接绑定，由该I/O线程负责连接生命周期内的所有I/O事件。</p>
+<p>步骤：</p>
+<ol>
+<li>连接注册：Channel建立后，注册到Reactor线程中的Selector选择器</li>
+<li>事件轮询：轮询Selector中注册的所有Channel的I/O事件</li>
+<li>事件分发：为准备就绪的I/O事件分配响应的处理线程</li>
+<li>任务处理：Reactor线程还负责任务队列中的非I/O任务，每个工作线程从各自维护的任务队列中取出任务异步执行。</li>
+</ol>
+<h2 id="事件处理机制"><a href="#事件处理机制" class="headerlink" title="事件处理机制"></a>事件处理机制</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzby6ykcedj30zk0k0did.jpg" alt="6.png"></p>
+<ol>
+<li>BossEventLoopGroup(包含一个或多个EventLoop)负责监听客户端上的Accept事件，事件触发时会将事件（即Channel）注册到WorkerEventLoopGroup(包含一个或多个EventLoop)中的某个EventLoop上。</li>
+<li>EventLoop在事件轮询时读到了Channel中的数据后，会调用绑定的ChannelPipeline进行事件传播，ChannelPipeline是线程安全的。数据传入到ChannelPipeline的第一个Handler，数据处理完成后会传递给下一个ChannelHandler，整个过程是串行化执行(增加吞吐量和降低业务难度)的。</li>
+</ol>
+<h2 id="服务编排层"><a href="#服务编排层" class="headerlink" title="服务编排层"></a>服务编排层</h2><p>问题：</p>
+<ul>
+<li>ChannelPipeline 与 ChannelHandler 的关系是什么？它们之间是如何协同工作的？</li>
+<li>ChannelHandler 的类型有哪些？有什么区别？</li>
+<li>Netty 中 I/O 事件是如何传播的？</li>
+</ul>
+<p>ChannelPipeline概述：</p>
+<p>Pipeline的意思是管道，它在Netty中的作用，就是把原始的网络字节流经过Pipeline，进一步加工包装</p>
+<h2 id="易用性API接口"><a href="#易用性API接口" class="headerlink" title="易用性API接口"></a>易用性API接口</h2><h2 id="对数据协议，序列化的支持"><a href="#对数据协议，序列化的支持" class="headerlink" title="对数据协议，序列化的支持"></a>对数据协议，序列化的支持</h2><h2 id="OS层面的零拷贝"><a href="#OS层面的零拷贝" class="headerlink" title="OS层面的零拷贝"></a>OS层面的零拷贝</h2><p>传统的数据拷贝：</p>
+<p>从文件中读取数据，然后将数据传输到网络上</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzbz1jzozgj31jw0tctb4.jpg" alt="Drawing 0.png"></p>
+<ol>
+<li>用户线程发起read()调用以后，上下文从用户态切换到内核态，从文件读取数据到内核缓冲区</li>
+<li>从内核态切换到用户态，将数据从内核态缓冲区拷贝到用户态缓冲区，然后返回给用户线程</li>
+<li>用户线程调用send()，用户态切换到内核态，请求数据从用户态缓冲区拷贝到内核态的Socket缓冲区</li>
+<li>最终send()结束，从内核态返回到用户态。发送了4次上下文切换和4次拷贝。</li>
+</ol>
+<p>问题：传统拷贝为何不是直接将数据传输到用户缓冲区？引入内核缓冲区可以充当缓存的作用，这样就可以实现文件数据的预读，提升 I/O 的性能</p>
+<p>比较好的流程：文件读取到内核缓冲区，然后从内核缓冲区直接传输到Socket缓冲区（）</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzbzcgobwbj31k60qiwgx.jpg" alt="Drawing 1.png"></p>
+<p>这里进行了3次拷贝，0次上下文切换</p>
+<p>还可以优化：就是不需要从内核缓冲区拷贝到Socket缓冲区，只在Socket缓冲区记录必要的信息，然后直接从内核缓冲区拷贝即可，这样就只有2次拷贝，这里就只有2次DMA拷贝，0次CPU拷贝了 -&gt; 所以是零拷贝</p>
+<h2 id="Netty的零拷贝"><a href="#Netty的零拷贝" class="headerlink" title="Netty的零拷贝"></a>Netty的零拷贝</h2><ol>
+<li>使用堆外内存 -&gt;  VM内部的数据需要拷贝到VM外部才能进行系统调用</li>
+<li>CompositeByteBuf</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1214,7 +1557,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-01-14 02:22:24" itemprop="dateModified" datetime="2022-01-14T02:22:24+08:00">2022-01-14</time>
+      <time title="Modified: 2022-02-13 00:34:32" itemprop="dateModified" datetime="2022-02-13T00:34:32+08:00">2022-02-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1240,12 +1583,31 @@
 
 <h2 id="Redis的设计与实现"><a href="#Redis的设计与实现" class="headerlink" title="Redis的设计与实现"></a>Redis的设计与实现</h2><p>核心点：</p>
 <ol>
-<li>Redis的五种数据类型是由什么数据结构实现？</li>
-<li>Redis的字符串类型即可以存储字符串，又可以存储整数和浮点数，甚至二进制位，Redis内部如何存储这些不同的值？</li>
-<li>Redis 的一部分命令只能对特定数据类型执行（比如 APPEND 只能对字符串执行， HSET 只能对哈希表执行）， 而另一部分命令却可以对所有数据类型执行（比如 DEL 、 TYPE 和 EXPIRE ）， 不同的命令在执行时是如何进行类型检查的？ Redis 在内部是否实现了一个类型系统？</li>
-<li>Redis 的数据库是怎样储存各种不同数据类型的键值对的？ 数据库里面的过期键又是怎样实现自动删除的？</li>
-<li>Redis 还拥有发布与订阅、脚本、事务等特性， 这些特性又是如何实现的？</li>
-<li>怎么处理客户端的命令请求？</li>
+<li><p>Redis的五种数据类型是由什么数据结构实现？</p>
+<p>String-&gt; 动态字符串</p>
+<p>List-&gt;  压缩链表，双向链表</p>
+<p>Hash-&gt; 压缩链表，hash表</p>
+<p>Set-&gt;set</p>
+<p>sortedSet-&gt;压缩链表，跳表</p>
+</li>
+<li><p>Redis的字符串类型即可以存储字符串，又可以存储整数和浮点数，甚至二进制位，Redis内部如何存储这些不同的值？</p>
+<p>针对不同场景，为同一类型设置不同的数据结构实现。</p>
+<p>比如字符串，数字时存为INT，长度小的时候为编码的简单字符串，长的时候就是简单动态字符串</p>
+</li>
+<li><p>Redis 的一部分命令只能对特定数据类型执行（比如 APPEND 只能对字符串执行， HSET 只能对哈希表执行）， 而另一部分命令却可以对所有数据类型执行（比如 DEL 、 TYPE 和 EXPIRE ）， 不同的命令在执行时是如何进行类型检查的？ Redis 在内部是否实现了一个类型系统？</p>
+<p>是的Redis内部实现了一套类型系统</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzb70oiqptj30se0ks0ue.jpg" alt="img"></p>
+</li>
+<li><p>Redis 的数据库是怎样储存各种不同数据类型的键值对的？ 数据库里面的过期键又是怎样实现自动删除的？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">redisServer</span> &#123;</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    redisDb *db;    <span class="comment">// 一个数组，保存着服务器中的所有数据库</span></span><br><span class="line">    <span class="keyword">int</span> dbnum;      <span class="comment">// 服务器的数据库数量，默认16</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisDb</span> &#123;</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    dict *dict;     <span class="comment">// 数据库键空间，保存着数据库中的所有键值对</span></span><br><span class="line">    dict *expires;  <span class="comment">// 过期字典，保存着键的过期时间</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzb6ys3r6mj30sf0fvmyj.jpg" alt="img"></p>
+</li>
+<li><p>Redis 还拥有发布与订阅、脚本、事务等特性， 这些特性又是如何实现的？</p>
+</li>
+<li><p>怎么处理客户端的命令请求？</p>
+<p>使用RESP协议（自定义的）进行通信</p>
+</li>
 </ol>
 <p>整体结构：</p>
 <p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyc81jn065j31hb0u0wj0.jpg" alt="img"></p>
@@ -1411,223 +1773,6 @@
 <li>先删缓存再更新数据库：无并发，重试机制（使用消息队列保证操作成功） 并发：延迟双删（先删除缓存，再更新数据库，休眠一秒，再次删除缓存）</li>
 <li>先更新数据库再删缓存（更好）：无并发，重试机制   并发：在客户端暂存并发请求</li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/11/MySQL%E4%BA%8B%E5%8A%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2022/01/11/MySQL%E4%BA%8B%E5%8A%A1/" class="post-title-link" itemprop="url">MySQL事务</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-01-11 16:44:02" itemprop="dateCreated datePublished" datetime="2022-01-11T16:44:02+08:00">2022-01-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-01-14 11:03:51" itemprop="dateModified" datetime="2022-01-14T11:03:51+08:00">2022-01-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/zhongsongzhi97.github.io/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Mysql事务"><a href="#Mysql事务" class="headerlink" title="Mysql事务"></a>Mysql事务</h1><p>在业务实现时，通常需要保证一批SQL同时具备ACID特性。</p>
-<p>ACID:</p>
-<ol>
-<li>原子性（Atomicity）：事务内SQL要么同时成功要么同时失败 ，基于UndoLog实现。</li>
-<li>一致性（Consistency）：系统从一个正确态转移到另一个正确态，由应用通过AID来保证，并非数据库的责任。</li>
-<li>隔离性（Isolation）：控制事务并发执行时数据的可见性，当多个应用并发访问数据库系统时，提供了一种隔离方法，防止彼此的操作相互干扰，基于锁和MVCC实现。</li>
-<li>持久性（Durability）：提交后一定存储成功不会丢失，基于RedoLog实现。</li>
-</ol>
-<h2 id="日志系统"><a href="#日志系统" class="headerlink" title="日志系统"></a>日志系统</h2><p><img src="/Users/bytedance/Documents/screenshot-20220111-180509.png" alt="screenshot-20220111-180509"></p>
-<p>Undo日志记录某数据被修改前的值，可以用来在事务失败时进行rollback；Redo日志记录某数据块被修改后的值，可以用来恢复未写入data file的已成功事务更新的数据。</p>
-<p>实现<strong>原子性</strong>：通过日志将所有对数据的更新操作都写入日志。如果事务一部分操作已完成又无法全部完成，则通过undolog将执行成功的操作撤销</p>
-<p>实现<strong>持久性</strong>：在事务提交之前，redo log已经持久化了，对于已经执行成功未写入磁盘的操作，会通过redo log写入磁盘</p>
-<p>最常见的场景是，数据库系统崩溃后重启，此时数据库处于不一致的状态，必须先执行一个crash recovery的过程：读取日志进行REDO（重新执行所有已经执行成功，但尚未写入到磁盘的操作，保证持久性），再对所有崩溃时尚未成功提交的事务进行进行undo（撤销所有执行一部分但尚未提交的操作，保证原子性）。crash recovery结束后，数据库恢复到一致性状态，可以继续被使用。</p>
-<p>Todo:</p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/2G_2ZYAbQIblVJY7pmrhKg">Redo Log</a></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/427911093">Undo Log</a></p>
-<h2 id="锁与MVCC"><a href="#锁与MVCC" class="headerlink" title="锁与MVCC"></a>锁与MVCC</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy9w6wgo1vj313a0gwdik.jpg" alt="screenshot-20220111-180737"></p>
-<p>隔离性: 数据库允许多个并发事务同时对数据进⾏读写和修改的能⼒，且互相不影响，看起来像串⾏执⾏⼀样， 并不会出现由于事务交叉执⾏⽽导致的数据不⼀致</p>
-<p>如何判断一个事务调度是正确的：⼀个并发事务的调度执⾏结果能和多种串⾏执⾏的其中⼀个结果相等，我们认为这是⼀个正确的调度， 称之为serializable schedule</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gybvcdykimj31t40p8dlc.jpg" alt="screenshot-20220113-110918"></p>
-<p>应该满足A+B = 2120</p>
-<p>隔离级别：</p>
-<p><code>RAED UNCOMMITED</code>：使用查询语句不会加锁，可能会读到未提交的行（Dirty Read）；</p>
-<p><code>READ COMMITED</code>：只对记录加记录锁，而不会在记录之间加间隙锁，所以允许新的记录插入到被锁定记录的附近，所以再多次使用查询语句时，可能得到不同的结果（Non-Repeatable Read 不可重复读是读取了其他事务更改的数据，<strong>针对update操作</strong>）；</p>
-<p><code>REPEATABLE READ</code>：加记录锁和间隙锁。多次读取同一范围的数据会返回第一次查询的快照，不会返回不同的数据行，但是可能发生幻读（读取了其他事务新增的数据，<strong>针对insert和delete操作</strong>）；</p>
-<p><code>SERIALIZABLE</code>：InnoDB 隐式地将全部的查询语句加上共享锁，解决了幻读的问题；</p>
-<p>并发产⽣的异象，本质上是出现了冲突：</p>
-<ul>
-<li>W-W冲突：两个事务先后修改了同⼀个数据库的相同object </li>
-<li> W-R冲突：⼀个事务T1修改某个object后(未提交)，另⼀个事务T2对改object进⾏了读操作 </li>
-<li> R-W冲突：⼀个事务T1读取了某个object或者某个range后，另⼀个事务T2对object或者range进⾏了修改</li>
-</ul>
-<h2 id="并发控制"><a href="#并发控制" class="headerlink" title="并发控制"></a>并发控制</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gybw8bsdt3j31gs0i475x.jpg" alt="screenshot-20220113-113925"></p>
-<ol>
-<li><p>2PL - 读写锁</p>
-<img src="https://tva1.sinaimg.cn/large/008i3skNly1gybwb7pt63j30k60riq50.jpg" alt="screenshot-20220113-114256" style="zoom: 50%;" />
-
-<p>可能发生死锁。需要进行死锁检测或死锁预防</p>
-</li>
-<li><p>T/O - T/O的核⼼思想就是利⽤时间戳来决定事务之间的等价执⾏顺序：如果TS(Ti) &lt; TS(Tj)，那么数据库必须保证实际的 schedule先执⾏Ti，后执⾏Tj的结果等价。</p>
-</li>
-<li><p>OCC - todo</p>
-</li>
-<li><p>MV2PL:</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gybwip4vkwj31rc0u045v.jpg" alt="screenshot-20220113-114917"></p>
-</li>
-<li><p>MVTO - todo</p>
-</li>
-<li><p>MVOCC - todo</p>
-</li>
-</ol>
-<h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>为了提⾼数据库的并发性能，⼈们提出了MVCC(Multi-Version Concurrency Control)来实现读写互不阻塞，从⽽提⾼数据 库的并发性能</p>
-<p>MySQL实现的是多版本的两阶段锁协议(Multiversion 2PL)将MVCC和2PL结合。每一个版本的数据行都有一个唯一的时间戳。</p>
-<p>读事务：从多个（可见（时间戳早于当前事务））版本的数据项中返回具有最大时间戳的</p>
-<p>更新操作：读取最新版本（可见）的数据计算更新的结果，然后创建一个新版本的数据，新数据的时间戳为当前数据行的最大版本+1</p>
-<p>删除操作：MySQL 会将版本最低的数据定时从数据库中清除以保证不会出现大量的遗留内容</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://draveness.me/database-concurrency-control/">锁与MVCC</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/11/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2022/01/11/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" class="post-title-link" itemprop="url">系统监控</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2022-01-11 00:26:10 / Modified: 00:35:15" itemprop="dateCreated datePublished" datetime="2022-01-11T00:26:10+08:00">2022-01-11</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Go系统监控的设计和实现原理"><a href="#Go系统监控的设计和实现原理" class="headerlink" title="Go系统监控的设计和实现原理"></a>Go系统监控的设计和实现原理</h1><p>守护进程：后台运行的计算机程序，有操作系统启动，会在整个系统的生命周期存在，随着系统的启动而启动，系统的结束而结束。</p>
-<p>Go的系统监控，会在内部启动一个不会中止的循环，循环内部进行网络轮询，抢占长期运行或者处于系统调用的Goroutine以及触发垃圾回收</p>
-<h2 id="监控循环"><a href="#监控循环" class="headerlink" title="监控循环"></a>监控循环</h2><p>启动时机：main函数进入时会通过系统调用创建一个新线程并启动系统监控（sysmon）</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sysmon</span><span class="params">()</span></span> &#123;</span><br><span class="line">	sched.nmsys++</span><br><span class="line">	checkdead() <span class="comment">//检查是否存在死锁</span></span><br><span class="line"></span><br><span class="line">	lasttrace := <span class="keyword">int64</span>(<span class="number">0</span>)</span><br><span class="line">	idle := <span class="number">0</span></span><br><span class="line">	delay := <span class="keyword">uint32</span>(<span class="number">0</span>)</span><br><span class="line">	<span class="keyword">for</span> &#123; <span class="comment">//监控循环</span></span><br><span class="line">		<span class="keyword">if</span> idle == <span class="number">0</span> &#123;</span><br><span class="line">			delay = <span class="number">20</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> idle &gt; <span class="number">50</span> &#123;</span><br><span class="line">			delay *= <span class="number">2</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> delay &gt; <span class="number">10</span>*<span class="number">1000</span> &#123;</span><br><span class="line">			delay = <span class="number">10</span> * <span class="number">1000</span></span><br><span class="line">		&#125;</span><br><span class="line">		usleep(delay) <span class="comment">//挂起当前线程</span></span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在程序稳定后，系统监控会每10ms触发一次，完成如下工作:</p>
-<ul>
-<li><p>运行计时器 — 获取下一个需要被触发的计时器；</p>
-</li>
-<li><p>轮询网络 — 获取需要处理的到期文件描述符；</p>
-</li>
-<li><p>抢占处理器 — 抢占运行时间较长的或者处于系统调用的 Goroutine；</p>
-</li>
-<li><p>垃圾回收 — 在满足条件时触发垃圾收集回收内存；</p>
-</li>
-</ul>
-<h3 id="运行计时器"><a href="#运行计时器" class="headerlink" title="运行计时器"></a>运行计时器</h3><h3 id="轮询网络"><a href="#轮询网络" class="headerlink" title="轮询网络"></a>轮询网络</h3><h3 id="抢占处理器"><a href="#抢占处理器" class="headerlink" title="抢占处理器"></a>抢占处理器</h3><h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p><a target="_blank" rel="noopener" href="https://draveness.me/golang/docs/part3-runtime/ch06-concurrency/golang-sysmon/">https://draveness.me/golang/docs/part3-runtime/ch06-concurrency/golang-sysmon/</a></p>
 
       
     </div>

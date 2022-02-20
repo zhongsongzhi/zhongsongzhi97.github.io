@@ -20,14 +20,16 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
-<meta name="description" content="Redis学习小结  Redis的设计与实现核心点：  Redis的五种数据类型是由什么数据结构实现？ Redis的字符串类型即可以存储字符串，又可以存储整数和浮点数，甚至二进制位，Redis内部如何存储这些不同的值？ Redis 的一部分命令只能对特定数据类型执行（比如 APPEND 只能对字符串执行， HSET 只能对哈希表执行）， 而另一部分命令却可以对所有数据类型执行（比如 DEL 、 T">
+<meta name="description" content="Redis学习小结  Redis的设计与实现核心点：  Redis的五种数据类型是由什么数据结构实现？ String-&gt; 动态字符串 List-&gt;  压缩链表，双向链表 Hash-&gt; 压缩链表，hash表 Set-&gt;set sortedSet-&gt;压缩链表，跳表  Redis的字符串类型即可以存储字符串，又可以存储整数和浮点数，甚至二进制位，Redis内部如何存储这些不">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis小结">
 <meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/13/Redis%E5%B0%8F%E7%BB%93/index.html">
 <meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
-<meta property="og:description" content="Redis学习小结  Redis的设计与实现核心点：  Redis的五种数据类型是由什么数据结构实现？ Redis的字符串类型即可以存储字符串，又可以存储整数和浮点数，甚至二进制位，Redis内部如何存储这些不同的值？ Redis 的一部分命令只能对特定数据类型执行（比如 APPEND 只能对字符串执行， HSET 只能对哈希表执行）， 而另一部分命令却可以对所有数据类型执行（比如 DEL 、 T">
+<meta property="og:description" content="Redis学习小结  Redis的设计与实现核心点：  Redis的五种数据类型是由什么数据结构实现？ String-&gt; 动态字符串 List-&gt;  压缩链表，双向链表 Hash-&gt; 压缩链表，hash表 Set-&gt;set sortedSet-&gt;压缩链表，跳表  Redis的字符串类型即可以存储字符串，又可以存储整数和浮点数，甚至二进制位，Redis内部如何存储这些不">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gyc7med1wej30uy0u0djk.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gzb70oiqptj30se0ks0ue.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gzb6ys3r6mj30sf0fvmyj.jpg">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gyc81jn065j31hb0u0wj0.jpg">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gyc8wiczbwj30lf08zgm8.jpg">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gyc8tm64v5j32t00u0jyx.jpg">
@@ -42,7 +44,7 @@
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gyckdibgooj31880u0adf.jpg">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gyckrc17jwj318m0hawhk.jpg">
 <meta property="article:published_time" content="2022-01-13T09:59:13.000Z">
-<meta property="article:modified_time" content="2022-01-13T18:22:24.963Z">
+<meta property="article:modified_time" content="2022-02-12T16:34:32.476Z">
 <meta property="article:author" content="Dylan Zhong">
 <meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
@@ -150,18 +152,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/zhongsongzhi97.github.io/archives/">
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/zhongsongzhi97.github.io/categories/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/zhongsongzhi97.github.io/tags/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -231,7 +233,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-01-14 02:22:24" itemprop="dateModified" datetime="2022-01-14T02:22:24+08:00">2022-01-14</time>
+      <time title="Modified: 2022-02-13 00:34:32" itemprop="dateModified" datetime="2022-02-13T00:34:32+08:00">2022-02-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -257,12 +259,31 @@
 
 <h2 id="Redis的设计与实现"><a href="#Redis的设计与实现" class="headerlink" title="Redis的设计与实现"></a>Redis的设计与实现</h2><p>核心点：</p>
 <ol>
-<li>Redis的五种数据类型是由什么数据结构实现？</li>
-<li>Redis的字符串类型即可以存储字符串，又可以存储整数和浮点数，甚至二进制位，Redis内部如何存储这些不同的值？</li>
-<li>Redis 的一部分命令只能对特定数据类型执行（比如 APPEND 只能对字符串执行， HSET 只能对哈希表执行）， 而另一部分命令却可以对所有数据类型执行（比如 DEL 、 TYPE 和 EXPIRE ）， 不同的命令在执行时是如何进行类型检查的？ Redis 在内部是否实现了一个类型系统？</li>
-<li>Redis 的数据库是怎样储存各种不同数据类型的键值对的？ 数据库里面的过期键又是怎样实现自动删除的？</li>
-<li>Redis 还拥有发布与订阅、脚本、事务等特性， 这些特性又是如何实现的？</li>
-<li>怎么处理客户端的命令请求？</li>
+<li><p>Redis的五种数据类型是由什么数据结构实现？</p>
+<p>String-&gt; 动态字符串</p>
+<p>List-&gt;  压缩链表，双向链表</p>
+<p>Hash-&gt; 压缩链表，hash表</p>
+<p>Set-&gt;set</p>
+<p>sortedSet-&gt;压缩链表，跳表</p>
+</li>
+<li><p>Redis的字符串类型即可以存储字符串，又可以存储整数和浮点数，甚至二进制位，Redis内部如何存储这些不同的值？</p>
+<p>针对不同场景，为同一类型设置不同的数据结构实现。</p>
+<p>比如字符串，数字时存为INT，长度小的时候为编码的简单字符串，长的时候就是简单动态字符串</p>
+</li>
+<li><p>Redis 的一部分命令只能对特定数据类型执行（比如 APPEND 只能对字符串执行， HSET 只能对哈希表执行）， 而另一部分命令却可以对所有数据类型执行（比如 DEL 、 TYPE 和 EXPIRE ）， 不同的命令在执行时是如何进行类型检查的？ Redis 在内部是否实现了一个类型系统？</p>
+<p>是的Redis内部实现了一套类型系统</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzb70oiqptj30se0ks0ue.jpg" alt="img"></p>
+</li>
+<li><p>Redis 的数据库是怎样储存各种不同数据类型的键值对的？ 数据库里面的过期键又是怎样实现自动删除的？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">redisServer</span> &#123;</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    redisDb *db;    <span class="comment">// 一个数组，保存着服务器中的所有数据库</span></span><br><span class="line">    <span class="keyword">int</span> dbnum;      <span class="comment">// 服务器的数据库数量，默认16</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisDb</span> &#123;</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    dict *dict;     <span class="comment">// 数据库键空间，保存着数据库中的所有键值对</span></span><br><span class="line">    dict *expires;  <span class="comment">// 过期字典，保存着键的过期时间</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzb6ys3r6mj30sf0fvmyj.jpg" alt="img"></p>
+</li>
+<li><p>Redis 还拥有发布与订阅、脚本、事务等特性， 这些特性又是如何实现的？</p>
+</li>
+<li><p>怎么处理客户端的命令请求？</p>
+<p>使用RESP协议（自定义的）进行通信</p>
+</li>
 </ol>
 <p>整体结构：</p>
 <p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyc81jn065j31hb0u0wj0.jpg" alt="img"></p>
