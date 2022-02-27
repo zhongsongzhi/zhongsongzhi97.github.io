@@ -20,20 +20,24 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"zhongsongzhi.github.io","root":"/zhongsongzhi97.github.io/","images":"/zhongsongzhi97.github.io/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/zhongsongzhi97.github.io/js/config.js"></script>
-<meta name="description" content="MQ消费模型 队列模型 发布-订阅模型：消息的发送者，消息的接受者，服务端存放消息的容器(Topic)。发布者将消息发送到主题中，订阅者在接收消息前需要先订阅”Topic“，每份订阅，订阅者可以收到主题的所有消息。  区别：发布-订阅模型中，一个消息可以被多次消费。 可靠性使用”请求-确认“机制确保消息不会丢失  生成端： 生产者先将消息发送给服务端(Broker)，Broker收到消息后将消息写">
+<meta name="description" content="MQ消费模型 队列模型 发布-订阅模型：消息的发送者，消息的接受者，服务端存放消息的容器(Topic)。发布者将消息发送到主题中，订阅者在接收消息前需要先订阅”Topic“，每份订阅，订阅者可以收到主题的所有消息。  区别：发布-订阅模型中，一个消息可以被多次消费。 RocketMQ结构 角色:  Producer: 消息生产者，可集群部署。Producer随机与NameServer集群中的一个节">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MQ小结">
 <meta property="og:url" content="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/10/MQ%E5%B0%8F%E7%BB%93/index.html">
 <meta property="og:site_name" content="Dylan Zhong&#96;s Blog">
-<meta property="og:description" content="MQ消费模型 队列模型 发布-订阅模型：消息的发送者，消息的接受者，服务端存放消息的容器(Topic)。发布者将消息发送到主题中，订阅者在接收消息前需要先订阅”Topic“，每份订阅，订阅者可以收到主题的所有消息。  区别：发布-订阅模型中，一个消息可以被多次消费。 可靠性使用”请求-确认“机制确保消息不会丢失  生成端： 生产者先将消息发送给服务端(Broker)，Broker收到消息后将消息写">
+<meta property="og:description" content="MQ消费模型 队列模型 发布-订阅模型：消息的发送者，消息的接受者，服务端存放消息的容器(Topic)。发布者将消息发送到主题中，订阅者在接收消息前需要先订阅”Topic“，每份订阅，订阅者可以收到主题的所有消息。  区别：发布-订阅模型中，一个消息可以被多次消费。 RocketMQ结构 角色:  Producer: 消息生产者，可集群部署。Producer随机与NameServer集群中的一个节">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1gzsjyzaxx7j21pc0pgadl.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1gzskoa7lq1j20vq0owwhr.jpg">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8phzrxhaj32g70u0q7b.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1gzslrk5t8yj20um0c2gmx.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1gzsly7z59ij20k10damy2.jpg">
 <meta property="article:published_time" content="2022-02-10T12:50:39.000Z">
-<meta property="article:modified_time" content="2022-02-10T12:51:07.844Z">
+<meta property="article:modified_time" content="2022-02-27T17:59:58.707Z">
 <meta property="article:author" content="Dylan Zhong">
 <meta property="article:tag" content="MQ">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gz8phzrxhaj32g70u0q7b.jpg">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1gzsjyzaxx7j21pc0pgadl.jpg">
 
 
 <link rel="canonical" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/10/MQ%E5%B0%8F%E7%BB%93/">
@@ -122,7 +126,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MQ"><span class="nav-number">1.</span> <span class="nav-text">MQ</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">消费模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">可靠性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF"><span class="nav-number">1.3.</span> <span class="nav-text">事务消息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2PC"><span class="nav-number">1.3.1.</span> <span class="nav-text">2PC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8"><span class="nav-number">1.4.</span> <span class="nav-text">存储</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MQ"><span class="nav-number">1.</span> <span class="nav-text">MQ</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">消费模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">RocketMQ结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E7%9A%84%E7%BB%93%E6%9E%84%EF%BC%9A"><span class="nav-number">1.2.1.</span> <span class="nav-text">存储的结构：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="nav-number">1.3.</span> <span class="nav-text">可靠性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF"><span class="nav-number">1.4.</span> <span class="nav-text">事务消息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2PC"><span class="nav-number">1.4.1.</span> <span class="nav-text">2PC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">1.5.</span> <span class="nav-text">消息的处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E8%AF%BB%E5%86%99%E6%95%B0%E6%8D%AE"><span class="nav-number">1.6.</span> <span class="nav-text">高性能读写数据</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -210,9 +214,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2022-02-10 20:50:39 / Modified: 20:51:07" itemprop="dateCreated datePublished" datetime="2022-02-10T20:50:39+08:00">2022-02-10</time>
+      <time title="Created: 2022-02-10 20:50:39" itemprop="dateCreated datePublished" datetime="2022-02-10T20:50:39+08:00">2022-02-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-02-28 01:59:58" itemprop="dateModified" datetime="2022-02-28T01:59:58+08:00">2022-02-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -239,6 +249,40 @@
 <li>发布-订阅模型：消息的发送者，消息的接受者，服务端存放消息的容器(Topic)。发布者将消息发送到主题中，订阅者在接收消息前需要先订阅”Topic“，每份订阅，订阅者可以收到主题的所有消息。</li>
 </ol>
 <p>区别：发布-订阅模型中，一个消息可以被多次消费。</p>
+<h2 id="RocketMQ结构"><a href="#RocketMQ结构" class="headerlink" title="RocketMQ结构"></a>RocketMQ结构</h2><p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1gzsjyzaxx7j21pc0pgadl.jpg" alt="RocketMQ 架构图"></p>
+<p>角色:</p>
+<ol>
+<li><p>Producer: 消息生产者，可集群部署。Producer随机与NameServer集群中的一个节点建立长连接，定期从NameServer集群中的一个节点建立长连接，定期从NameServer获取Topic路由信息，并向提供Topic服务的Master建立长连接，且定期向Master发送心跳。</p>
+</li>
+<li><p>Consumer: 消息消费者，可集群部署。建立连接方式和生产者一样。支持push（长轮询的拉）和pull两种消费方式。支持集群（同一个Topic的同一条消息只会被一个消费者实例消费）和广播模式（广播给所有订阅了该Topic的消费实例）的消费。</p>
+</li>
+<li><p>NameServer: 类似Zookeeper的作用（但是无状态节点），支持Broker的动态注册和发现（路由注册中心），为何所有的Broker和Topic的路由信息。Broker启动需要向所有的NameServer实现注册，并定期发送心跳信息。每个NameServer都维护了所有的Broker和Topic路由信息。</p>
+</li>
+<li><p>Broker：Broker主要负责消息的存储，投递，查询以及服务高可用。</p>
+<p>Broker的部署：1. 单主 2. 多主 3. 多主多从 - 异步复制 4。 多主多从 - 同步双写</p>
+</li>
+</ol>
+<p>执行流程：</p>
+<ol>
+<li>先启动NameServer（注册中心）服务，监控端口等待Broker，Producer，Consumer。</li>
+<li>启动Broker跟所有的NameServer保存长连接并且定期发送心跳。</li>
+<li>创建Topic并直到保存在哪些Broker</li>
+<li>Producer向主Broker发送消息并且给消息打tag进行分组</li>
+<li>Consumer监听所有Broker的消息</li>
+</ol>
+<h3 id="存储的结构："><a href="#存储的结构：" class="headerlink" title="存储的结构："></a>存储的结构：</h3><p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1gzskoa7lq1j20vq0owwhr.jpg" alt="RocketMQ Message Store"></p>
+<ol>
+<li>CommitLog:存储所有消息主体和元数据，消息顺序写入CommitLog，一个写满就新建一个。</li>
+<li>ConsumeQueue: 消费队列，目的是提供消费性能。保存了指定Topic下消息队列消息在CommitLog的起始偏移量，消息大小和消息Tag的hashcode</li>
+<li>IndexFile: 提供了一种可以通过key或时间区间来查询消息的方法</li>
+</ol>
+<p>RocketMQ的存储以Broker为单位，Broker(ConsumerLog消息文件&amp;N*ConsumerQueue索引文件)，</p>
+<ol>
+<li>写入消息：Broker上所有Topic，队列的消息都按照自然顺序追加写入到同一个消息文件中</li>
+<li>查找消息：根据队列的消息序号，计算索引的全局位置(索引序号 x 索引固定长度20)，直接读取这条索引，然后根据索引查找到消息的位置</li>
+<li>存储方式mmap: 一般的数据拷贝需要4次操作，RocketMQ使用了零拷贝技术，只需要2次</li>
+<li>同步刷盘和异步刷盘：异步刷盘：当消息累计到一定量后统一磁盘写入。同步刷盘：返回写成功就写入磁盘。</li>
+</ol>
 <h2 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h2><p>使用”请求-确认“机制确保消息不会丢失</p>
 <ol>
 <li><p>生成端：</p>
@@ -265,11 +309,44 @@
 <li>订单系统在消息队列上开启一个事务。然后订单系统给消息服务器发送一个“半消息”，这个半消息不是说消息内容不完整，它包含的内容就是完整的消息内容，半消息和普通消息的唯一区别是，在事务提交之前，对于消费者来说，这个消息是不可见的。</li>
 <li>半消息发送成功后，订单系统就可以执行本地事务了，在订单库中创建一条订单记录，并提交订单库的数据库事务。然后根据本地事务的执行结果决定提交或者回滚事务消息。如果订单创建成功，那就提交事务消息，购物车系统就可以消费到这条消息继续后续的流程。如果订单创建失败，那就回滚事务消息，购物车系统就不会收到这条消息。</li>
 </ol>
-<h2 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h2><p>RocketMQ的存储以Broker为单位，Broker(ConsumerLog消息文件&amp;N*ConsumerQueue索引文件)，</p>
+<h2 id="消息的处理"><a href="#消息的处理" class="headerlink" title="消息的处理"></a>消息的处理</h2><ol>
+<li><p>如何保证消息不被重复消费或者保证其幂等？</p>
+<p>在业务层实现，通过业务id，可以使用数据库和redis来保存当前业务id是否已经被消费</p>
+</li>
+<li><p>如何保证消息的可靠性？预防消息丢失</p>
+<p>Producer: 使用请求-Ack机制</p>
+<p>Broker: 通过同步刷盘或者异步刷盘的方式将其持久化到CommitLog</p>
+<p>Consumer: 消费者为何一个MessageQueue队列，保存消费进度的Offset，失败就定时重试，成功就更新Offset</p>
+</li>
+<li><p>如何保证消息的顺序性?</p>
+<p>全局消息：需要在生产端只保留一个读写队列，消费端只有一个消费队列。但是会降低使用性。</p>
+<p>分区消息：生产者将同一订单的消息发到同一个MessageQueu，消费端保证从同一个MessageQueue取出消息并且不并发处理</p>
+</li>
+<li><p>如何解决消息的延时和过期失效问题？</p>
+<p>当消费端宕机或者消费速度很慢导致 Broker 中消息大量积压，如有积压时长超过阈值就会被清理掉导致数据丢失。可以使用一段程序功能先将丢失的丢失的消息存储起来，等系统负载较低时将这部分消息重新发送给Broker。</p>
+</li>
+<li><p>消息队列满了或者堆积过多怎么办？</p>
 <ol>
-<li>写入消息：Broker上所有Topic，队列的消息都按照自然顺序追加写入到同一个消息文件中</li>
-<li>查找消息：根据队列的消息序号，计算索引的全局位置(索引序号 x 索引固定长度20)，直接读取这条索引，然后根据索引查找到消息的位置</li>
+<li>新建Topic把积压的消息的Topic分发到新建的Topic中</li>
+<li>停掉旧的消费端，将新建的Topic都启动对应的消费端实例</li>
+<li>通过更强的消费能力把积压消息处理完</li>
 </ol>
+</li>
+</ol>
+<h2 id="高性能读写数据"><a href="#高性能读写数据" class="headerlink" title="高性能读写数据"></a>高性能读写数据</h2><p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1gzslrk5t8yj20um0c2gmx.jpg" alt="在这里插入图片描述"></p>
+<p>MMAP技术: 就是进行文件映射和内存映射，把磁盘里面的文件映射到用户态的虚拟内存，还有将 PageCache 映射到用户态的虚拟内存，从而减少内核态到用户态的 CPU 拷贝</p>
+<p>PageCache技术：为了优化磁盘中数据文件的读写性能，PageCache 技术对数据文件进行了缓存。“对磁盘中数据文件的顺序读写性能接近于对内存的读写性能”，其主要原因就是 PageCache 对磁盘中数据文件的读写进行了优化。</p>
+<ul>
+<li><strong>PageCache 对数据文件的读优化：</strong>由于读数据文件的时候会先从 PageCache 加载数据，如果 PageCache 没有数据的话，会从磁盘的数据文件中加载数据并且顺序把相邻的数据文件页面预加载到 PageCache 中，这样子如果之后读取的数据文件在 PageCache 中能找到的话就省去了去磁盘加载数据的操作相当于直接读内存。</li>
+<li><strong>PageCache 对数据文件的写优化：</strong>往数据文件中写数据的时候同样先写到 PageCache 中，然后操作系统会定期刷盘把 PageCache 中的数据持久化到磁盘中。</li>
+</ul>
+<p>RocketMQ是怎么使用的？</p>
+<ol>
+<li>将磁盘中的CommitLog数据文件映射到虚拟内存中。</li>
+<li>生产端将消息顺序写到PageCache中，然后OS定期进行异步刷盘，将PageCache中的数据批量持久化到磁盘</li>
+<li>消费端读取CommitLog数据，由于程序的局部性，所以加载的数据基本可以在PageCache找到，就不用去磁盘读取。</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1gzsly7z59ij20k10damy2.jpg" alt="在这里插入图片描述"></p>
 
     </div>
 
