@@ -129,18 +129,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/zhongsongzhi97.github.io/archives/">
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/zhongsongzhi97.github.io/categories/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/zhongsongzhi97.github.io/tags/">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -169,6 +169,98 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/10/how-to-read-source-code/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2021/12/10/how-to-read-source-code/" class="post-title-link" itemprop="url">how to read source code</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-12-10 14:31:00" itemprop="dateCreated datePublished" datetime="2021-12-10T14:31:00+08:00">2021-12-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-01-27 15:27:09" itemprop="dateModified" datetime="2022-01-27T15:27:09+08:00">2022-01-27</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="怎样阅读源码"><a href="#怎样阅读源码" class="headerlink" title="怎样阅读源码"></a>怎样阅读源码</h1><h2 id="怎样阅读源码-1"><a href="#怎样阅读源码-1" class="headerlink" title="怎样阅读源码"></a>怎样阅读源码</h2><p>focus on code which either does something that I want to replicate the style of in the future, or which deepens my knowledge of code I use daily</p>
+<p>find a high-level abstraction as a starting point and then gradually dig deeper into the internals</p>
+<p> make notes in OneNote as I study the code, describing the flow and how the code works</p>
+<p>This process is less about having a reference, although that can be useful, than it is about embedding the knowledge into my memory. By describing it in writing, I find that it sticks with me much longer</p>
+<p>Navigating code and forming a mental picture of the logical flow is a handy skill. If you can learn this through reading code, it’ll pay dividends when you’re next trying to fix a critical bug under pressure.</p>
+<p>Once I have an overview formed the next step is to go deeper. For this, I tend to clone the repository so that I can bring it into an IDE or VS Code.</p>
+<p> I like to think about how I’d have chosen to approach a problem and contrast it with the actual implementation。Is the author’s approach better or more efficient? Should I file it away for when I next face a similar requirement?</p>
+<p>Often the code may use APIs that I’ve never discovered when writing code.I study the description and method signature(s) to understand their designed use. This extends my code vocabulary.</p>
+<p>I find tricks and shortcuts to save time when navigating the code</p>
+<h2 id="不了解源码怎么办"><a href="#不了解源码怎么办" class="headerlink" title="不了解源码怎么办"></a>不了解源码怎么办</h2><p>You want to expose yourself to new APIs or new syntax in the code which you read so that you further your own code vocabulary.</p>
+<p>Try to break things down into smaller chunks to work through in your head. What is the code doing and also why has it been written that way? Has the author used an approach to solving something you had not previously considered? As you come up against language syntax or keywords you don’t understand, stop and search for the documentation. Armed with an actual use case, often the documentation will make sense in the context you are approaching it from.</p>
+<p>Similarly, when you encounter framework APIs which you have never used before, visit the code documentation if there is any.</p>
+<h2 id="如何打造自己的技术体系，如何学习一个新的技术"><a href="#如何打造自己的技术体系，如何学习一个新的技术" class="headerlink" title="如何打造自己的技术体系，如何学习一个新的技术"></a>如何打造自己的技术体系，如何学习一个新的技术</h2><h2 id="体系化：目标制定与执行"><a href="#体系化：目标制定与执行" class="headerlink" title="体系化：目标制定与执行"></a>体系化：目标制定与执行</h2><ol>
+<li>该技术能够解决什么问题，可以提升哪些能力？</li>
+<li>短期目标和长期目标是什么？</li>
+<li>我需要做哪些事情可以实现目标？</li>
+</ol>
+<p>首先可以通过官方文档，博客等渠道快速了解一门技术的概貌，当决定深入研究这门技术时，首先需要制定自己的学习计划，比如应该知道有哪些重要的概念，特性需要去深入学习，然后制定具体的学习计划表，在学习过程中，当理解更加深入时，会发现更多需要去挖掘的知识点，然后再去调整和完善学习计划。</p>
+<p>途径：项目实战，源码学习，写博客，参加社区都是高效的办法。需要定时回顾相关的计划是否有效和阶段性的检验。</p>
+<h2 id="思考和总结"><a href="#思考和总结" class="headerlink" title="思考和总结"></a>思考和总结</h2><p>学习一门技术时，除了使用层面上，还需要知道该技术能够解决什么问题，相比于同领域的其他技术有什么优缺点。可以从技术原理中去了解问题的本质，然后找到问题的解决防范，让结果更有说服力。同时从优秀的开源项目中去挖掘技术原理也是非常有帮助的。</p>
+<p>同时多维度的思考，不停留于表明，一个技术问题需要考虑多种因素，需要将方方面面考虑得非常细致。同时对于别人的观点和他人的方案进行学习，总结出自己独特的思考。</p>
+<h2 id="分享和交流"><a href="#分享和交流" class="headerlink" title="分享和交流"></a>分享和交流</h2><p>交流和分享时检验自己的学习成果的有效方法，技术分享，书籍，博客都是沉淀知识的途径。交流与分析可以让我们梳理自己的知识体系，牢固自己的知识，让别人检验自己对知识的理解是否正确。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1590,101 +1682,6 @@
 
 <p>结构体标签由一个或多个键值对组成。键与值使用冒号分隔，值用双引号括起来。键值对之间使用一个空格分隔。 注意事项： 为结构体编写Tag时，必须严格遵守键值对的规则。结构体标签的解析代码的容错能力很差，一旦格式写错，编译和运行时都不会提示任何错误，通过反射也无法正确取值。例如不要在key和value之间添加空格。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Student 学生</span></span><br><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID     <span class="keyword">int</span>    <span class="string">`json:&quot;id&quot;`</span> <span class="comment">//通过指定tag实现json序列化该字段时的key</span></span><br><span class="line">    Gender <span class="keyword">string</span> <span class="comment">//json序列化是默认使用字段名作为key</span></span><br><span class="line">    name   <span class="keyword">string</span> <span class="comment">//私有不能被json包访问</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s1 := Student&#123;</span><br><span class="line">        ID:     <span class="number">1</span>,</span><br><span class="line">        Gender: <span class="string">&quot;女&quot;</span>,</span><br><span class="line">        name:   <span class="string">&quot;pprof&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    data, err := json.Marshal(s1)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;json marshal failed!&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;json str:%s\n&quot;</span>, data) <span class="comment">//json str:&#123;&quot;id&quot;:1,&quot;Gender&quot;:&quot;女&quot;&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/11/22/go%E5%9F%BA%E7%A1%80-Map/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/11/22/go%E5%9F%BA%E7%A1%80-Map/" class="post-title-link" itemprop="url">go基础 - Map</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-11-22 01:26:01" itemprop="dateCreated datePublished" datetime="2021-11-22T01:26:01+08:00">2021-11-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-01-11 20:31:32" itemprop="dateModified" datetime="2022-01-11T20:31:32+08:00">2022-01-11</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Map及其底层实现"><a href="#Map及其底层实现" class="headerlink" title="Map及其底层实现"></a>Map及其底层实现</h1><p>map是一种无序的基于key-value的数据结构，Go语言中的map是引用类型，必须初始化才能使用。</p>
-<p>实现是一种hashmap。</p>
-<h3 id="map定义："><a href="#map定义：" class="headerlink" title="map定义："></a>map定义：</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">map</span>[KeyType]ValueType</span><br><span class="line"></span><br><span class="line">KeyType:表示键的类型。</span><br><span class="line"></span><br><span class="line">ValueType:表示键对应的值的类型。</span><br><span class="line"></span><br><span class="line"><span class="keyword">map</span>类型的变量默认初始值为<span class="literal">nil</span>，需要使用<span class="built_in">make</span>()函数来分配内存。</span><br><span class="line"></span><br><span class="line"><span class="built_in">make</span>(<span class="keyword">map</span>[KeyType]ValueType, [<span class="built_in">cap</span>])</span><br></pre></td></tr></table></figure>
-
-<h3 id="map基本使用："><a href="#map基本使用：" class="headerlink" title="map基本使用："></a>map基本使用：</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">scoreMap := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>, <span class="number">8</span>)</span><br><span class="line">scoreMap[<span class="string">&quot;张三&quot;</span>] = <span class="number">90</span></span><br><span class="line">scoreMap[<span class="string">&quot;小明&quot;</span>] = <span class="number">100</span></span><br><span class="line"></span><br><span class="line">userInfo := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">        <span class="string">&quot;username&quot;</span>: <span class="string">&quot;pprof.cn&quot;</span>,</span><br><span class="line">        <span class="string">&quot;password&quot;</span>: <span class="string">&quot;123456&quot;</span>,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="判断某个key是否存在"><a href="#判断某个key是否存在" class="headerlink" title="判断某个key是否存在"></a>判断某个key是否存在</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">value, ok := <span class="keyword">map</span>[key]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">scoreMap := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>)</span><br><span class="line">scoreMap[<span class="string">&quot;张三&quot;</span>] = <span class="number">90</span></span><br><span class="line">scoreMap[<span class="string">&quot;小明&quot;</span>] = <span class="number">100</span></span><br><span class="line"><span class="comment">// 如果key存在ok为true,v为对应的值；不存在ok为false,v为值类型的零值</span></span><br><span class="line">v, ok := scoreMap[<span class="string">&quot;张三&quot;</span>]</span><br><span class="line"><span class="keyword">if</span> ok &#123;</span><br><span class="line">  fmt.Println(v)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">&quot;查无此人&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="map的遍历"><a href="#map的遍历" class="headerlink" title="map的遍历"></a>map的遍历</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> k, v := <span class="keyword">range</span> scoreMap &#123;</span><br><span class="line">        fmt.Println(k, v)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="删除键值对"><a href="#删除键值对" class="headerlink" title="删除键值对"></a>删除键值对</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">delete</span>(<span class="keyword">map</span>, key)</span><br></pre></td></tr></table></figure>
-
-<h3 id="Go中Map的实现原理："><a href="#Go中Map的实现原理：" class="headerlink" title="Go中Map的实现原理："></a>Go中Map的实现原理：</h3><p>map是通过数组存储，数组下标出存储的是一个bucket,每个bucket可以存储8个kv对，当存满8个以后，会通过overflow指针指向一个新的bucket，形成一个链表</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwnb2ndaawj30xx0e5adm.jpg" alt="img"></p>
-<p>tophash用于快速查找key值是否在该bucket，存储结构为kkk vvv是因为，比如map[int64]int8，由于kv的长度不同，如果按照kv存储，考虑到内存对齐，v也需要int64，但是按照kkkvvv，则8个v刚好占用一个int64</p>
-<p>overflow是链表法解决key的hash冲突问题</p>
-<p>具体情况：</p>
-<p>当往map存储一个kv对时，通过k获取hash值，hash值的低八位与bucket数组长度取余，定位到数组的下标，hash值的高八位存储在bucket的tophash中，快速判断是否存在key，kv的具体值则是通过指针运算存储，当bucket满时会自动通过overflow链接到下一个bucket</p>
-<p>补充：在运行期间，<a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.bmap"><code>runtime.bmap</code></a> 结构体其实不止包含 <code>tophash</code> 字段，因为哈希表中可能存储不同类型的键值对，而且 Go 语言也不支持泛型，所以键值对占据的内存空间大小只能在编译时进行推导。<a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/runtime.bmap"><code>runtime.bmap</code></a> 中的其他字段在运行时也都是通过计算内存地址的方式访问的，所以它的定义中就不包含这些字段，不过我们能根据编译期间的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/cmd/compile/internal/gc.bmap"><code>cmd/compile/internal/gc.bmap</code></a> 函数重建它的结构：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> bmap <span class="keyword">struct</span> &#123;</span><br><span class="line">    topbits  [<span class="number">8</span>]<span class="keyword">uint8</span></span><br><span class="line">    keys     [<span class="number">8</span>]keytype</span><br><span class="line">    values   [<span class="number">8</span>]valuetype</span><br><span class="line">    pad      <span class="keyword">uintptr</span></span><br><span class="line">    overflow <span class="keyword">uintptr</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>随着哈希表存储的数据逐渐增多，我们会扩容哈希表或者使用额外的桶存储溢出的数据，不会让单个桶中的数据超过 8 个，不过溢出桶只是临时的解决方案，创建过多的溢出桶最终也会导致哈希的扩容。</p>
-<p>go的map源码：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mapassign</span><span class="params">(t *maptype, h *hmap, key unsafe.Pointer)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">    <span class="comment">//获取hash算法</span></span><br><span class="line">    alg := t.key.alg</span><br><span class="line">    <span class="comment">//计算hash值</span></span><br><span class="line">    hash := alg.hash(key, <span class="keyword">uintptr</span>(h.hash0))</span><br><span class="line">    <span class="comment">//如果bucket数组一开始为空，则初始化</span></span><br><span class="line">    <span class="keyword">if</span> h.buckets == <span class="literal">nil</span> &#123;</span><br><span class="line">        h.buckets = newobject(t.bucket) <span class="comment">// newarray(t.bucket, 1)</span></span><br><span class="line">    &#125;</span><br><span class="line">again:</span><br><span class="line">    <span class="comment">// 定位存储在哪一个bucket中</span></span><br><span class="line">    bucket := hash &amp; bucketMask(h.B)</span><br><span class="line">    <span class="comment">//得到bucket的结构体</span></span><br><span class="line">    b := (*bmap)(unsafe.Pointer(<span class="keyword">uintptr</span>(h.buckets) +bucket*<span class="keyword">uintptr</span>(t.bucketsize)))</span><br><span class="line">    <span class="comment">//获取高八位hash值</span></span><br><span class="line">    top := tophash(hash)</span><br><span class="line">    <span class="keyword">var</span> inserti *<span class="keyword">uint8</span></span><br><span class="line">    <span class="keyword">var</span> insertk unsafe.Pointer</span><br><span class="line">    <span class="keyword">var</span> val unsafe.Pointer</span><br><span class="line">bucketloop:</span><br><span class="line">    <span class="comment">//死循环</span></span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        <span class="comment">//循环bucket中的tophash数组</span></span><br><span class="line">        <span class="keyword">for</span> i := <span class="keyword">uintptr</span>(<span class="number">0</span>); i &lt; bucketCnt; i++ &#123;</span><br><span class="line">            <span class="comment">//如果hash不相等</span></span><br><span class="line">            <span class="keyword">if</span> b.tophash[i] != top &#123;</span><br><span class="line">             <span class="comment">//判断是否为空，为空则插入</span></span><br><span class="line">                <span class="keyword">if</span> isEmpty(b.tophash[i]) &amp;&amp; inserti == <span class="literal">nil</span> &#123;</span><br><span class="line">                    inserti = &amp;b.tophash[i]</span><br><span class="line">                    insertk = add(unsafe.Pointer(b), dataOffset+i*<span class="keyword">uintptr</span>(t.keysize))</span><br><span class="line">                    val = add( unsafe.Pointer(b), </span><br><span class="line">                    dataOffset+bucketCnt*<span class="keyword">uintptr</span>(t.keysize)+i*<span class="keyword">uintptr</span>(t.valuesize) )</span><br><span class="line">                &#125;</span><br><span class="line">              <span class="comment">//插入成功，终止最外层循环</span></span><br><span class="line">                <span class="keyword">if</span> b.tophash[i] == emptyRest &#123;</span><br><span class="line">                    <span class="keyword">break</span> bucketloop</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//到这里说明高八位hash一样，获取已存在的key</span></span><br><span class="line">            k := add(unsafe.Pointer(b), dataOffset+i*<span class="keyword">uintptr</span>(t.keysize))</span><br><span class="line">            <span class="keyword">if</span> t.indirectkey() &#123;</span><br><span class="line">                k = *((*unsafe.Pointer)(k))</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//判断两个key是否相等，不相等就循环下一个</span></span><br><span class="line">            <span class="keyword">if</span> !alg.equal(key, k) &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 如果相等则更新</span></span><br><span class="line">            <span class="keyword">if</span> t.needkeyupdate() &#123;</span><br><span class="line">                typedmemmove(t.key, k, key)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//获取已存在的value</span></span><br><span class="line">            val = add(unsafe.Pointer(b), dataOffset+bucketCnt*<span class="keyword">uintptr</span>(t.keysize)+i*<span class="keyword">uintptr</span>(t.valuesize))</span><br><span class="line">            <span class="keyword">goto</span> done</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果上一个bucket没能插入，则通过overflow获取链表上的下一个bucket</span></span><br><span class="line">        ovf := b.overflow(t)</span><br><span class="line">        <span class="keyword">if</span> ovf == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">        b = ovf</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> inserti == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// all current buckets are full, allocate a new one.</span></span><br><span class="line">        newb := h.newoverflow(t, b)</span><br><span class="line">        inserti = &amp;newb.tophash[<span class="number">0</span>]</span><br><span class="line">        insertk = add(unsafe.Pointer(newb), dataOffset)</span><br><span class="line">        val = add(insertk, bucketCnt*<span class="keyword">uintptr</span>(t.keysize))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// store new key/value at insert position</span></span><br><span class="line">    <span class="keyword">if</span> t.indirectkey() &#123;</span><br><span class="line">        kmem := newobject(t.key)</span><br><span class="line">        *(*unsafe.Pointer)(insertk) = kmem</span><br><span class="line">        insertk = kmem</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> t.indirectvalue() &#123;</span><br><span class="line">        vmem := newobject(t.elem)</span><br><span class="line">        *(*unsafe.Pointer)(val) = vmem</span><br><span class="line">    &#125;</span><br><span class="line">    typedmemmove(t.key, insertk, key)</span><br><span class="line">    <span class="comment">//将高八位hash值存储</span></span><br><span class="line">    *inserti = top</span><br><span class="line">    h.count++</span><br><span class="line">    <span class="keyword">return</span> val</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
       

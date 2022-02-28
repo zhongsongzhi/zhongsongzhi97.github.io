@@ -129,18 +129,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/zhongsongzhi97.github.io/archives/">
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/zhongsongzhi97.github.io/categories/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/zhongsongzhi97.github.io/tags/">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -169,6 +169,279 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/13/Redis%E5%B0%8F%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/01/13/Redis%E5%B0%8F%E7%BB%93/" class="post-title-link" itemprop="url">Redis小结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-01-13 17:59:13" itemprop="dateCreated datePublished" datetime="2022-01-13T17:59:13+08:00">2022-01-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-02-13 00:34:32" itemprop="dateModified" datetime="2022-02-13T00:34:32+08:00">2022-02-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Redis学习小结"><a href="#Redis学习小结" class="headerlink" title="Redis学习小结"></a>Redis学习小结</h1><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyc7med1wej30uy0u0djk.jpg" alt="screenshot-20220113-181317" style="zoom:150%;" />
+
+<h2 id="Redis的设计与实现"><a href="#Redis的设计与实现" class="headerlink" title="Redis的设计与实现"></a>Redis的设计与实现</h2><p>核心点：</p>
+<ol>
+<li><p>Redis的五种数据类型是由什么数据结构实现？</p>
+<p>String-&gt; 动态字符串</p>
+<p>List-&gt;  压缩链表，双向链表</p>
+<p>Hash-&gt; 压缩链表，hash表</p>
+<p>Set-&gt;set</p>
+<p>sortedSet-&gt;压缩链表，跳表</p>
+</li>
+<li><p>Redis的字符串类型即可以存储字符串，又可以存储整数和浮点数，甚至二进制位，Redis内部如何存储这些不同的值？</p>
+<p>针对不同场景，为同一类型设置不同的数据结构实现。</p>
+<p>比如字符串，数字时存为INT，长度小的时候为编码的简单字符串，长的时候就是简单动态字符串</p>
+</li>
+<li><p>Redis 的一部分命令只能对特定数据类型执行（比如 APPEND 只能对字符串执行， HSET 只能对哈希表执行）， 而另一部分命令却可以对所有数据类型执行（比如 DEL 、 TYPE 和 EXPIRE ）， 不同的命令在执行时是如何进行类型检查的？ Redis 在内部是否实现了一个类型系统？</p>
+<p>是的Redis内部实现了一套类型系统</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzb70oiqptj30se0ks0ue.jpg" alt="img"></p>
+</li>
+<li><p>Redis 的数据库是怎样储存各种不同数据类型的键值对的？ 数据库里面的过期键又是怎样实现自动删除的？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">redisServer</span> &#123;</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    redisDb *db;    <span class="comment">// 一个数组，保存着服务器中的所有数据库</span></span><br><span class="line">    <span class="keyword">int</span> dbnum;      <span class="comment">// 服务器的数据库数量，默认16</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisDb</span> &#123;</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    dict *dict;     <span class="comment">// 数据库键空间，保存着数据库中的所有键值对</span></span><br><span class="line">    dict *expires;  <span class="comment">// 过期字典，保存着键的过期时间</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gzb6ys3r6mj30sf0fvmyj.jpg" alt="img"></p>
+</li>
+<li><p>Redis 还拥有发布与订阅、脚本、事务等特性， 这些特性又是如何实现的？</p>
+</li>
+<li><p>怎么处理客户端的命令请求？</p>
+<p>使用RESP协议（自定义的）进行通信</p>
+</li>
+</ol>
+<p>整体结构：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyc81jn065j31hb0u0wj0.jpg" alt="img"></p>
+<h2 id="K-V如何组织"><a href="#K-V如何组织" class="headerlink" title="K-V如何组织"></a>K-V如何组织</h2><p>使用的是Hash表的结构</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyc8wiczbwj30lf08zgm8.jpg" alt="img"></p>
+<p>问题：</p>
+<ol>
+<li><p>Hash冲突？ -&gt;链式解决</p>
+</li>
+<li><p>Rehash(分配更大的空间，减少冲突): </p>
+<p>Redis 默认使用了两个全局哈希表：哈希表 1 和哈希表 2。一开始，当你刚插入数据时，默认使用哈希表 1，此时的哈希表 2 并没有被分配空间。随着数据逐步增多，Redis 开始执行 rehash，这个过程分为三步：</p>
+<ol>
+<li>给哈希表 2 分配更大的空间，例如是当前哈希表 1 大小的两倍；</li>
+<li>把哈希表 1 中的数据重新映射并拷贝到哈希表 2 中； 为了避免copy 过程阻塞用户请求，Redis 采用了渐进式 rehash，每处理一个请求时，从哈希表 1 中的第一个索引位置开始，<strong>顺带着</strong>将这个索引位置上的所有 entries 拷贝到哈希表 2 中。PS：跟redis 通过用户请求顺带清理 过期数据是一样的。</li>
+<li>释放哈希表 1 的空间。</li>
+</ol>
+</li>
+<li><p>RedisObject: </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_LRU_BITS 24</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisObject</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> type:<span class="number">4</span>;        <span class="comment">// 类型</span></span><br><span class="line">    <span class="keyword">unsigned</span> encoding:<span class="number">4</span>;    <span class="comment">// 编码</span></span><br><span class="line">    <span class="keyword">unsigned</span> lru:REDIS_LRU_BITS; <span class="comment">// 对象最后一次被访问的时间</span></span><br><span class="line">    <span class="keyword">int</span> refcount;   <span class="comment">// 引用计数</span></span><br><span class="line">    <span class="keyword">void</span> *ptr;  <span class="comment">// 指向实际值的指针，可以指向不同的数据类型</span></span><br><span class="line"></span><br><span class="line">&#125; robj;</span><br></pre></td></tr></table></figure>
+
+<p>由于Redis的数据类型很多，所以是用了一个RedisObject来做封装</p>
+</li>
+</ol>
+<h2 id="K-V底层数据结构"><a href="#K-V底层数据结构" class="headerlink" title="K-V底层数据结构"></a>K-V底层数据结构</h2><p>Key只能为string类型，value可以为复杂类型</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyc8tm64v5j32t00u0jyx.jpg" alt="img"></p>
+<p>压缩列表：</p>
+<p>由于压缩列表节约内存，所以hash,list,sortedSet的底层实现在数据量小的时候都采用压缩列表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">area        |&lt;---- ziplist header ----&gt;|&lt;----------- entries -------------&gt;|&lt;-end-&gt;|</span><br><span class="line"></span><br><span class="line">size          4 bytes  4 bytes  2 bytes    ?        ?        ?        ?     1 byte</span><br><span class="line">            +---------+--------+-------+--------+--------+--------+--------+-------+</span><br><span class="line">component   | zlbytes | zltail | zllen | entry1 | entry2 |  ...   | entryN | zlend |</span><br><span class="line">            +---------+--------+-------+--------+--------+--------+--------+-------+</span><br><span class="line">                                       ^                          ^        ^</span><br><span class="line">address                                |                          |        |</span><br><span class="line">                                ZIPLIST_ENTRY_HEAD                |   ZIPLIST_ENTRY_END</span><br><span class="line">                                                                  |</span><br><span class="line">                                                         ZIPLIST_ENTRY_TAIL</span><br></pre></td></tr></table></figure>
+
+<p>图中各个域的作用如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">域</th>
+<th align="left">长度/类型</th>
+<th align="left">域的值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>zlbytes</code></td>
+<td align="left"><code>uint32_t</code></td>
+<td align="left">整个 ziplist 占用的内存字节数，对 ziplist 进行内存重分配，或者计算末端时使用。</td>
+</tr>
+<tr>
+<td align="left"><code>zltail</code></td>
+<td align="left"><code>uint32_t</code></td>
+<td align="left">到达 ziplist 表尾节点的偏移量。 通过这个偏移量，可以在不遍历整个 ziplist 的前提下，弹出表尾节点。</td>
+</tr>
+<tr>
+<td align="left"><code>zllen</code></td>
+<td align="left"><code>uint16_t</code></td>
+<td align="left">ziplist 中节点的数量。 当这个值小于 <code>UINT16_MAX</code> （<code>65535</code>）时，这个值就是 ziplist 中节点的数量； 当这个值等于 <code>UINT16_MAX</code> 时，节点的数量需要遍历整个 ziplist 才能计算得出。</td>
+</tr>
+<tr>
+<td align="left"><code>entryX</code></td>
+<td align="left"><code>?</code></td>
+<td align="left">ziplist 所保存的节点，各个节点的长度根据内容而定。</td>
+</tr>
+<tr>
+<td align="left"><code>zlend</code></td>
+<td align="left"><code>uint8_t</code></td>
+<td align="left"><code>255</code> 的二进制值 <code>1111 1111</code> （<code>UINT8_MAX</code>） ，用于标记 ziplist 的末端。</td>
+</tr>
+</tbody></table>
+<p>Entry的构成：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">area        |&lt;------------------- entry --------------------&gt;|</span><br><span class="line"></span><br><span class="line">            +------------------+----------+--------+---------+</span><br><span class="line">component   | pre_entry_length | encoding | length | content |</span><br><span class="line">            +------------------+----------+--------+---------+</span><br></pre></td></tr></table></figure>
+
+<h2 id="RESP协议"><a href="#RESP协议" class="headerlink" title="RESP协议"></a>RESP协议</h2><p>Redis客户端与服务端使用了RESP(Redis Serialization Protocol)的二进制安全文本协议进行通信，通过TCP连接实现数据交互</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">*&lt;参数数量&gt; CR LF</span><br><span class="line">$&lt;参数 1 的字节数量&gt; CR LF</span><br><span class="line">&lt;参数 1 的数据&gt; CR LF</span><br><span class="line">...</span><br><span class="line">$&lt;参数 N 的字节数量&gt; CR LF</span><br><span class="line">&lt;参数 N 的数据&gt; CR LF</span><br></pre></td></tr></table></figure>
+
+<p>对于特定场景，使用自定义的通信协议，性能会好于通用的通信协议</p>
+<h2 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">struct redisServer &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    redisDb *db;    <span class="comment">// 一个数组，保存着服务器中的所有数据库</span></span><br><span class="line">    <span class="keyword">int</span> dbnum;      <span class="comment">// 服务器的数据库数量，默认16</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line">typedef struct redisDb &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    dict *dict;     <span class="comment">// 数据库键空间，保存着数据库中的所有键值对</span></span><br><span class="line">    dict *expires;  <span class="comment">// 过期字典，保存着键的过期时间</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyc7x6r5umj30sf0fvmyj.jpg" alt="img"></p>
+<h2 id="单线程的原因"><a href="#单线程的原因" class="headerlink" title="单线程的原因"></a>单线程的原因</h2><ol>
+<li>只是对读写使用了单线程，底层使用了IO多路复用机制</li>
+<li>单线程使用简单，并且这里主要的瓶颈不是单线程而是共享资源</li>
+</ol>
+<h2 id="持久化（单机高可用）"><a href="#持久化（单机高可用）" class="headerlink" title="持久化（单机高可用）"></a>持久化（单机高可用）</h2><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyc7lzkw1yj31fn0u0wju.jpg" alt="screenshot-20220113-181342" style="zoom:150%;" />
+
+<h3 id="AOF"><a href="#AOF" class="headerlink" title="AOF:"></a>AOF:</h3><p>MySQL使用的是写前日志（WAL）。但是AOF日志是写后日志，需要Redis先执行命令，写入内存后，再记录日志。</p>
+<p>优点：记录每一条命令但是不需要检查语法。AOF也不会阻塞当前命令</p>
+<p>缺点：存在执行完命令没有记录日志丢失数据的风险。AOF会阻塞下一个命令执行，如果后续磁盘写压力大会导致变慢。</p>
+<p>解决问题：</p>
+<ol>
+<li><p>丢失数据风险：提供三种配置, Always(同步写回)，EverySec(每秒写回),NO(只写到内存，有操作系统写入磁盘)</p>
+</li>
+<li><p>日志文件变大：使用AOF重写机制</p>
+<p>AOF重写机制：</p>
+<ol>
+<li>执行重写是，主线程fork一个子线程，内存会拷贝一份，如何对同一键值对的反复修改的命令只保留其值即可。主线程未阻塞，仍然可以处理新来的操作。如果有写操作，除了正在写的AOF 日志，还会再写一份AOF 重写日志。等到bgrewriteaof 拷贝数据的所有操作记录重写完成后，重写日志记录的这些最新操作也会写入新的 AOF 文件，此时，就可以用新的 AOF 文件替代旧文件了。</li>
+</ol>
+</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gycbr21z07j31s40u0436.jpg" alt="img"></p>
+<h3 id="RDB："><a href="#RDB：" class="headerlink" title="RDB："></a>RDB：</h3><p>记录某一时刻的内存中的数据，以文件的形式写到磁盘。即快照。</p>
+<p>提供了两个命令生成RDB：</p>
+<ol>
+<li>Save: 主线程执行，会阻塞</li>
+<li>Bgsave: 创建一个子进程，专门写入RDB文件，避免了主线程的阻塞，但是这样做确需要暂停写操作，可以使用Copy-On-Write，即会复制一份值用于写。</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyccaxy4m4j31hc0u0ad2.jpg" alt="img"></p>
+<p>快照频率使用上，频率搞了消耗大，低了数据容易丢</p>
+<p>更好的应用场景：快照不频繁使用，AOF记录两次快照之间的操作。</p>
+<p>因为RDB和AOF都会使用fork，<strong>fork 这个创建过程本身会阻塞主线程，而且主线程的内存越大，阻塞时间越长</strong>（所以使用RDB时，单个实例的redis 内存不宜过大）</p>
+<p>同时，Redis 是内存数据库，内存使用量大，如果没有控制好内存的使用量，或者和其他内存需求大的应用一起运行了，就可能受到 swap 的影响，而导致性能变慢。</p>
+<h2 id="主从同步（多机高可用）"><a href="#主从同步（多机高可用）" class="headerlink" title="主从同步（多机高可用）"></a>主从同步（多机高可用）</h2><h3 id="主从同步"><a href="#主从同步" class="headerlink" title="主从同步"></a>主从同步</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gycjk9u4c0j31nk0q4gru.jpg" alt="screenshot-20220114-010708"></p>
+<p>Redis提供了主从库模式，主从库同步是如何完成的呢？</p>
+<ol>
+<li><p>第一次同步：启动多个 Redis 实例的时候，它们相互之间就可以通过 replicaof（Redis 5.0 之前使用 slaveof）命令形成主库和从库的关系，然后使用RDB进行数据同步</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gycjmznewtj31ve0u0q8l.jpg" alt="img"></p>
+</li>
+<li><p>主从级联模式：从库很多，如果都要和主库进行全量复制，就会导致主库压力大，通过“主-从-从”的模式就可以解决</p>
+</li>
+<li><p>主从库端口：通过增量复制的方式继续同步。主从库断连后，主库会将写操作持续写入一个buffer（注：环状）</p>
+</li>
+</ol>
+<p>主库挂了怎么办？</p>
+<p>通过哨兵机制解决：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gycjsvqhk5j31qs0me78h.jpg" alt="screenshot-20220114-011539"></p>
+<p>哨兵是一个特殊模式下的Redis进程，主要用于：监控，选主，通知</p>
+<ol>
+<li>监控。周期性地给所有的主从库发送 PING 命令，检测它们是否仍然在线运行。如果从库没有在规定时间内响应哨兵的 PING 命令，哨兵就会把它标记为“下线状态”；同样，如果主库也没有在规定时间内响应哨兵的 PING 命令，哨兵就会判定主库下线，然后开始自动切换主库的流程。</li>
+<li>选主。筛选+打分，在多个从库中，先按照一定的筛选条件，把不符合条件的从库去掉（在线状态、断连次数）。然后，我们再按照一定的规则，给剩下的从库逐个打分（从库优先级、从库复制进度= master_repl_offset-slave_repl_offset 以及从库 ID 号），将得分最高的从库选为新主库。</li>
+<li>通知。哨兵会把新主库的连接信息发给其他从库，让它们执行 replicaof 命令，和新主库建立连接，并进行数据复制。同时，哨兵会把新主库的连接信息通知给客户端，让它们把请求操作发到新主库上</li>
+</ol>
+<p>单哨兵也可能会出问题，所以可以使用哨兵集群：</p>
+<h3 id="切片集群"><a href="#切片集群" class="headerlink" title="切片集群"></a>切片集群</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gycjydb0w0j31ho0u00yi.jpg" alt="screenshot-20220114-012052"></p>
+<p>当数据量变大以后，就需要扩展，如果只是单纯的扩大单个Redis的内存，会导致fork时间变长，Redis性能变差。此时需要纵向扩展。通过切片集群解决，这里即对一个K-V,先通过K找到需要保存到那个redis示例，在通过K找到在redis的hash表的存放位置。对于第一步来说，还需要考虑负载均衡的问题。</p>
+<p>实际：Redis Cluster是通过Hash Slot实现的，一个环状的hash槽（16384个），通过hash算法（hash(key)%N）找到slot位置。在部署时，Redis会自动将这些槽平均到集群实例上。</p>
+<p>如何知道哈希槽分布在哪个实例上？Redis 实例会把自己的哈希槽信息发给和它相连接的其它实例，来完成哈希槽分配信息的扩散。当实例之间相互连接后，每个实例就有所有哈希槽的映射关系了。客户端收到哈希槽信息后，会把哈希槽信息缓存在本地。当客户端请求键值对时，会先计算键所对应的哈希槽，然后就可以给相应的实例发送请求了。</p>
+<p>当出现增删节点和负载均衡情况等变化的情况，通过重定向机制处理，即原本的实例存放了变更的位置，会通过重定向将请求发给变更的位置</p>
+<h3 id="缓冲区"><a href="#缓冲区" class="headerlink" title="缓冲区"></a>缓冲区</h3><p>缓冲区是Redis中用于，当客户端和服务端进行通信时，暂存客户端命令或服务端结果的。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyckdibgooj31880u0adf.jpg" alt="img"></p>
+<h3 id="淘汰策略"><a href="#淘汰策略" class="headerlink" title="淘汰策略"></a>淘汰策略</h3><ol>
+<li>对于缓存来说，淘汰策略很重要，通过时间局部性和空间局部性来保证缓存的作用</li>
+<li>单范围淘汰，即对设置了过期时间的数据进行淘汰</li>
+<li>全范围淘汰，按照淘汰算法对所有数据进行</li>
+</ol>
+<p>LRU（Redis）实现：在RedisObject中有个lru字段，保存一个数据访问的时间戳，因为数据量很大，Redis也只是抽取一定数量的数据，然后对齐按照lru的大小进行淘汰</p>
+<p>LFU（Redis）实现:  也是使用RedisObject中lru字段，总共24bit，拆为16bit（时间戳）,counter(8bit)访问值（最大255）。Redis 并没有采用数据每被访问一次，就给对应的 counter 值加 1 的计数规则，用计数器当前的值乘以配置项 lfu_log_factor 再加 1，再取其倒数，得到一个 p 值；然后，把这个 p 值和一个取值范围在（0，1）间的随机数 r 值比大小，只有 p 值大于 r 值时，计数器才加 1。这样可以保证访问次数很大也可以进行比较，但是这样本身存在一定误差，数据量大的时候其counter值才置信。</p>
+<h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyckrc17jwj318m0hawhk.jpg" alt="screenshot-20220114-014847"></p>
+<p>Redis的事务，一致性和隔离性可以保证，持久性和原子性不行。</p>
+<h2 id="缓存异常问题"><a href="#缓存异常问题" class="headerlink" title="缓存异常问题"></a>缓存异常问题</h2><h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><p>问题：应用请求无法在Redis处理，大量的被传导到数据库了</p>
+<ol>
+<li>大量数据同时到期 -&gt; a. 微调时间，给业务数据加上一个小的随机数 b. 服务降级，只保证核心内容服务</li>
+<li>Redis实例宕机导致 -&gt; a.进行服务熔断和请求限流 b. 建立高可靠的集群</li>
+</ol>
+<h3 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h3><p>问题：对于某个热点数据的访问很频繁，但是此时该数据刚好过期，导致大量请求到了数据库。</p>
+<p>解决办法：对于热点数据，不设置过期时间</p>
+<h3 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h3><p>问题：要访问的数据即不在Redis缓存也不在数据库，通常由于业务层误操作或者恶意攻击导致</p>
+<p>解决办法：</p>
+<ol>
+<li>缓存空值</li>
+<li>使用Bloom Filer（一个初值全为0的数组和N个hash函数组成，对于某个值，如果存在，则使用N个hash将它的位置置为1）快速判断数据是否存在。（存在一定通过Bloom Filter，不存在大部分通不过Bloom Filter）</li>
+<li>对请求进行合法校验，避免恶意请求</li>
+</ol>
+<h3 id="缓存与数据库数据不一致问题"><a href="#缓存与数据库数据不一致问题" class="headerlink" title="缓存与数据库数据不一致问题"></a>缓存与数据库数据不一致问题</h3><p>核心：需要保证缓存中有数据，缓存的数据必须和数据库中相同。没有数据，则数据库中必须为最新值。</p>
+<p>解决办法：</p>
+<p>读写缓存：同步写回</p>
+<p>只读缓存：</p>
+<ol>
+<li>先删缓存再更新数据库：无并发，重试机制（使用消息队列保证操作成功） 并发：延迟双删（先删除缓存，再更新数据库，休眠一秒，再次删除缓存）</li>
+<li>先更新数据库再删缓存（更好）：无并发，重试机制   并发：在客户端暂存并发请求</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1475,98 +1748,6 @@
 <li>go tool trace</li>
 <li>Debug trace</li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/10/how-to-read-source-code/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/12/10/how-to-read-source-code/" class="post-title-link" itemprop="url">how to read source code</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-12-10 14:31:00" itemprop="dateCreated datePublished" datetime="2021-12-10T14:31:00+08:00">2021-12-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-01-27 15:27:09" itemprop="dateModified" datetime="2022-01-27T15:27:09+08:00">2022-01-27</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="怎样阅读源码"><a href="#怎样阅读源码" class="headerlink" title="怎样阅读源码"></a>怎样阅读源码</h1><h2 id="怎样阅读源码-1"><a href="#怎样阅读源码-1" class="headerlink" title="怎样阅读源码"></a>怎样阅读源码</h2><p>focus on code which either does something that I want to replicate the style of in the future, or which deepens my knowledge of code I use daily</p>
-<p>find a high-level abstraction as a starting point and then gradually dig deeper into the internals</p>
-<p> make notes in OneNote as I study the code, describing the flow and how the code works</p>
-<p>This process is less about having a reference, although that can be useful, than it is about embedding the knowledge into my memory. By describing it in writing, I find that it sticks with me much longer</p>
-<p>Navigating code and forming a mental picture of the logical flow is a handy skill. If you can learn this through reading code, it’ll pay dividends when you’re next trying to fix a critical bug under pressure.</p>
-<p>Once I have an overview formed the next step is to go deeper. For this, I tend to clone the repository so that I can bring it into an IDE or VS Code.</p>
-<p> I like to think about how I’d have chosen to approach a problem and contrast it with the actual implementation。Is the author’s approach better or more efficient? Should I file it away for when I next face a similar requirement?</p>
-<p>Often the code may use APIs that I’ve never discovered when writing code.I study the description and method signature(s) to understand their designed use. This extends my code vocabulary.</p>
-<p>I find tricks and shortcuts to save time when navigating the code</p>
-<h2 id="不了解源码怎么办"><a href="#不了解源码怎么办" class="headerlink" title="不了解源码怎么办"></a>不了解源码怎么办</h2><p>You want to expose yourself to new APIs or new syntax in the code which you read so that you further your own code vocabulary.</p>
-<p>Try to break things down into smaller chunks to work through in your head. What is the code doing and also why has it been written that way? Has the author used an approach to solving something you had not previously considered? As you come up against language syntax or keywords you don’t understand, stop and search for the documentation. Armed with an actual use case, often the documentation will make sense in the context you are approaching it from.</p>
-<p>Similarly, when you encounter framework APIs which you have never used before, visit the code documentation if there is any.</p>
-<h2 id="如何打造自己的技术体系，如何学习一个新的技术"><a href="#如何打造自己的技术体系，如何学习一个新的技术" class="headerlink" title="如何打造自己的技术体系，如何学习一个新的技术"></a>如何打造自己的技术体系，如何学习一个新的技术</h2><h2 id="体系化：目标制定与执行"><a href="#体系化：目标制定与执行" class="headerlink" title="体系化：目标制定与执行"></a>体系化：目标制定与执行</h2><ol>
-<li>该技术能够解决什么问题，可以提升哪些能力？</li>
-<li>短期目标和长期目标是什么？</li>
-<li>我需要做哪些事情可以实现目标？</li>
-</ol>
-<p>首先可以通过官方文档，博客等渠道快速了解一门技术的概貌，当决定深入研究这门技术时，首先需要制定自己的学习计划，比如应该知道有哪些重要的概念，特性需要去深入学习，然后制定具体的学习计划表，在学习过程中，当理解更加深入时，会发现更多需要去挖掘的知识点，然后再去调整和完善学习计划。</p>
-<p>途径：项目实战，源码学习，写博客，参加社区都是高效的办法。需要定时回顾相关的计划是否有效和阶段性的检验。</p>
-<h2 id="思考和总结"><a href="#思考和总结" class="headerlink" title="思考和总结"></a>思考和总结</h2><p>学习一门技术时，除了使用层面上，还需要知道该技术能够解决什么问题，相比于同领域的其他技术有什么优缺点。可以从技术原理中去了解问题的本质，然后找到问题的解决防范，让结果更有说服力。同时从优秀的开源项目中去挖掘技术原理也是非常有帮助的。</p>
-<p>同时多维度的思考，不停留于表明，一个技术问题需要考虑多种因素，需要将方方面面考虑得非常细致。同时对于别人的观点和他人的方案进行学习，总结出自己独特的思考。</p>
-<h2 id="分享和交流"><a href="#分享和交流" class="headerlink" title="分享和交流"></a>分享和交流</h2><p>交流和分享时检验自己的学习成果的有效方法，技术分享，书籍，博客都是沉淀知识的途径。交流与分析可以让我们梳理自己的知识体系，牢固自己的知识，让别人检验自己对知识的理解是否正确。</p>
 
       
     </div>
