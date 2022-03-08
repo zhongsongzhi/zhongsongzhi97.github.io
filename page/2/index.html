@@ -129,7 +129,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/zhongsongzhi97.github.io/archives/">
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -169,6 +169,238 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/24/%E5%9F%BA%E4%BA%8E%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%93%8D%E5%BA%94%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/01/24/%E5%9F%BA%E4%BA%8E%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%93%8D%E5%BA%94%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">基于线程和事件驱动的响应模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-01-24 20:33:09 / Modified: 21:02:52" itemprop="dateCreated datePublished" datetime="2022-01-24T20:33:09+08:00">2022-01-24</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Reactor-Pattern"><a href="#Reactor-Pattern" class="headerlink" title="Reactor Pattern"></a>Reactor Pattern</h1><p>Reactor pattern的理念:</p>
+<ol>
+<li>连接和线程总是存在一对一的关系。Unfortunately, there is always a one-to-one relationship between connections and threads</li>
+<li>事件驱动的方法可以将线程与连接分开，它只对特定回调/处理程序的事件使用线程。Event-driven approach can separate threads from connections, which only uses threads for events on specific callbacks/handlers.</li>
+<li>一个事件驱动的架构由事件的创建者和事件的消费者组成。创建者，也就是事件的源头，只知道事件发生了。消费者是需要知道事件已经发生的实体。消费者可能参与到事件处理中去，也可能只是受到事件的影响。An event-driven architecture consists of event creators and event consumers. The creator, which is the source of the event, only knows that the event has occurred. Consumers are entities that need to know the event has occurred. They may be involved in processing the event or they may simply be affected by the event.</li>
+<li>反应器模式时事件驱动架构的一种实现，简单来说，它是由一个单线程的事件循环对发出事件的资源进行了阻塞并且将其分配给对应的处理程序或者回调。The reactor pattern is one implementation technique of the event-driven architecture. <strong>In simple words, it uses a single threaded event loop blocking on resources emitting events and dispatches them to corresponding handlers/callbacks.</strong></li>
+<li>只有注册了处理程序和回调，就没必要阻塞IO了。事件就行传入的一个新的连接，已经可以读，可以写了<strong>There is no need to block on I/O, as long as handlers/callbacks for events are registered to take care of them.</strong> Events are like incoming a new connection, ready for read, ready for write, etc.</li>
+<li>This pattern decouples modular application-level code from reusable reactor implementation.这种模式可以解耦模块化的应用级代码和可重复使用的反应器实现。</li>
+<li>The purpose of the Reactor design pattern is to avoid the common problem of creating a thread for each message/request/connection.Avoid this problem is to avoid the famous and known problem C10K.反应器模式的目的是为了避免为每个消息/请求/连接创建一个线程的问题。也是为了解决C10K问题。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/18/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/01/18/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8/" class="post-title-link" itemprop="url">MySQL高可用</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-01-18 02:01:29" itemprop="dateCreated datePublished" datetime="2022-01-18T02:01:29+08:00">2022-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-01-28 17:46:56" itemprop="dateModified" datetime="2022-01-28T17:46:56+08:00">2022-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="MySQL高可用"><a href="#MySQL高可用" class="headerlink" title="MySQL高可用"></a>MySQL高可用</h1><h2 id="主备一致是如何保证的"><a href="#主备一致是如何保证的" class="headerlink" title="主备一致是如何保证的"></a>主备一致是如何保证的</h2><p>主库同步到从库的过程：</p>
+<ol>
+<li>主库接收到写请求以后，执行内部事务的更新逻辑，同时写binlog</li>
+<li>从库和主库直接维持了一个长连接，主库A内部有一个线程，专门用于服务备库B的长连接。</li>
+<li>事务日志同步：从库和主库建立好长连接后，会收到主库的binlog，存储到本地为relaylog，会有一个线程读取relaylog，解析日志里的sql命令，然后执行</li>
+</ol>
+<p>binlog的三种格式：</p>
+<ol>
+<li><p>statement</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytf1oqf7jj31ga05xdhk.jpg" alt="img"></p>
+<p>statement格式存储的是原始的SQL语句。</p>
+<p>存在的问题：主库和从库执行同一条sql语句，可能存在结果不一致的情况。</p>
+</li>
+<li><p>row</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytf2ifijgj31hc0et411.jpg" alt="img"></p>
+<p>row格式里存储的是: Table_map, Delete_rows，row格式记录了真实删除行的主键id，也就是主库和备库最终结果是一致的</p>
+</li>
+<li><p>mixed</p>
+<p>mixed是以上两种混合使用的结果</p>
+<p>statement格式的binlog可能会造成主备不一致</p>
+<p>row格式的话，会很占用空间 - 比如delete删除10万行，row格式要记录10w个记录，statement只记录一句sql</p>
+<p>Mixed: 主动判断SQL语句是否可能造成主备不一致，可能就用row，否则stament</p>
+</li>
+<li><p>实践：设置为mixed，如果需要恢复数据的场景，则设置为row</p>
+</li>
+</ol>
+<h2 id="恢复数据"><a href="#恢复数据" class="headerlink" title="恢复数据"></a>恢复数据</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytgdcxmwcj31hc0ig0y2.jpg" alt="img"></p>
+<p>row格式中记录的信息中，bin_row_image的默认设置会存储行的所有字段的值，上面设置为只记录必要信息，只有id=4这个信息</p>
+<p>所以在row格式中，可以记录所有的行的信息。</p>
+<ol>
+<li>delete：执行的delete语句，在row格式的binlog中，被删除的每一行的信息都会保存，既可以将删除的数据insert回去。</li>
+<li>insert: insert语句，row格式的binlog会记录所有字段信息，可以用于定义刚刚插入的一行，使用delete删除即可</li>
+<li>update: update语句，row格式的binlog会记录修改前的整行数据和修改后的整行数据，只需要对调前后，执行update即可</li>
+</ol>
+<h2 id="双主结构和循环复制"><a href="#双主结构和循环复制" class="headerlink" title="双主结构和循环复制"></a>双主结构和循环复制</h2><p>当两个库都作为主库时，会有2个长连接来保持相互同步，但是如何保证不会循环复制。这里使用serverid来做区分。</p>
+<h2 id="主备延迟"><a href="#主备延迟" class="headerlink" title="主备延迟"></a>主备延迟</h2><p>数据同步的节点：</p>
+<ol>
+<li>主库A执行完成一个事务，写入binlog T1</li>
+<li>binlog传给备库B，备库接收完这个binlog T2</li>
+<li>备库B执行完成事务 T3</li>
+</ol>
+<p>主备延迟 = T3 - T1</p>
+<p>T2 - T1 = 网络传输的时间，比较短</p>
+<p>T3 - T2 = 接收完binlog并执行事务的时间（长）</p>
+<p>主备延迟 约等于 T3-T2 接收完binlog，执行relaylog的速度差</p>
+<p><strong>主备延迟的来源</strong>：</p>
+<ol>
+<li>主库机器被备库好</li>
+<li>备库压力大</li>
+<li>大事务 - 因为主库必须等事务执行完以后才会写入binlog，如果大事务执行时间为t1则延迟为t1</li>
+<li>备库的并行复制</li>
+</ol>
+<h3 id="针对主备延迟带来的主备切换策略："><a href="#针对主备延迟带来的主备切换策略：" class="headerlink" title="针对主备延迟带来的主备切换策略："></a>针对主备延迟带来的主备切换策略：</h3><ol>
+<li>可靠性优先策略：</li>
+<li>可用性优先策略：</li>
+</ol>
+<h3 id="小时级的主备延迟-备库并行复制"><a href="#小时级的主备延迟-备库并行复制" class="headerlink" title="小时级的主备延迟 - 备库并行复制"></a>小时级的主备延迟 - 备库并行复制</h3><p>在备库执行日志的速度持续低于主库生成日志的速度情况下，主备延迟有可能变成小时级别。</p>
+<p>为什么要多线程并行复制 - 客户端事务是可以并发的，如果备库处理relaylog是单线程的，则会导致备库执行日志速度持续低于主库生成日志，造成较长时间的主备延迟。</p>
+<p>协调器 - 多工作线程的模式（同时需要保证 不能更新覆盖，不能拆同一个事务）</p>
+<h3 id="一主多从的结构"><a href="#一主多从的结构" class="headerlink" title="一主多从的结构"></a>一主多从的结构</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytifl1yznj30vq0ns0u1.jpg" alt="img"></p>
+<p>具体结构：A与A1是互为主从，B，C，D是执行A的从库，主库为WR，从库为readonly</p>
+<ol>
+<li><p>主库故障后的主从切换：</p>
+<p>当A出错后，A1会作为新的主库，对于从库B来说需要执行change master命令，需要建立到新主库的连接并且将日志位点对齐新主库</p>
+<p><strong>重点问题：日志位点很难对齐</strong></p>
+<p>对于相同的日志，A和A1的位点是不同的，所以从库首先需要对齐位点</p>
+<p>通用的做法是使用GTID来对齐位点：</p>
+<p>GTID(Global Transaction Identifier) 是全局事务ID，是一个事务在提交时生成的</p>
+<p>在开启了GTID以后，日志位点就可以自动对齐了</p>
+<p><strong>流程：</strong></p>
+<ol>
+<li>从库B指定主库A1，基于主备协议建立连接</li>
+<li>从库B把自己的GTID集合set_b发给新主库A1</li>
+<li>主库A1把set_b和自己的GTID集合set_a比较，获取差集，然后看自己是否包含所有的差集</li>
+<li>主库A1在binlog中找到第一个差集中的事务，然后向后顺序取binlog给B</li>
+</ol>
+</li>
+<li></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1477,277 +1709,6 @@
 <p>前提概念：</p>
 <p>Xcode的静态库：</p>
 <p>由于Xcode编译源代码文件是按照compile source里顺序编译并链接的，并且是静态链接的。当整个SDK被添加到应用里的时候，相对于起始地址存在一个偏移量m，SDK的第一个符号symbol1的地址为addr1,第二个符号的地址为addr2,symbolN的地址为addrN,所有符号直接的地址偏差是固定的，也就是SDK的符号的地址范围为addr1-&gt;addrN，这样就可以在SDK的组件前后分别加上2个.c文件，获取自己的地址，这样就可以拿到SDK所属代码区间，在APM筛选过程中判断函数地址是否在SDK的范围内，即可筛选出是否为SDK的崩溃。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/19/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Context/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/12/19/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Context/" class="post-title-link" itemprop="url">并发编程 - Context</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2021-12-19 14:36:52 / Modified: 15:14:22" itemprop="dateCreated datePublished" datetime="2021-12-19T14:36:52+08:00">2021-12-19</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="并发编程-上下文Context"><a href="#并发编程-上下文Context" class="headerlink" title="并发编程 - 上下文Context"></a>并发编程 - 上下文Context</h1><h2 id="Context的作用和使用"><a href="#Context的作用和使用" class="headerlink" title="Context的作用和使用"></a>Context的作用和使用</h2><p>上下文 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> Go 语言中用来设置截止日期、同步信号，传递请求相关值的结构体。</p>
-<p>该接口有4个需要实现的方法</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Context <span class="keyword">interface</span> &#123;</span><br><span class="line">	Deadline() (deadline time.Time, ok <span class="keyword">bool</span>) <span class="comment">//返回context.Context被取消的时间</span></span><br><span class="line">	Done() &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; <span class="comment">//返回一个channel，会在工作完成或context被取消后关闭，重复调用返回同一个Channel</span></span><br><span class="line">	Err() error <span class="comment">//被取消 - Canceled错误 超时 - DeadlineExceeded</span></span><br><span class="line">	Value(key <span class="keyword">interface</span>&#123;&#125;) <span class="keyword">interface</span>&#123;&#125; <span class="comment">//获取键对应的值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>作用：</strong>在 Goroutine 构成的树形结构中对信号进行同步以减少计算资源的浪费是 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> 的最大作用。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxj50vvo7hj30xc0aa0tb.jpg" alt="golang-context-usage"></p>
-<p>Go 服务的每一个请求都是通过单独的 Goroutine 处理的，HTTP/RPC 请求的处理器会启动新的 Goroutine 访问数据库和其他服务，如上图所示，对于同一个请求可能会创建多个Goroutine，需要使用Context.context在Goroutine直接同步特定数据，取消信号以及处理请求的截止日期。</p>
-<p>当上层的Goroutine因为某些原因执行失败时，使用context.Context就可以在下层及时停掉无用的工作以减少额外资源的消耗</p>
-<p><strong>示例：</strong></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handle</span><span class="params">(ctx context.Context, duration time.Duration)</span></span>  &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">		fmt.Println(<span class="string">&quot;handle&quot;</span>,ctx.Err())</span><br><span class="line">	<span class="keyword">case</span> &lt;-time.After(duration):</span><br><span class="line">		fmt.Println(<span class="string">&quot;process request with&quot;</span>,duration)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(),<span class="number">1</span> * time.Second)</span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> handle(ctx,<span class="number">500</span>*time.Millisecond)</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">		fmt.Println(<span class="string">&quot;main&quot;</span>,ctx.Err())</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//handle处理时间为500ms</span></span><br><span class="line">process request with <span class="number">500</span>ms</span><br><span class="line">main context deadline exceeded</span><br><span class="line"><span class="comment">//handle处理时间为1500ms</span></span><br><span class="line">handle context deadline exceeded</span><br><span class="line">main context deadline exceeded</span><br></pre></td></tr></table></figure>
-
-<p>多个Goroutine同时订阅ctx.Done()管道中的消息，一旦收到取消信号就立刻停止当前执行的工作</p>
-<h2 id="默认上下文"><a href="#默认上下文" class="headerlink" title="默认上下文"></a>默认上下文</h2><p>context里最常用的方法是context.Background, context.TODO，这两个方法都会返回预先初始化好的私有变量backgroud和todo，这两个变量都是通过new(emptyCtx)初始化，即全为空实现的context.Context</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Background"><code>context.Background</code></a> 是上下文的默认值，所有其他的上下文都应该从它衍生出来；</li>
-<li><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.TODO"><code>context.TODO</code></a> 应该仅在不确定应该使用哪种上下文时使用；</li>
-</ul>
-<p>在多数情况下，如果当前函数没有上下文作为入参，我们都会使用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Background"><code>context.Background</code></a> 作为起始的上下文向下传递。</p>
-<h2 id="取消信号"><a href="#取消信号" class="headerlink" title="取消信号"></a>取消信号</h2><p><a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithCancel"><code>context.WithCancel</code></a> 函数能够从 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> 中衍生出一个新的子上下文并返回用于取消该上下文的函数。一旦我们执行返回的取消函数，当前上下文以及它的子上下文都会被取消，所有的 Goroutine 都会同步收到这一取消信号。</p>
-<p>除了 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithCancel"><code>context.WithCancel</code></a> 之外，<a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/context"><code>context</code></a> 包中的另外两个函数 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithDeadline"><code>context.WithDeadline</code></a> 和 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithTimeout"><code>context.WithTimeout</code></a> 也都能创建可以被取消的计时器上下文 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.timerCtx"><code>context.timerCtx</code></a>：</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxj5x724t9j30xc0aawf3.jpg" alt="golang-parent-cancel-context"></p>
-<h2 id="传值方法"><a href="#传值方法" class="headerlink" title="传值方法"></a>传值方法</h2><p>如何使用上下文传值:<a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/context"><code>context</code></a> 包中的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.WithValue"><code>context.WithValue</code></a> 能从父上下文中创建一个子上下文，传值的子上下文使用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.valueCtx"><code>context.valueCtx</code></a> 类型</p>
-<p>如果 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.valueCtx"><code>context.valueCtx</code></a> 中存储的键值对与 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.valueCtx.Value"><code>context.valueCtx.Value</code></a> 方法中传入的参数不匹配，就会从父上下文中查找该键对应的值直到某个父上下文中返回 <code>nil</code> 或者查找到对应的值</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithValue</span><span class="params">(parent Context, key, val <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">Context</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;valueCtx&#123;parent, key, val&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> valueCtx <span class="keyword">struct</span> &#123;</span><br><span class="line">	Context</span><br><span class="line">	key, val <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *valueCtx)</span> <span class="title">Value</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">if</span> c.key == key &#123;</span><br><span class="line">		<span class="keyword">return</span> c.val</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> c.Context.Value(key)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Go 语言中的 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> 的主要作用还是在多个 Goroutine 组成的树中同步<strong>取消信号</strong>以减少对资源的消耗和占用，虽然它也有传值的功能，但是这个功能我们还是很少用到。</p>
-<p>在真正使用传值的功能时我们也应该非常谨慎，使用 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/context.Context"><code>context.Context</code></a> 传递请求的所有参数一种非常差的设计，比较常见的使用场景是传递请求对应用户的认证令牌以及用于进行分布式追踪的请求 ID。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/13/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E8%B0%83%E5%BA%A6%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/12/13/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E8%B0%83%E5%BA%A6%E5%99%A8/" class="post-title-link" itemprop="url">Go并发编程 - 调度器</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-12-13 00:32:29" itemprop="dateCreated datePublished" datetime="2021-12-13T00:32:29+08:00">2021-12-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-12-19 15:55:13" itemprop="dateModified" datetime="2021-12-19T15:55:13+08:00">2021-12-19</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="调度器"><a href="#调度器" class="headerlink" title="调度器"></a>调度器</h1><h2 id="调度器的由来"><a href="#调度器的由来" class="headerlink" title="调度器的由来"></a>调度器的由来</h2><p>多进程、多线程已经提高了系统的并发能力，但是在当今互联网高并发场景下，为每个任务都创建一个线程是不现实的，因为会消耗大量的内存。</p>
-<p>后来发现，线程可以分为 “内核态 “线程和” 用户态 “线程。一个 “用户态线程” 必须要绑定一个 “内核态线程”，但是 CPU 并不知道有 “用户态线程” 的存在，它只知道它运行的是一个 “内核态线程”。</p>
-<h3 id="协程与线程的映射关系"><a href="#协程与线程的映射关系" class="headerlink" title="协程与线程的映射关系"></a>协程与线程的映射关系</h3><p>N:1 -&gt; 一个进程的所有协程都绑定到一个线程了</p>
-<p>1:1 -&gt; 协程的管理由CPU完成，成本过高</p>
-<p>M:N: 比较合适</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxbl2jjhosj31020u0gop.jpg" alt="img"></p>
-<h2 id="调度器发展"><a href="#调度器发展" class="headerlink" title="调度器发展"></a>调度器发展</h2><h3 id="单线程调度器"><a href="#单线程调度器" class="headerlink" title="单线程调度器"></a>单线程调度器</h3><p>只包含G，M</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">scheduler</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">	G* gp;</span><br><span class="line">	lock(&amp;sched);<span class="comment">//获取调度器的全局锁</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(gosave(&amp;m-&gt;sched))&#123; <span class="comment">//gosave保存栈寄存器和程序计数器</span></span><br><span class="line">		lock(&amp;sched);</span><br><span class="line">		gp = m-&gt;curg;</span><br><span class="line">		<span class="keyword">switch</span>(gp-&gt;status)&#123;</span><br><span class="line">		<span class="keyword">case</span> Grunnable:</span><br><span class="line">		<span class="keyword">case</span> Grunning:</span><br><span class="line">			gp-&gt;status = Grunnable;</span><br><span class="line">			gput(gp);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		...</span><br><span class="line">		&#125;</span><br><span class="line">		notewakeup(&amp;gp-&gt;stopped);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	gp = nextgandunlock(); <span class="comment">//获取下一个需要运行的Goroutine并解锁调度器</span></span><br><span class="line">	noteclear(&amp;gp-&gt;stopped);</span><br><span class="line">	gp-&gt;status = Grunning;</span><br><span class="line">	m-&gt;curg = gp; <span class="comment">//修改全局线程上要执行的Goroutine为gp</span></span><br><span class="line">	g = gp;</span><br><span class="line">	gogo(&amp;gp-&gt;sched);<span class="comment">//调用gogo运行最新的Goroutine</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="多线程调度器"><a href="#多线程调度器" class="headerlink" title="多线程调度器"></a>多线程调度器</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">schedule</span><span class="params">(G *gp)</span> </span>&#123;</span><br><span class="line">	schedlock();</span><br><span class="line">	<span class="keyword">if</span>(gp != nil) &#123;</span><br><span class="line">		gp-&gt;m = nil;</span><br><span class="line">		uint32 v = runtime·xadd(&amp;runtime·sched.atomic, <span class="number">-1</span>&lt;&lt;mcpuShift);</span><br><span class="line">		<span class="keyword">if</span>(atomic_mcpu(v) &gt; maxgomaxprocs)</span><br><span class="line">			runtime·<span class="keyword">throw</span>(<span class="string">&quot;negative mcpu in scheduler&quot;</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">switch</span>(gp-&gt;status)&#123;</span><br><span class="line">		<span class="keyword">case</span> Grunning:</span><br><span class="line">			gp-&gt;status = Grunnable;</span><br><span class="line">			gput(gp);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> ...:</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	gp = nextgandunlock();</span><br><span class="line">	gp-&gt;status = Grunning;</span><br><span class="line">	m-&gt;curg = gp;</span><br><span class="line">	gp-&gt;m = m;</span><br><span class="line">	runtime·gogo(&amp;gp-&gt;sched, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="任务窃取调度器"><a href="#任务窃取调度器" class="headerlink" title="任务窃取调度器"></a>任务窃取调度器</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">schedule</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    G *gp;</span><br><span class="line"> top:</span><br><span class="line">    <span class="keyword">if</span>(runtime·gcwaiting) &#123;<span class="comment">//如果当前运行时在等待垃圾回收，则调用gcstopm</span></span><br><span class="line">        gcstopm();</span><br><span class="line">        <span class="keyword">goto</span> top;</span><br><span class="line">    &#125;</span><br><span class="line">		</span><br><span class="line">  	<span class="comment">//调用runqget和findrunnable从本地或全局的运行队列获取待执行的Goroutine</span></span><br><span class="line">    gp = runqget(m-&gt;p);<span class="comment">//本地</span></span><br><span class="line">    <span class="keyword">if</span>(gp == nil)</span><br><span class="line">        gp = findrunnable();<span class="comment">//全局获取，会触发工作窃取，从其他处理器的队列中随机获取Goroutine</span></span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    execute(gp);<span class="comment">//调用execute在当前线程M上运行Goroutine</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在G-M模型基础上引入了P</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> P &#123;</span><br><span class="line">	Lock;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">uint32</span>	status;</span><br><span class="line">	P*	link;</span><br><span class="line">	<span class="keyword">uint32</span>	tick;</span><br><span class="line">	M*	m;</span><br><span class="line">	MCache*	mcache;</span><br><span class="line"></span><br><span class="line">	G**	runq;</span><br><span class="line">	<span class="keyword">int32</span>	runqhead;</span><br><span class="line">	<span class="keyword">int32</span>	runqtail;</span><br><span class="line">	<span class="keyword">int32</span>	runqsize;</span><br><span class="line"></span><br><span class="line">	G*	gfree;</span><br><span class="line">	<span class="keyword">int32</span>	gfreecnt;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxj6qv3mq0j30xc0bemxg.jpg" alt="golang-gmp"></p>
-<p>处理器持有一个由可运行的 Goroutine 组成的运行队列 <code>runq</code>，还反向持有一个线程。调度器在调度时会从处理器的队列中选择队列头的 Goroutine 放到线程 M 上执行。</p>
-<h3 id="抢占式调度器"><a href="#抢占式调度器" class="headerlink" title="抢占式调度器"></a>抢占式调度器</h3><p>对于非抢占式的调度器饥饿问题很严重</p>
-<h4 id="基于协作的抢占式调度"><a href="#基于协作的抢占式调度" class="headerlink" title="基于协作的抢占式调度"></a>基于协作的抢占式调度</h4><p>存在无法被抢占的边缘情况</p>
-<p>Go 语言会在分段栈的机制上实现抢占调度，利用编译器在分段栈上插入的函数，所有 Goroutine 在函数调用时都有机会进入运行时检查是否需要执行抢占。</p>
-<p><strong>原理：</strong></p>
-<ol>
-<li>编译器会在调用函数前插入 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/1e112cd59f560129f4dca5e9af7c3cbc445850b6/src/pkg/runtime/stack.c#L192"><code>runtime.morestack</code></a>；</li>
-<li>Go 语言运行时会在垃圾回收暂停程序、系统监控发现 Goroutine 运行超过 10ms 时发出抢占请求 <code>StackPreempt</code>；</li>
-<li>当发生函数调用时，可能会执行编译器插入的 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/1e112cd59f560129f4dca5e9af7c3cbc445850b6/src/pkg/runtime/stack.c#L192"><code>runtime.morestack</code></a> 函数，它调用的 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/1e112cd59f560129f4dca5e9af7c3cbc445850b6/src/pkg/runtime/stack.c#L192"><code>runtime.newstack</code></a> 会检查 Goroutine 的 <code>stackguard0</code> 字段是否为 <code>StackPreempt</code>；</li>
-<li>如果 <code>stackguard0</code> 是 <code>StackPreempt</code>，就会触发抢占让出当前线程；</li>
-</ol>
-<h4 id="基于信号的抢占式调度"><a href="#基于信号的抢占式调度" class="headerlink" title="基于信号的抢占式调度"></a>基于信号的抢占式调度</h4><ol>
-<li>程序启动时，在 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/62e53b79227dafc6afcd92240c89acb8c0e1dd56/src/runtime/signal_unix.go#L494"><code>runtime.sighandler</code></a> 函数中注册 <code>SIGURG</code> 信号的处理函数 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/62e53b79227dafc6afcd92240c89acb8c0e1dd56/src/runtime/signal_unix.go#L326"><code>runtime.doSigPreempt</code></a>；</li>
-<li>在触发垃圾回收的栈扫描时会调用<code>runtime.suspendG</code>挂起 Goroutine，该函数会执行下面的逻辑：<ol>
-<li>将 <code>_Grunning</code> 状态的 Goroutine 标记成可以被抢占，即将 <code>preemptStop</code> 设置成 <code>true</code>；</li>
-<li>调用 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/67f0f83216930e053441500e2b28c3fa2b667581/src/runtime/signal_unix.go#L346"><code>runtime.preemptM</code></a> 触发抢占；</li>
-</ol>
-</li>
-<li><a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/67f0f83216930e053441500e2b28c3fa2b667581/src/runtime/signal_unix.go#L346"><code>runtime.preemptM</code></a> 会调用 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/8e0be05ec7c369387c0ed3c9cf37968c6d3afbbd/src/runtime/os_linux.go#L483"><code>runtime.signalM</code></a> 向线程发送信号 <code>SIGURG</code>；</li>
-<li>操作系统会中断正在运行的线程并执行预先注册的信号处理函数 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/62e53b79227dafc6afcd92240c89acb8c0e1dd56/src/runtime/signal_unix.go#L326"><code>runtime.doSigPreempt</code></a>；</li>
-<li><a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/62e53b79227dafc6afcd92240c89acb8c0e1dd56/src/runtime/signal_unix.go#L326"><code>runtime.doSigPreempt</code></a> 函数会处理抢占信号，获取当前的 SP 和 PC 寄存器并调用 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/7955ecebfc85851d43913f9358fa5f6a7bbb7c59/src/runtime/signal_386.go#L69"><code>runtime.sigctxt.pushCall</code></a>；</li>
-<li><a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/7955ecebfc85851d43913f9358fa5f6a7bbb7c59/src/runtime/signal_386.go#L69"><code>runtime.sigctxt.pushCall</code></a> 会修改寄存器并在程序回到用户态时执行 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/cdb7fd6b06937aa38a7a4921f567697144448073/src/runtime/preempt_386.s#L6"><code>runtime.asyncPreempt</code></a>；</li>
-<li>汇编指令 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/cdb7fd6b06937aa38a7a4921f567697144448073/src/runtime/preempt_386.s#L6"><code>runtime.asyncPreempt</code></a> 会调用运行时函数 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/dcdee153cd61de47d0cabd6729a17673536b0418/src/runtime/preempt.go#L302"><code>runtime.asyncPreempt2</code></a>；</li>
-<li><a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/dcdee153cd61de47d0cabd6729a17673536b0418/src/runtime/preempt.go#L302"><code>runtime.asyncPreempt2</code></a> 会调用 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/64c22b70bf00e15615bb17c29f808b55bc339682/src/runtime/proc.go#L2739"><code>runtime.preemptPark</code></a>；</li>
-<li><a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/64c22b70bf00e15615bb17c29f808b55bc339682/src/runtime/proc.go#L2739"><code>runtime.preemptPark</code></a> 会修改当前 Goroutine 的状态到 <code>_Gpreempted</code> 并调用 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/8d7be1e3c9a98191f8c900087025c5e78b73d962/src/runtime/proc.go#L2482"><code>runtime.schedule</code></a> 让当前函数陷入休眠并让出线程，调度器会选择其它的 Goroutine 继续执行；</li>
-</ol>
-<p>STW 和栈扫描是一个可以抢占的安全点（Safe-points），所以 Go 语言会在这里先加入抢占功能</p>
-<h2 id="Go协程goroutine"><a href="#Go协程goroutine" class="headerlink" title="Go协程goroutine"></a>Go协程goroutine</h2><p>Go 中，协程被称为 goroutine，它非常轻量，一个 goroutine 只占几 KB，并且这几 KB 就足够 goroutine 运行完，这就能在有限的内存空间内支持大量 goroutine，支持了更多的并发。虽然一个 goroutine 的栈只占几 KB，但实际是可伸缩的，如果需要更多内容，runtime 会自动为 goroutine 分配。</p>
-<p>Goroutine 特点：</p>
-<ul>
-<li>占用内存更小（几 kb）</li>
-<li>调度更灵活 (runtime 调度)</li>
-</ul>
-<h2 id="GMP模型"><a href="#GMP模型" class="headerlink" title="GMP模型"></a>GMP模型</h2><p>符号含义： G -&gt; goroutine P -&gt; processor M-&gt;thread</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxbl71yyqej30sg0lcdhh.jpg" alt="img"></p>
-<ul>
-<li>全局队列（Global Queue）：存放等待运行的 G。</li>
-<li>P 的本地队列：同全局队列类似，存放的也是等待运行的 G，存的数量有限，不超过 256 个。新建 G’时，G’优先加入到 P 的本地队列，如果队列满了，则会把本地队列中一半的 G 移动到全局队列。</li>
-<li>P 列表：所有的 P 都在程序启动时创建，并保存在数组中，最多有 GOMAXPROCS(可配置) 个。</li>
-<li>M：线程想运行任务就得获取 P，从 P 的本地队列获取 G，P 队列为空时，M 也会尝试从全局队列拿一批 G 放到 P 的本地队列，或从其他 P 的本地队列偷一半放到自己 P 的本地队列。M 运行 G，G 执行之后，M 会从 P 获取下一个 G，不断重复下去。</li>
-</ul>
-<h4 id="P和M的个数问题"><a href="#P和M的个数问题" class="headerlink" title="P和M的个数问题"></a>P和M的个数问题</h4><p>M 与 P 的数量没有绝对关系，一个 M 阻塞，P 就会去创建或者切换另一个 M，所以，即使 P 的默认数量是 1，也有可能会创建很多个 M 出来。</p>
-<p>P:</p>
-<p>由启动时环境变量 $GOMAXPROCS 或者是由 runtime 的方法 GOMAXPROCS() 决定。这意味着在程序执行的任意时刻都只有 $GOMAXPROCS 个 goroutine 在同时运行</p>
-<p>M:</p>
-<ul>
-<li>go 语言本身的限制：go 程序启动时，会设置 M 的最大数量，默认 10000. 但是内核很难支持这么多的线程数，所以这个限制可以忽略。</li>
-<li>runtime/debug 中的 SetMaxThreads 函数，设置 M 的最大数量</li>
-<li>一个 M 阻塞了，会创建新的 M。</li>
-</ul>
-<h4 id="P和M何时被创建"><a href="#P和M何时被创建" class="headerlink" title="P和M何时被创建"></a>P和M何时被创建</h4><p>1、P 何时创建：在确定了 P 的最大数量 n 后，运行时系统会根据这个数量创建 n 个 P。</p>
-<p>2、M 何时创建：没有足够的 M 来关联 P 并运行其中的可运行的 G。比如所有的 M 此时都阻塞住了，而 P 中还有很多就绪任务，就会去寻找空闲的 M，而没有空闲的，就会去创建新的 M。</p>
-<h3 id="调度器的设计策略"><a href="#调度器的设计策略" class="headerlink" title="调度器的设计策略"></a>调度器的设计策略</h3><ol>
-<li><p>复用线程：</p>
-<p>work stealing 机制:当本线程无可运行的 G 时，尝试从其他线程绑定的 P 偷取 G，而不是销毁线程。</p>
-<p>hand off 机制:当本线程因为 G 进行系统调用阻塞时，线程释放绑定的 P，把 P 转移给其他空闲的线程执行。</p>
-</li>
-<li><p>利用并行：</p>
-<p>GOMAXPROCS 设置 P 的数量，最多有 GOMAXPROCS 个线程分布在多个 CPU 上同时运行。GOMAXPROCS 也限制了并发的程度，比如 GOMAXPROCS = 核数/2，则最多利用了一半的 CPU 核进行并行。</p>
-</li>
-<li><p>抢占：</p>
-<p>在 coroutine 中要等待一个协程主动让出 CPU 才执行下一个协程，在 Go 中，一个 goroutine 最多占用 CPU 10ms，防止其他 goroutine 被饿死，这就是 goroutine 不同于 coroutine 的一个地方。</p>
-</li>
-<li><p>全局G队列：</p>
-<p>在新的调度器中依然有全局 G 队列，但功能已经被弱化了，当 M 执行 work stealing 从其他 P 偷不到 G 时，它可以从全局 G 队列获取 G。</p>
-</li>
-</ol>
-<h3 id="调度器的调度流程"><a href="#调度器的调度流程" class="headerlink" title="调度器的调度流程"></a>调度器的调度流程</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxblfko443j30yg0jewgb.jpg" alt="img"></p>
-<p> 1、我们通过 go func () 来创建一个 goroutine；</p>
-<p> 2、有两个存储 G 的队列，一个是局部调度器 P 的本地队列、一个是全局 G 队列。新创建的 G 会先保存在 P 的本地队列中，如果 P 的本地队列已经满了就会保存在全局的队列中；</p>
-<p> 3、G 只能运行在 M 中，一个 M 必须持有一个 P，M 与 P 是 1：1 的关系。M 会从 P 的本地队列弹出一个可执行状态的 G 来执行，如果 P 的本地队列为空，就会想其他的 MP 组合偷取一个可执行的 G 来执行；</p>
-<p> 4、一个 M 调度 G 执行的过程是一个循环机制；</p>
-<p> 5、当 M 执行某一个 G 时候如果发生了 syscall 或则其余阻塞操作，M 会阻塞，如果当前有一些 G 在执行，runtime 会把这个线程 M 从 P 中摘除 (detach)，然后再创建一个新的操作系统的线程 (如果有空闲的线程可用就复用空闲线程) 来服务于这个 P；</p>
-<p> 6、当 M 系统调用结束时候，这个 G 会尝试获取一个空闲的 P 执行，并放入到这个 P 的本地队列。如果获取不到 P，那么这个线程 M 变成休眠状态， 加入到空闲线程中，然后这个 G 会被放入全局队列中。</p>
-<h3 id="调度器的生命周期"><a href="#调度器的生命周期" class="headerlink" title="调度器的生命周期"></a>调度器的生命周期</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxblhrrhddj30c70o8gmg.jpg" alt="img"></p>
-<p>M0</p>
-<p>M0 是启动程序后的编号为 0 的主线程，这个 M 对应的实例会在全局变量 runtime.m0 中，不需要在 heap 上分配，M0 负责执行初始化操作和启动第一个 G， 在之后 M0 就和其他的 M 一样了。</p>
-<p>G0</p>
-<p>G0 是每次启动一个 M 都会第一个创建的 gourtine，G0 仅用于负责调度的 G，G0 不指向任何可执行的函数，每个 M 都会有一个自己的 G0。在调度或系统调用时会使用 G0 的栈空间，全局变量的 G0 是 M0 的 G0。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;Hello world&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>也会经历如上图所示的过程：</p>
-<p>1.runtime 创建最初的线程 m0 和 goroutine g0，并把 2 者关联。</p>
-<p>2.调度器初始化：初始化 m0、栈、垃圾回收，以及创建和初始化由 GOMAXPROCS 个 P 构成的 P 列表。</p>
-<p>3.示例代码中的 main 函数是 main.main，runtime 中也有 1 个 main 函数 ——runtime.main，代码经过编译后，runtime.main 会调用 main.main，程序启动时会为 runtime.main 创建 goroutine，称它为 main goroutine 吧，然后把 main goroutine 加入到 P 的本地队列。</p>
-<p>4.启动 m0，m0 已经绑定了 P，会从 P 的本地队列获取 G，获取到 main goroutine。</p>
-<p>5.G 拥有栈，M 根据 G 中的栈信息和调度信息设置运行环境</p>
-<p>6.M 运行 G</p>
-<p>7.G 退出，再次回到 M 获取可运行的 G，这样重复下去，直到 main.main 退出，runtime.main 执行 Defer 和 Panic 处理，或调用 runtime.exit 退出程序。</p>
-<h3 id="GMP数据查看的工具"><a href="#GMP数据查看的工具" class="headerlink" title="GMP数据查看的工具"></a>GMP数据查看的工具</h3><ol>
-<li>go tool trace</li>
-<li>Debug trace</li>
-</ol>
 
       
     </div>

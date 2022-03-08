@@ -129,7 +129,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/zhongsongzhi97.github.io/archives/">
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -169,6 +169,198 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/03/07/RPC%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/03/07/RPC%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="post-title-link" itemprop="url">RPC服务治理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-03-07 00:55:15 / Modified: 01:37:35" itemprop="dateCreated datePublished" datetime="2022-03-07T00:55:15+08:00">2022-03-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/RPC/" itemprop="url" rel="index"><span itemprop="name">RPC</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="RPC服务治理"><a href="#RPC服务治理" class="headerlink" title="RPC服务治理"></a>RPC服务治理</h1><h2 id="客户端治理"><a href="#客户端治理" class="headerlink" title="客户端治理"></a>客户端治理</h2><h4 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h4><p>服务发现的本质：就是完成接口跟服务提供者IP:PORT的映射</p>
+<p>常见的服务发现：Zookeeper，ETCD，Consul</p>
+<ol>
+<li>使用服务发现：</li>
+<li>服务发现的规则：</li>
+<li>匹配失败的fallback策略：</li>
+<li>保护策略：</li>
+</ol>
+<h4 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h4><p>RPC的负载均衡由RPC框架自身实现，RPC 的服务调用者会与“注册中心”下发的所有服务节点建立长连接，在每次发起 RPC 调用时，服务调用者都会通过配置的负载均衡插件，自主选择一个服务节点，发起 RPC 调用请求。</p>
+<p>负载均衡的策略：1. 一致性hash 2. 随机策略 3. 权重策略</p>
+<h4 id="异常重试"><a href="#异常重试" class="headerlink" title="异常重试"></a>异常重试</h4><p>使用RPC框架时，尽量保证被调用的服务的业务逻辑是幂等的，这样才能考虑开启异常重试</p>
+<p>为了保证安全，防止重试导致请求时间超出配置的超时时间，需要在每次进行重试前判断一下是否超时</p>
+<p>重试策略：在发起重试前，在负载均衡的节点去掉之前出问题的节点</p>
+<p>快速重试</p>
+<h4 id="健康检查"><a href="#健康检查" class="headerlink" title="健康检查"></a>健康检查</h4><p>对于Client连接池的连接状态进行检查</p>
+<p>对于Client连接池的连接检查，定期检查每个连接，使用心跳机制（Ping Server）</p>
+<h4 id="熔断"><a href="#熔断" class="headerlink" title="熔断"></a>熔断</h4><p>目的：是调用方为了避免在调用过程中，服务提供方出现问题的时候，自身资源被耗尽的保护策略</p>
+<p>熔断的工作机制：在关闭，打开，半关闭的三个状态之间切换</p>
+<ul>
+<li>OPEN:  熔断器打开，链路被熔断，此状态下请求直接被熔断器拒绝。</li>
+<li>CLOSED:  熔断器闭合，请求正常通过。</li>
+<li>HALF-OPEN: 半开状态，允许部分请求通过</li>
+</ul>
+<h4 id="超时控制"><a href="#超时控制" class="headerlink" title="超时控制"></a>超时控制</h4><ol>
+<li>读超时</li>
+<li>写超时</li>
+<li>连接超时</li>
+</ol>
+<h4 id="机房调度"><a href="#机房调度" class="headerlink" title="机房调度"></a>机房调度</h4><p>控制下游服务调度到哪个机房以及流量分配比例，默认情况是访问本机房的下游服务</p>
+<h2 id="服务端治理"><a href="#服务端治理" class="headerlink" title="服务端治理"></a>服务端治理</h2><h4 id="服务注册"><a href="#服务注册" class="headerlink" title="服务注册"></a>服务注册</h4><p>将自己注册到注册中心</p>
+<h4 id="健康检查-1"><a href="#健康检查-1" class="headerlink" title="健康检查"></a>健康检查</h4><p>让每个应用实例提供一个“健康检测”的URL，检测程序定时构造HTTP请求访问该URL，根据响应结果判活</p>
+<h4 id="优雅启动"><a href="#优雅启动" class="headerlink" title="优雅启动"></a>优雅启动</h4><p>目的：避免流量打到没有启动完成的节点，或者大流量打到刚启动的节点（缓存未预热）</p>
+<ol>
+<li><p>启动预热：</p>
+<p>将调用次数作为负载均衡的权重</p>
+</li>
+<li><p>延迟暴露：</p>
+<p>先完成数据预热等操作后再注册到服务中心</p>
+</li>
+</ol>
+<h4 id="优雅退出"><a href="#优雅退出" class="headerlink" title="优雅退出"></a>优雅退出</h4><ol>
+<li><p>服务退出前通知注册中心下线</p>
+<p>整个关闭过程中依赖了两次 RPC 调用，一次是服务提供方通知注册中心下线操作，一次是注册中心通知服务调用方下线节点操作。注册中心通知服务调用方都是异步的，我们在“服务发现”一讲中讲过在大规模集群里面，服务发现只保证最终一致性，并不保证实时性，并不能成功保证把这次要下线的节点推送到所有的调用方</p>
+</li>
+<li><p>Server端主动通知Client断开连接</p>
+<p>因为在 RPC 里面调用方跟服务提供方之间是长连接，我们可以在提供方应用内存里面维护一份调用方连接集合，当服务要关闭的时候，挨个去通知调用方去下线这台机器。这样整个调用链路就变短了，对于每个调用方来说就一次 RPC，可以确保调用的成功率很高</p>
+</li>
+<li><p>退出设置Stop标记，并处理完所有已经进来的请求</p>
+</li>
+</ol>
+<h4 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h4><p>一般提供的是单实例限流，即单个实例上能允许的最大的QPS。</p>
+<h4 id="比例丢弃"><a href="#比例丢弃" class="headerlink" title="比例丢弃"></a>比例丢弃</h4><p>根据需求对客户端发出的请求进行一定比例的丢弃，从而保证资源需求小于下游能提供的可用资源阈值</p>
+<h4 id="内部降级"><a href="#内部降级" class="headerlink" title="内部降级"></a>内部降级</h4><p>当一个服务处理大量请求达到一定压力时，在处理请求时减少一些非必要的功能</p>
+<h4 id="访问控制"><a href="#访问控制" class="headerlink" title="访问控制"></a>访问控制</h4><p>服务方通过配置访问控制功能来配置运行上游哪些服务可以调用本服务的接口</p>
+<h2 id="排查测试"><a href="#排查测试" class="headerlink" title="排查测试"></a>排查测试</h2><h3 id="Trace追踪"><a href="#Trace追踪" class="headerlink" title="Trace追踪"></a>Trace追踪</h3><p>追踪整个业务链路，包括日志</p>
+<h3 id="流量回放"><a href="#流量回放" class="headerlink" title="流量回放"></a>流量回放</h3><p>通过线上流量来验证改造后应用的正确性，即慢慢放量</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/03/01/%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/03/01/%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="post-title-link" itemprop="url">服务发现与服务治理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-03-01 20:14:29" itemprop="dateCreated datePublished" datetime="2022-03-01T20:14:29+08:00">2022-03-01</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1461,238 +1653,6 @@
 <li>启动时扫描需要对外发布的服务，并将服务元数据信息发布到注册中心；</li>
 <li>接收 RPC 请求，解码后得到请求消息；</li>
 <li>提交请求至自定义线程池进行处理，并将处理结果写回客户端。</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/24/%E5%9F%BA%E4%BA%8E%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%93%8D%E5%BA%94%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2022/01/24/%E5%9F%BA%E4%BA%8E%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%93%8D%E5%BA%94%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">基于线程和事件驱动的响应模式</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2022-01-24 20:33:09 / Modified: 21:02:52" itemprop="dateCreated datePublished" datetime="2022-01-24T20:33:09+08:00">2022-01-24</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Reactor-Pattern"><a href="#Reactor-Pattern" class="headerlink" title="Reactor Pattern"></a>Reactor Pattern</h1><p>Reactor pattern的理念:</p>
-<ol>
-<li>连接和线程总是存在一对一的关系。Unfortunately, there is always a one-to-one relationship between connections and threads</li>
-<li>事件驱动的方法可以将线程与连接分开，它只对特定回调/处理程序的事件使用线程。Event-driven approach can separate threads from connections, which only uses threads for events on specific callbacks/handlers.</li>
-<li>一个事件驱动的架构由事件的创建者和事件的消费者组成。创建者，也就是事件的源头，只知道事件发生了。消费者是需要知道事件已经发生的实体。消费者可能参与到事件处理中去，也可能只是受到事件的影响。An event-driven architecture consists of event creators and event consumers. The creator, which is the source of the event, only knows that the event has occurred. Consumers are entities that need to know the event has occurred. They may be involved in processing the event or they may simply be affected by the event.</li>
-<li>反应器模式时事件驱动架构的一种实现，简单来说，它是由一个单线程的事件循环对发出事件的资源进行了阻塞并且将其分配给对应的处理程序或者回调。The reactor pattern is one implementation technique of the event-driven architecture. <strong>In simple words, it uses a single threaded event loop blocking on resources emitting events and dispatches them to corresponding handlers/callbacks.</strong></li>
-<li>只有注册了处理程序和回调，就没必要阻塞IO了。事件就行传入的一个新的连接，已经可以读，可以写了<strong>There is no need to block on I/O, as long as handlers/callbacks for events are registered to take care of them.</strong> Events are like incoming a new connection, ready for read, ready for write, etc.</li>
-<li>This pattern decouples modular application-level code from reusable reactor implementation.这种模式可以解耦模块化的应用级代码和可重复使用的反应器实现。</li>
-<li>The purpose of the Reactor design pattern is to avoid the common problem of creating a thread for each message/request/connection.Avoid this problem is to avoid the famous and known problem C10K.反应器模式的目的是为了避免为每个消息/请求/连接创建一个线程的问题。也是为了解决C10K问题。</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/18/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2022/01/18/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8/" class="post-title-link" itemprop="url">MySQL高可用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-01-18 02:01:29" itemprop="dateCreated datePublished" datetime="2022-01-18T02:01:29+08:00">2022-01-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-01-28 17:46:56" itemprop="dateModified" datetime="2022-01-28T17:46:56+08:00">2022-01-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/zhongsongzhi97.github.io/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="MySQL高可用"><a href="#MySQL高可用" class="headerlink" title="MySQL高可用"></a>MySQL高可用</h1><h2 id="主备一致是如何保证的"><a href="#主备一致是如何保证的" class="headerlink" title="主备一致是如何保证的"></a>主备一致是如何保证的</h2><p>主库同步到从库的过程：</p>
-<ol>
-<li>主库接收到写请求以后，执行内部事务的更新逻辑，同时写binlog</li>
-<li>从库和主库直接维持了一个长连接，主库A内部有一个线程，专门用于服务备库B的长连接。</li>
-<li>事务日志同步：从库和主库建立好长连接后，会收到主库的binlog，存储到本地为relaylog，会有一个线程读取relaylog，解析日志里的sql命令，然后执行</li>
-</ol>
-<p>binlog的三种格式：</p>
-<ol>
-<li><p>statement</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytf1oqf7jj31ga05xdhk.jpg" alt="img"></p>
-<p>statement格式存储的是原始的SQL语句。</p>
-<p>存在的问题：主库和从库执行同一条sql语句，可能存在结果不一致的情况。</p>
-</li>
-<li><p>row</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytf2ifijgj31hc0et411.jpg" alt="img"></p>
-<p>row格式里存储的是: Table_map, Delete_rows，row格式记录了真实删除行的主键id，也就是主库和备库最终结果是一致的</p>
-</li>
-<li><p>mixed</p>
-<p>mixed是以上两种混合使用的结果</p>
-<p>statement格式的binlog可能会造成主备不一致</p>
-<p>row格式的话，会很占用空间 - 比如delete删除10万行，row格式要记录10w个记录，statement只记录一句sql</p>
-<p>Mixed: 主动判断SQL语句是否可能造成主备不一致，可能就用row，否则stament</p>
-</li>
-<li><p>实践：设置为mixed，如果需要恢复数据的场景，则设置为row</p>
-</li>
-</ol>
-<h2 id="恢复数据"><a href="#恢复数据" class="headerlink" title="恢复数据"></a>恢复数据</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytgdcxmwcj31hc0ig0y2.jpg" alt="img"></p>
-<p>row格式中记录的信息中，bin_row_image的默认设置会存储行的所有字段的值，上面设置为只记录必要信息，只有id=4这个信息</p>
-<p>所以在row格式中，可以记录所有的行的信息。</p>
-<ol>
-<li>delete：执行的delete语句，在row格式的binlog中，被删除的每一行的信息都会保存，既可以将删除的数据insert回去。</li>
-<li>insert: insert语句，row格式的binlog会记录所有字段信息，可以用于定义刚刚插入的一行，使用delete删除即可</li>
-<li>update: update语句，row格式的binlog会记录修改前的整行数据和修改后的整行数据，只需要对调前后，执行update即可</li>
-</ol>
-<h2 id="双主结构和循环复制"><a href="#双主结构和循环复制" class="headerlink" title="双主结构和循环复制"></a>双主结构和循环复制</h2><p>当两个库都作为主库时，会有2个长连接来保持相互同步，但是如何保证不会循环复制。这里使用serverid来做区分。</p>
-<h2 id="主备延迟"><a href="#主备延迟" class="headerlink" title="主备延迟"></a>主备延迟</h2><p>数据同步的节点：</p>
-<ol>
-<li>主库A执行完成一个事务，写入binlog T1</li>
-<li>binlog传给备库B，备库接收完这个binlog T2</li>
-<li>备库B执行完成事务 T3</li>
-</ol>
-<p>主备延迟 = T3 - T1</p>
-<p>T2 - T1 = 网络传输的时间，比较短</p>
-<p>T3 - T2 = 接收完binlog并执行事务的时间（长）</p>
-<p>主备延迟 约等于 T3-T2 接收完binlog，执行relaylog的速度差</p>
-<p><strong>主备延迟的来源</strong>：</p>
-<ol>
-<li>主库机器被备库好</li>
-<li>备库压力大</li>
-<li>大事务 - 因为主库必须等事务执行完以后才会写入binlog，如果大事务执行时间为t1则延迟为t1</li>
-<li>备库的并行复制</li>
-</ol>
-<h3 id="针对主备延迟带来的主备切换策略："><a href="#针对主备延迟带来的主备切换策略：" class="headerlink" title="针对主备延迟带来的主备切换策略："></a>针对主备延迟带来的主备切换策略：</h3><ol>
-<li>可靠性优先策略：</li>
-<li>可用性优先策略：</li>
-</ol>
-<h3 id="小时级的主备延迟-备库并行复制"><a href="#小时级的主备延迟-备库并行复制" class="headerlink" title="小时级的主备延迟 - 备库并行复制"></a>小时级的主备延迟 - 备库并行复制</h3><p>在备库执行日志的速度持续低于主库生成日志的速度情况下，主备延迟有可能变成小时级别。</p>
-<p>为什么要多线程并行复制 - 客户端事务是可以并发的，如果备库处理relaylog是单线程的，则会导致备库执行日志速度持续低于主库生成日志，造成较长时间的主备延迟。</p>
-<p>协调器 - 多工作线程的模式（同时需要保证 不能更新覆盖，不能拆同一个事务）</p>
-<h3 id="一主多从的结构"><a href="#一主多从的结构" class="headerlink" title="一主多从的结构"></a>一主多从的结构</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytifl1yznj30vq0ns0u1.jpg" alt="img"></p>
-<p>具体结构：A与A1是互为主从，B，C，D是执行A的从库，主库为WR，从库为readonly</p>
-<ol>
-<li><p>主库故障后的主从切换：</p>
-<p>当A出错后，A1会作为新的主库，对于从库B来说需要执行change master命令，需要建立到新主库的连接并且将日志位点对齐新主库</p>
-<p><strong>重点问题：日志位点很难对齐</strong></p>
-<p>对于相同的日志，A和A1的位点是不同的，所以从库首先需要对齐位点</p>
-<p>通用的做法是使用GTID来对齐位点：</p>
-<p>GTID(Global Transaction Identifier) 是全局事务ID，是一个事务在提交时生成的</p>
-<p>在开启了GTID以后，日志位点就可以自动对齐了</p>
-<p><strong>流程：</strong></p>
-<ol>
-<li>从库B指定主库A1，基于主备协议建立连接</li>
-<li>从库B把自己的GTID集合set_b发给新主库A1</li>
-<li>主库A1把set_b和自己的GTID集合set_a比较，获取差集，然后看自己是否包含所有的差集</li>
-<li>主库A1在binlog中找到第一个差集中的事务，然后向后顺序取binlog给B</li>
-</ol>
-</li>
-<li></li>
 </ol>
 
       
