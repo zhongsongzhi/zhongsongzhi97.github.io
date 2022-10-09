@@ -129,18 +129,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/zhongsongzhi97.github.io/archives/">
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/zhongsongzhi97.github.io/categories/">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/zhongsongzhi97.github.io/tags/">
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -169,6 +169,338 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/02/10/%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%B0%8F%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/02/10/%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%B0%8F%E7%BB%93/" class="post-title-link" itemprop="url">序列化和反序列化小结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-10 16:40:37 / Modified: 17:22:07" itemprop="dateCreated datePublished" datetime="2022-02-10T16:40:37+08:00">2022-02-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/%E5%BA%8F%E5%88%97%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">序列化</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="序列化和反序列化小结"><a href="#序列化和反序列化小结" class="headerlink" title="序列化和反序列化小结"></a>序列化和反序列化小结</h1><p>序列化是指把数据结构或对象转化为可存储或可传输的结构，这种结构可以用于重建数据结构或对象。</p>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>类型</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Json</td>
+<td>文本</td>
+<td>1. 人可读 2. 属性顺序对序列化反序列化无影响</td>
+<td>1. 丢弃了类型信息，eg: “num”:100，这里对于num的类型信息是不可知的，解析存在二义性 2. 不支持二进制数据类型</td>
+</tr>
+<tr>
+<td>Protobuf</td>
+<td>二进制</td>
+<td>性能高</td>
+<td>1. 不宜读 2. 向后兼容有约定限制</td>
+</tr>
+</tbody></table>
+<h2 id="Json"><a href="#Json" class="headerlink" title="Json"></a>Json</h2><p>JSON建构于两种结构：</p>
+<ul>
+<li>“Key/Value”对的集合，在不同语言中，可以作为对象，字典，结构体等</li>
+<li>值的有序列表。通常可以理解为数组。</li>
+</ul>
+<p>以上两种结构在大多数语言中都存在，所以在不同语言中使用JSON进行交流非常自然。</p>
+<p>形式：</p>
+<ol>
+<li>对象是一个无序的’key/value’对集合。一个对象以”{“开始，”}”结束。键值对”key:value”表示。键值对之间使用”,”分隔</li>
+<li>值的有序集合：一个数组以”[“开始,”]”结束，值之间使用”,”分隔</li>
+<li>值value:可以为string-&gt;”abc”，number-&gt;1,Bool-&gt;true/false,null,对象或数组，同时结构可以嵌套</li>
+</ol>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><ol>
+<li>传输数据量较小，且实时性要求比较低的服务</li>
+<li>JSON的前后兼容性比较强，对于接口经常变化，对可调性要求高的场景比较适合，比如移动端和服务端通讯</li>
+<li>JSON的典型场景： JSON+HTTP</li>
+</ol>
+<p>JSON的性能和序列化的额外空间开销比较大，对于大数据量服务或持久化来说，会有巨大的开销。同时JSON本身没有使用IDL约束参与方，尽管在大多数语言中它的形式都可以兼容，但是还是会存在问题，需要通过文档方式进行约束，对调试会带来不便。</p>
+<h2 id="Protobuf"><a href="#Protobuf" class="headerlink" title="Protobuf"></a>Protobuf</h2><p>protobuf有许多作为优秀的序列化协议的众多优点：</p>
+<ol>
+<li>使用了标志的IDL</li>
+<li>序列化数据紧凑，空间开销小</li>
+<li>序列化反序列化速度很快</li>
+</ol>
+<p>protobuf产生与Google，其支持多种语言，支持的数据类型相对较少，常见与一下rpc框架中使用。</p>
+<h3 id="典型使用场景"><a href="#典型使用场景" class="headerlink" title="典型使用场景"></a>典型使用场景</h3><p>protobuf的空间开销小，加上解析性能高，使用与RPC调用的场景。protobuf提供了标志的IDL，IDL对于各方都有比较强的约束。此外对于应用层对象持久化来说，也比较适合。</p>
+<p>缺点在于调试比较麻烦</p>
+<h2 id="使用ANTLR设计自己的序列化协议-TODO"><a href="#使用ANTLR设计自己的序列化协议-TODO" class="headerlink" title="使用ANTLR设计自己的序列化协议 TODO"></a>使用ANTLR设计自己的序列化协议 TODO</h2><h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2015/02/26/serialization-vs-deserialization.html">https://tech.meituan.com/2015/02/26/serialization-vs-deserialization.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/29/MySQL-%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/01/29/MySQL-%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">MySQL - 查询优化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-01-29 17:16:04 / Modified: 18:19:14" itemprop="dateCreated datePublished" datetime="2022-01-29T17:16:04+08:00">2022-01-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="查询性能优化"><a href="#查询性能优化" class="headerlink" title="查询性能优化"></a>查询性能优化</h1><h2 id="优化数据访问"><a href="#优化数据访问" class="headerlink" title="优化数据访问"></a>优化数据访问</h2><ol>
+<li>确认程序是否在检索大量超过需要的数据</li>
+<li>确认Mysql服务器是否在分析大量超过需要的数据行</li>
+</ol>
+<h3 id="请求了不需要的数据"><a href="#请求了不需要的数据" class="headerlink" title="请求了不需要的数据"></a>请求了不需要的数据</h3><ol>
+<li>查询不需要的记录：Mysql总是先返回全部结果集再计算，最好的办法是在查询后面加上LIMIT</li>
+<li>多表关联时返回全部列：只取需要的列</li>
+<li>使用select *</li>
+<li>重复查询相同的数据：使用缓存将数据缓存下来</li>
+</ol>
+<h3 id="是否在扫描额外的记录"><a href="#是否在扫描额外的记录" class="headerlink" title="是否在扫描额外的记录"></a>是否在扫描额外的记录</h3><p>衡量标准：1. 响应时间 2. 扫描的行数 3. 返回的行数 -&gt; 查询慢日志获得指标 4. 扫描的行数和访问类型 -&gt; 通过EXPLAIN语句中的type列可以获取访问类型。</p>
+<p>优化思路：</p>
+<ol>
+<li>使用索引覆盖扫描</li>
+<li>改变库表结构</li>
+<li>重写复杂查询，让优化器能够以更优化的方式去执行查询</li>
+</ol>
+<h2 id="重构查询的方式"><a href="#重构查询的方式" class="headerlink" title="重构查询的方式"></a>重构查询的方式</h2><ol>
+<li><p>将一个复杂查询分解为多个简单查询</p>
+</li>
+<li><p>切分查询：将一个重的事务分解为多个小的事务（eg：删除过期数据）</p>
+</li>
+<li><p>分解关联查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM tag JOIN tag_post WHERE tag_post.id=tag.id JOIN post ON tag_post.id=post.id </span><br><span class="line">WHERE tag.tag=&#x27;mysql&#x27;</span><br><span class="line"></span><br><span class="line">//将关联查询分解为多个单表查询，然后在业务程序再进行关联</span><br><span class="line">SELECT * FROM tag WHERE tag=&#x27;mysql&#x27;</span><br><span class="line">SELECT * FROM tag_post WHERE tag_id=1234</span><br><span class="line">SELECT * FROM post WHERE post.id in (123,456)</span><br></pre></td></tr></table></figure></li>
+<li><p>Mysql客户端和服务端的通信协议: 半双工-&gt; 导致Mysql查询，需要所有的数据都接收到以后才能是否查询占用的资源。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/27/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
+      <meta itemprop="name" content="Dylan Zhong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan Zhong`s Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/zhongsongzhi97.github.io/2022/01/27/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8%E6%A1%86%E6%9E%B6/" class="post-title-link" itemprop="url">如何实现一个远程调用框架</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-01-27 14:45:00 / Modified: 17:09:32" itemprop="dateCreated datePublished" datetime="2022-01-27T14:45:00+08:00">2022-01-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zhongsongzhi97.github.io/categories/RPC/" itemprop="url" rel="index"><span itemprop="name">RPC</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="如何实现一个远程调用框架"><a href="#如何实现一个远程调用框架" class="headerlink" title="如何实现一个远程调用框架"></a>如何实现一个远程调用框架</h1><p>RPC框架会涉及到的内容，线程模型，通信协议设计，同步/异步调用，负载均衡等。</p>
+<h2 id="RPC框架架构设计"><a href="#RPC框架架构设计" class="headerlink" title="RPC框架架构设计"></a>RPC框架架构设计</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gys9sub3prj31940msabj.jpg" alt="Lark20210101-221749.png"></p>
+<p>大概有三个部分的组件，1. 客户端 2. 注册中心 3. 服务端</p>
+<h3 id="服务注册与发现"><a href="#服务注册与发现" class="headerlink" title="服务注册与发现"></a>服务注册与发现</h3><p>使用注册中心来实现服务注册和发现的功能。</p>
+<p>服务端节点上线以后自行向注册中心注册服务列表，节点下线时需要从注册中心将节点数据移除。</p>
+<p>客户端向服务端发起调用时，自己从注册中心获取到服务端的服务列表，然后通过负载均衡算法选择其中一个服务节点进行调用。</p>
+<p><strong>问题</strong>：服务端节点下线时如何移除节点数据，尤其是异常下线的情况。</p>
+<p>方式：主动通知+心跳检测</p>
+<p>当服务端下线时会主动通知注册节点下线移除数据，同时注册中心会对服务节点进行探活。</p>
+<h2 id="通信协议与序列化："><a href="#通信协议与序列化：" class="headerlink" title="通信协议与序列化："></a>通信协议与序列化：</h2><p>因为RPC框架对于性能要求较高，所以通信协议越简单越好。</p>
+<p>主流的是TPC,HTTP，gRPC使用的HTTP2。需要稳定可靠的协议。</p>
+<p>数据和序列化：如果是一般的框架会选用通用且高效的序列化方式，比如Json,Protocbuf等待，如果是特定场景下使用的话，可以使用特定的序列化方式，这样会更加高效。</p>
+<h2 id="RPC的调用方式："><a href="#RPC的调用方式：" class="headerlink" title="RPC的调用方式："></a>RPC的调用方式：</h2><p>一般支持的调用方式：</p>
+<ol>
+<li>同步Sync：客户端发起RPC调用后，当前线程会一直阻塞，指定服务端返回结果或者超时。</li>
+<li>异步Future：客户端发起调用以后不会阻塞等待，而是拿到RPC框架的Future对象，调用结果会被服务端缓存，客户端自行决定何时拿到返回结果，主动获取结果的过程是阻塞等待的。</li>
+<li>回调Callback：客户端发起调用时，将Callback对象传递给RPC框架，无需同步等待，直接返回。当获取到服务端响应结果或者超时，再执行用户注册的Callback回调。这种Callback接口一般包含了onResponse和onException两个方法</li>
+<li>单向Oneway：客户端发起请求后直接返回，忽略结果</li>
+</ol>
+<h2 id="线程模型："><a href="#线程模型：" class="headerlink" title="线程模型："></a>线程模型：</h2><p>使用主从Reactor线程模型，其中Boss和Worker线程池可以看做IO线程，IO线程用于处理网络数据，比如事件轮询，编解码，数据传输等。业务逻辑使用业务线程执行。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gysaijfmhoj317q0onn2d.jpg" alt="Lark20210101-221822.png"></p>
+<h2 id="负载均衡："><a href="#负载均衡：" class="headerlink" title="负载均衡："></a>负载均衡：</h2><p>常见的负载均衡的策略：</p>
+<p><strong>Round-Robin 轮询</strong>。Round-Robin 是最简单有效的负载均衡策略，并没有考虑服务端节点的实际负载水平，而是依次轮询服务端节点。</p>
+<p><strong>Weighted Round-Robin 权重轮询</strong>。对不同负载水平的服务端节点增加权重系数，这样可以通过权重系数降低性能较差或者配置较低的节点流量。权重系数可以根据服务端负载水平实时进行调整，使集群达到相对均衡的状态。</p>
+<p><strong>Least Connections 最少连接数</strong>。客户端根据服务端节点当前的连接数进行负载均衡，客户端会选择连接数最少的一台服务器进行调用。Least Connections 策略只是服务端其中一种维度，我们可以演化出最少请求数、CPU 利用率最低等其他维度的负载均衡方案。</p>
+<p><strong>Consistent Hash 一致性 Hash</strong>。目前主流推荐的负载均衡策略，Consistent Hash 是一种特殊的 Hash 算法，在服务端节点扩容或者下线时，尽可能保证客户端请求还是固定分配到同一台服务器节点。Consistent Hash 算法是采用哈希环来实现的，通过 Hash 函数将对象和服务器节点放置在哈希环上，一般来说服务器可以选择 IP + Port 进行 Hash，然后为对象选择对应的服务器节点，在哈希环中顺时针查找距离对象 Hash 值最近的服务器节点。</p>
+<h2 id="代理："><a href="#代理：" class="headerlink" title="代理："></a>代理：</h2><p>RPC框架如果要做到像调用本地接口一样调用远端服务，需要创建代理对象，在代理对象中完成数据报文编码，然后发起调用数据给服务方，以此来屏蔽RPC框架的调用细节。可以通过动态代理的方式生成桩类（代理类），gRPC则是通过定义好的DSL，使用DSL来生成桩类和代理方法。</p>
+<h2 id="基本框架"><a href="#基本框架" class="headerlink" title="基本框架"></a>基本框架</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// rpc-facade # HelloFacade</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloFacade</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">hello</span><span class="params">(String name)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// rpc-provider # HelloFacadeImpl</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RpcService(serviceInterface = HelloFacade.class, serviceVersion = &quot;1.0.0&quot;)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloFacadeImpl</span> <span class="keyword">implements</span> <span class="title">HelloFacade</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello&quot;</span> + name;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// rpc-consumer # HelloController</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RpcReference(serviceVersion = &quot;1.0.0&quot;, timeout = 3000)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> HelloFacade helloFacade;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping(value = &quot;/hello&quot;, method = RequestMethod.GET)</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> helloFacade.hello(<span class="string">&quot;mini rpc&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务方"><a href="#服务方" class="headerlink" title="服务方"></a>服务方</h3><ol>
+<li>服务提供者启动服务，并暴露服务端口；</li>
+<li>启动时扫描需要对外发布的服务，并将服务元数据信息发布到注册中心；</li>
+<li>接收 RPC 请求，解码后得到请求消息；</li>
+<li>提交请求至自定义线程池进行处理，并将处理结果写回客户端。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1229,506 +1561,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2022/01/06/MySQL-%E7%B4%A2%E5%BC%95%E5%92%8C%E8%B0%83%E4%BC%98%E5%B0%8F%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2022/01/06/MySQL-%E7%B4%A2%E5%BC%95%E5%92%8C%E8%B0%83%E4%BC%98%E5%B0%8F%E7%BB%93/" class="post-title-link" itemprop="url">MySQL - 索引和调优小结</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-01-06 21:28:07" itemprop="dateCreated datePublished" datetime="2022-01-06T21:28:07+08:00">2022-01-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-01-29 17:10:15" itemprop="dateModified" datetime="2022-01-29T17:10:15+08:00">2022-01-29</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="MySQL索引和SQL调优"><a href="#MySQL索引和SQL调优" class="headerlink" title="MySQL索引和SQL调优"></a>MySQL索引和SQL调优</h1><h2 id="MySQL索引"><a href="#MySQL索引" class="headerlink" title="MySQL索引"></a>MySQL索引</h2><p>MySQL支持多种引擎，各种引擎对所有的支持不同，因此MySQL数据库支持多种索引类型，如BTree索引，哈希索引，全文索引等等。其中只有为BTree索引。</p>
-<h3 id="B-Tree索引："><a href="#B-Tree索引：" class="headerlink" title="B-Tree索引："></a>B-Tree索引：</h3><p>eg:  key(last_name, first_name, birthday)</p>
-<p>适用于全键值，键值范围，键前缀查找</p>
-<p>全值匹配：和索引的所有列匹配，查询一个名为 ab出生日期c的 人</p>
-<p>匹配最左前缀：匹配 last_name = a的人，只使用了索引的第一列</p>
-<p>匹配列前缀：查询last_name的第一个字母为J的人</p>
-<p>匹配范围值：查询last_name在allen和Bob之间的人，只使用了索引第一列</p>
-<p>精确匹配某一列并范围匹配另一列：查询姓为allen，名字k开头的人。即第一列last_name精确匹配，第二列first_name范围匹配</p>
-<p>覆盖索引：即要查的数据都在索引中包含了，即不需要回查具体的行的内容</p>
-<p><strong>索引用于ORDER BY</strong>: 满足上述范围的查询，进行order by也可以使用索引</p>
-<p><strong>限制：</strong></p>
-<ol>
-<li>最左前缀匹配优先：如果不是按照索引最左列开始查找，就无法使用索引。比如上述的所有无法查找first_name = bill 的人，需要取出所有的值，然后再匹配</li>
-<li>不能跳过索引中的列：比如无法在索引上找到last_name=’Smith’并且birthday=”1997-01-01”的人，只能通过索引找到last_name=Smith的所有行，然后在去匹配</li>
-<li>如果最左匹配中遇到某一行为范围查询，则后续的列都无法使用索引：比如 where last_name = ‘Smith’ AND first_name list ‘%j’ and birthday = ‘1997-01-01’则会找到满足last_name和first_name的，然后取出所有行再和birthday做匹配</li>
-</ol>
-<h2 id="MySQL索引原理"><a href="#MySQL索引原理" class="headerlink" title="MySQL索引原理"></a>MySQL索引原理</h2><p>目的：提高查询效率（读，写），数据库的查询情况复杂，包括等值查询，范围查询，模糊查询，并集查询，多值匹配等。需要每次查找数据时，磁盘IO次数较少，高度可控的多路搜索树就是很好的选择。</p>
-<p>索引结构：B+树</p>
-<h3 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h3><p>B+树的重要性质：</p>
-<ol>
-<li><p>索引字段越小，数据项的数目越多，树的高度越低 - 所以B+树的索引字段要尽量小</p>
-</li>
-<li><p>最左匹配：当B+树的数据项是复合的数据结构，比如(name, age, sex)的时候，b+树是按照从左到右的顺序来构建搜索树的。比如(张三，24，F)进行检索时，会优先比较name来确定下一个搜索方向，name相同再依次比较age，sex，最后得到检索的数据。</p>
-<p>但是当(24,F)这样的没有name的数据来的时候，B+数不知道下一步该查哪一个节点</p>
-<p>当（张三，F）进行检索，先根据name进行搜索，由于age缺失，只能把所有满足张三的都找到，然后再匹配性别为F的数据</p>
-</li>
-</ol>
-<p>B+树在磁盘存储中表现的特性</p>
-<ol>
-<li>为了节省内存，是把B+树存储到硬盘中的，对于每一个节点的访问都对应了一次磁盘IO操作 -&gt; 树的高度 == 查询时的磁盘IO次数</li>
-<li>一个m叉树，m越大高度越低。但是操作系统是按页（4KB）来读取磁盘或内存中的数据的。如果读取的数据量超过4KB，则会触发多次IO操作。所以在选择m的大小时，尽量让每个节点的大小等于一个页的大小。这样一个节点只需要一次IO。（总的次数：(向上取整)(节点大小)/4KB  * 树的高度）</li>
-<li>数据的增加删除修改都会导致B+树结构调整，自增字段会减少消耗</li>
-</ol>
-<h2 id="MySQL索引的实现"><a href="#MySQL索引的实现" class="headerlink" title="MySQL索引的实现"></a>MySQL索引的实现</h2><p>主要为MyISAM和InnoDB</p>
-<h3 id="MyISAM索引实现"><a href="#MyISAM索引实现" class="headerlink" title="MyISAM索引实现"></a>MyISAM索引实现</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy6r6in5akj30hs0ebjs2.jpg" alt="图片"></p>
-<p>使用B+树，叶子节点存放的是数据的地址。</p>
-<p>在MyISAM中，主索引和辅助索引在结构上都是一样的，只是主索引要求key是唯一的</p>
-<p>上图使用的是Col1作为Primary Key,如果使用Col2作为辅助索引如下图</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy6racejzaj30hs0ebaaq.jpg" alt="图片"></p>
-<p>所以，对于MyISAM来说，索引检索为首先按照B+树的方式搜索索引，找到key以后读取地址值，再根据地址值读取相应的数据（非聚集的索引）</p>
-<h3 id="InnoDB索引实现"><a href="#InnoDB索引实现" class="headerlink" title="InnoDB索引实现"></a>InnoDB索引实现</h3><p>使用B+树，但是InnoDB的数据文件本身就是索引文件，表数据文件本身是按照B+树组织的一个索引结构，叶节点保存了完整的数据，索引key是数据表的主键。这种叫做聚集索引。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy6rfassnzj30f306pdg3.jpg" alt="图片"></p>
-<p>由于InnoDB的数据文件本身需要根据主键组织，所以InnoDB要求必须有主键（MyISAM可以没有）</p>
-<p>如果没有显示指定，则MySQL会自动旋转一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则会自动生成一个隐含字段作为主键（自增，6字节的长整形）</p>
-<p>由于InnoDB的表数据文件按照B+数组织，所以对于InnoDB的辅助索引来说，辅助索引的叶子节点需要保存的是主键的值而不是地址</p>
-<p><strong>造成的不同</strong>：聚集索引的方式会使得按照主键（主索引）搜索的方式变得高效，但是对于辅助索引来说，需要进行两次检索（使用辅助索引检索到主键，然后在主索引通过主键找到记录）</p>
-<p>重要特性：</p>
-<ol>
-<li>InnoDB的索引形式，导致其使用过长的字段作为主键，它的所有辅助索引都会因此变得过大</li>
-<li>使用非单调的字段作为主键，在InnoDB中不是好事，因为InnoDB本身是B+树，非单调的主键会在插入新数据时，B+树频繁的分裂调整，所以使用自增字段作为主键是一个很好的选择</li>
-</ol>
-<h2 id="建立索引的原理"><a href="#建立索引的原理" class="headerlink" title="建立索引的原理"></a>建立索引的原理</h2><p>联合索引：</p>
-<p>MySQL的索引可以按照一定的顺序引用多个列，这种索引叫做联合索引</p>
-<p>一个联合索引是一个有序元祖。</p>
-<p>索引匹配的最左原则：</p>
-<p>假如索引列分别为A，B，C，顺序也是A，B，C</p>
-<ol>
-<li>如果查询[A],[A,B],[A,B,C]可以通过索引查询</li>
-<li>如果使用[A,C]，则只能使用到A索引</li>
-<li>如果查询的时候，是[B],[B,C],[C]，由于没有用的第一列索引，所以后面的索引也用不到</li>
-<li>如果查询时范围查询，并且是最左前缀，也就是第一列索引，那么可以用到索引，但是范围后面的列用不了索引</li>
-</ol>
-<p>索引的代价：</p>
-<ol>
-<li>索引本身需要空间存储</li>
-<li>MySQL运行时也需要维护索引</li>
-</ol>
-<p>InnoDB存储引擎：没有特殊情况，使用一个与业务无关的自增主键</p>
-<p>磁盘IO: MySQL的数据都是以文件形式存储在磁盘上的，数据库对数据的读取以页为基本单位单位读取，一般为4KB的整数倍。为了提升效率，会有缓冲池（时间局部性&amp;空间局部性）</p>
-<p>随机读取和顺序读取：随机读取的消耗时间大约为10ms，内存中的随机读取大约1ms，顺序读写能达到一页0.1ms。所以能减少随机IO，使用顺序读取，会大大提高磁盘吞吐量。</p>
-<p>过滤因子：一个 SQL 查询扫描的索引片大小其实是由过滤因子决定的，也就是满足查询条件的记录行数所占的比例。如果过滤因子比较好，则该列的重复字段的比例低。</p>
-<p>匹配列和过滤列： users 表中有 name、age 和 (name, sex, age) 三个辅助索引。当where存在age=21或name=”123”时，三个索引都会成功匹配列用于选择索引树中的数据行。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">WHERE</span> name <span class="operator">=</span> &quot;draven&quot; <span class="keyword">AND</span> sex <span class="operator">=</span> &quot;male&quot; <span class="keyword">AND</span> age <span class="operator">&gt;</span> <span class="number">20</span>;</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>对于这种有等值有范围的请求，只会使用name,sex作为匹配列</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>但是当其扫描到了所有的满足条件的数据行以后，会把age作为过滤列，这样可以减少去磁盘读取IO的情况</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy92m69i80j30rs099aag.jpg" alt="Match-Columns-Filter-Columns"></p>
-<h3 id="建立索引的常见技巧："><a href="#建立索引的常见技巧：" class="headerlink" title="建立索引的常见技巧："></a>建立索引的常见技巧：</h3><ol>
-<li><p>最终前缀匹配原则：MySQL会一直向右匹配直到遇见范围查询</p>
-</li>
-<li><p>=和in可以乱序，比如a = 1 and b = 2 and c = 3 建立(a,b,c)索引可以任意顺序，mysql的查询优化器会帮你优化成索引可以识别的形式</p>
-</li>
-<li><p>尽量选择区分度高的列作为索引，区分度高是指字段不重复的比例，比例越大扫描的记录数越少，唯一键的区分度为1</p>
-</li>
-<li><p>索引列不参与计算</p>
-<p>eg:from_unixtime(create_time) = ’2014-05-29’就不能使用到索引</p>
-<p>原因很简单，b+树中存的都是数据表中的字段值，但进行检索时，需要把所有元素都应用函数才能比较，显然成本太大。所以语句应该写成create_time = unix_timestamp(’2014-05-29’);</p>
-<p>Eg: </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT actor_id FROM actor WHERE actor_id + 1 = 5;</span><br><span class="line">//这里无法使用 key(actor_id) 因为mysql无法解析表达式</span><br><span class="line">SELECT actor_id FROM actor WHERE actor_id = 4; 保证索引列单独在比较符号的左边即可</span><br></pre></td></tr></table></figure></li>
-<li><p>尽量扩展索引而不是新建索引，比如本身已经有a索引了，需要（a，b）索引，则最好修改原来的索引a为（a，b）最好，否则会存冗余和重复索引（MySQL也不会自动删除）</p>
-</li>
-<li><p>前缀索引：对于value为字符串类型的索引来说，直接索引值会使得索引变得很大且很慢。如果只是索引开始的部分字符，就可以解决。前缀索引无法用于做ORDER BY和GROUP BY，也不能使用前缀索引做覆盖扫描。</p>
-</li>
-<li><p>多列索引和合适的索引列顺序：多列索引-&gt;不为每个列建一个索引，而是建一个多列索引。多列索引的顺序最好按照区分度来，区分度搞的在前面。对于有些情况，比如登录用户，除了普通用户以为，还有大量的游客用户是用的相同的username，则最好的办法是在业务层面上做好区分。</p>
-</li>
-<li><p>使用自增主键</p>
-</li>
-<li><p>对于常用的查询，建立覆盖索引</p>
-</li>
-<li><p>使用索引扫描来做排序：如何生成有序的结果：1. 通过排序操作 2. 按索引顺序扫描</p>
-<p>扫描索引本身很快，但是不是覆盖索引，就需要回表，基本都是随机IO，所以按索引顺序读取数据通常比全表扫描更慢。只有当索引的列顺序和ORDER BY的子句顺序完全一致，并且排序方向都一致时，才能使用索引对结果进行排序。如果是Join多张表，只有ORDER BY子句引用的字段全是第一个表时，才能使用索引做排序。</p>
-</li>
-</ol>
-<h3 id="索引设计的案列"><a href="#索引设计的案列" class="headerlink" title="索引设计的案列"></a>索引设计的案列</h3><ol>
-<li><p>支持多种过滤条件：</p>
-<p>设计一个在线约会网站，用户信息表有很多列，包括国家，地区，城市，性别等。需要支持按照以上特质组合来搜索用户</p>
-<p>这里由于sex, country使用的情况非常多，所以需要用(sex, country)列做前缀。但是sex, country的区分度很低，如果某个查询没有使用到sex该怎么办？这里使用 查询条件 AND SEX IN(‘m’, ‘f’) 来让索引能够被使用，包括contry也可以</p>
-</li>
-<li><p>避免多个范围条件：</p>
-<p>在上述的在线约会网站中，有一个last_online列并希望能够查询过去几周上过线的用户：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WHERE last_online &gt; DATE_SUB(NOW(),INTERVAL 7 DAY) AND age BETWEEN 18 AND 25</span><br></pre></td></tr></table></figure>
-
-<p>对于范围查询，MySQL无法使用范围列后面的其他索引列，但是对于多个“等值条件查询”没有这个限制</p>
-<p>这里有两个范围条件, last_online和age，MySQL可以使用last_online或者age，但是没有办法同时使用，如果也无法使用IN来优化为多个等值条件查询，比如这里的，那就可以将范围查询转换为一个简单的等值查询来处理。</p>
-<p>这里最好的解决办法是，维护以active列，在业务层使用定时任务来维护。</p>
-</li>
-<li><p>优化排序：</p>
-<ul>
-<li><p>如何对区分度非常低的列进行排序</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT &lt;cols&gt; FROM users WHERE sex=&#x27;M&#x27; ORDER BY rating LIMIT 10;</span><br><span class="line">//这个索引同时使用了ORDER BY 和 LIMIT 如果没有索引会很慢</span><br><span class="line">//创建索引 &lt;sex,rating&gt;</span><br></pre></td></tr></table></figure></li>
-<li><p>但是以上情况在查询翻页比较靠后的情况 LIMIT 100000,10也会很慢</p>
-<p>这里需要现在用户翻页的数量，不过也可以通过延迟关联来优化</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT &lt;cols&gt; FROM users INNER JOIN (SELECT &lt;primary key cols&gt; FROM users WHERE x.sex=&#x27;M&#x27; ORDER BY rating LIMIT 100000,10) AS x USING(&lt;primary key cols&gt;)</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li></li>
-</ol>
-<h2 id="三星索引"><a href="#三星索引" class="headerlink" title="三星索引"></a>三星索引</h2><p>概念：如果一个查询语句的索引是三星索引，那么它只需要进行<strong>一次磁盘的随机读及一个窄索引片的顺序扫描</strong>就可以得到全部的结果集</p>
-<p>最简单的方式：在设计单表的索引时，首先把查询中所有的<strong>等值谓词全部取出</strong>以任意顺序放在索引最前面，在这时，如果索引中同时存在范围索引和 ORDER BY 就需要权衡利弊了，希望最小化扫描的索引片厚度时，应该将<strong>过滤因子最小的范围索引列</strong>加入索引，如果希望避免排序就选择 <strong>ORDER BY 中的全部列</strong>，在这之后就只需要将查询中<strong>剩余的全部列</strong>加入索引了，通过这种固定的方法和逻辑就可以最快地获得一个查询语句的二星或者三星索引了。</p>
-<p>Todo: 数据库索引设计与优化 Book</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/31/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A%E5%B0%8F%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/12/31/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A%E5%B0%8F%E7%BB%93/" class="post-title-link" itemprop="url">计算广告小结</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2021-12-31 14:51:42 / Modified: 16:09:21" itemprop="dateCreated datePublished" datetime="2021-12-31T14:51:42+08:00">2021-12-31</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="计算广告小结"><a href="#计算广告小结" class="headerlink" title="计算广告小结"></a>计算广告小结</h1><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxx0qu65d3j30tk1lj10k.jpg" alt="计算广告基础概念"></p>
-<h2 id="广告基础："><a href="#广告基础：" class="headerlink" title="广告基础："></a>广告基础：</h2><ol>
-<li><p>什么是广告？</p>
-<p>广告是由已确定的出资人通过各种媒介进行的有关产品的，有组织，综合，劝服性的非人员的信息传播活动</p>
-</li>
-<li><p>广告的目的？</p>
-<p>广告主通过媒体达到低成本的用户接触</p>
-</li>
-<li><p>广告的参与者：</p>
-<p>需求方：广告主</p>
-<p>供给方：媒体或者其他技术形态的变现平台</p>
-<p>受众：普通群众，一个被动的参与方</p>
-</li>
-<li><p>分类：</p>
-<p>大体上是按照售卖方式，分为品牌广告和效果广告。</p>
-<p>如果按照广告的形式，可以有多种多样，比如开屏广告，激励视频广告，搜索广告等等。</p>
-<p>品牌广告：广告主希望借助媒体达到宣传品牌形象，提升中长期购买率和利润空间的目的。</p>
-<p>效果广告：广告主希望能利用广告手段马上带来大量的购买行为。</p>
-</li>
-</ol>
-<h2 id="计算广告："><a href="#计算广告：" class="headerlink" title="计算广告："></a>计算广告：</h2><ol>
-<li><p>特点：</p>
-<ol>
-<li>技术和计算导向</li>
-<li>效果可衡量</li>
-<li>创意和投放方式标准化</li>
-<li>媒体概念多样化</li>
-<li>数据驱动的投放决策</li>
-</ol>
-</li>
-<li><p>基本概念：</p>
-<ol>
-<li>点击率CTR(Click Through Rate):广告点击与广告展现的比率</li>
-<li>转化率CVR(Conversion Rate):点击广告以后，会打开广告主的落地页，落地页成功打开次数与点击次数的比率成为到达率。从落地页开始，进一步完成下单等操作，则是转化，转化次数与到达次数的比例成为转化率。</li>
-<li>千次展示付费(Cost Per Mille)CPM：广告每展示千次作为单位收取广告费。</li>
-<li>千次展示收入(Effective cost per maille)eCPM：每千次展示可以获得的广告收入</li>
-</ol>
-</li>
-<li><p>常见的收费模式：</p>
-<ol>
-<li><p>CPM：</p>
-<p>对于效果和目的不便于直接衡量的，可以使用CPM（千次展示收费）方式计费。供给方和需求方约定好千次展示的计费标准，这些展示是否能够代理相应的收益，需要由需求方类估计和控制。</p>
-</li>
-<li><p>CPC：</p>
-<p>CPC(Cost Per Click)计费，按点击收费。通常用于效果广告。CPC计费有利于发挥供给方和需求方的长处，把点击率的估计交给供给方，点击价值的估计交给需求方。供给方通过收集大量用户数据，可以准确评估点击率，转化效果则是广告商站内的行为，需要由他们自己的数据分析体系更准确的对其进行评估。</p>
-</li>
-<li><p>CPS/CPA/ROI:</p>
-<p>按照销售订单数，转化行为数，投入产出比来计费。这种情况下，需求方只按照最后的转化收益来结算，极大程度的规避了风险。供给方不但需要估计点击率，还需要对点击价值做出估计，才能合理决定流量分配。</p>
-<p>问题：</p>
-<ol>
-<li>转化行为对于供给方来说很难控制，也无法进行估计和优化。</li>
-<li>存在广告主故意降低转化率以低成本获取大量品牌曝光的可能。</li>
-</ol>
-</li>
-<li><p>CPT:</p>
-<p>CPT(Cost Per Time)计费，这是针对大品牌广告主特定的广告活动，将某个广告位以独占的方式交给某广告主，按独占时间段收取费用。CPT虽然有额外的品牌效果和橱窗效应，但是无法利用受众定向技术。</p>
-</li>
-</ol>
-<h2 id="广告投放和广告竞价"><a href="#广告投放和广告竞价" class="headerlink" title="广告投放和广告竞价"></a>广告投放和广告竞价</h2></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhongsongzhi.github.io/zhongsongzhi97.github.io/2021/12/29/%E9%93%BE%E6%8E%A5-%E8%A3%85%E8%BD%BD%EF%BC%8C%E5%BA%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/37136639?s=400&u=6e2ba0de05f1020daf278189f1ffe69c5ac946af&v=4#/images/avatar.gif">
-      <meta itemprop="name" content="Dylan Zhong">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dylan Zhong`s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/zhongsongzhi97.github.io/2021/12/29/%E9%93%BE%E6%8E%A5-%E8%A3%85%E8%BD%BD%EF%BC%8C%E5%BA%93/" class="post-title-link" itemprop="url">链接,装载，库</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-12-29 19:13:32" itemprop="dateCreated datePublished" datetime="2021-12-29T19:13:32+08:00">2021-12-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-12-30 12:00:26" itemprop="dateModified" datetime="2021-12-30T12:00:26+08:00">2021-12-30</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="链接，装载，库"><a href="#链接，装载，库" class="headerlink" title="链接，装载，库"></a>链接，装载，库</h1><h2 id="从源代码到内存的通路"><a href="#从源代码到内存的通路" class="headerlink" title="从源代码到内存的通路"></a>从源代码到内存的通路</h2><h3 id="可执行文件的组成"><a href="#可执行文件的组成" class="headerlink" title="可执行文件的组成"></a>可执行文件的组成</h3><p>在链接前，需要将源文件编译为目标文件，目标文件链接为可执行文件。可执行文件（动态链接与运行时加载）由多个段组成：</p>
-<ol>
-<li>文件头：文件基本信息。</li>
-<li>段表：描述各段的基本信息。</li>
-<li>基本的代码段和数据段。</li>
-<li>链接相关的。（符号的解析和重定位）</li>
-<li>装载相关。</li>
-</ol>
-<h3 id="可执行文件的加载："><a href="#可执行文件的加载：" class="headerlink" title="可执行文件的加载："></a>可执行文件的加载：</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gxuy176e6rj30u00znmy3.jpg" alt="img"></p>
-<p>源代码编译而成的目标文件一般依赖系统的运行库和其他共享对象，将它们链接成可执行的程序并加载到内存。有以下这些方式“</p>
-<ol>
-<li>将所有相关文件静态链接成一个完整的可执行文件，然后加载到内存</li>
-<li>将目标文件作为可执行文件，载入内存时由动态链接器加载其依赖的其他文件</li>
-<li>将目标文件作为可执行文件，载入内存，由程序调用”依赖函数“加载或找到已加载到内存的函数地址，继续执行。</li>
-</ol>
-<h3 id="文件的映射"><a href="#文件的映射" class="headerlink" title="文件的映射"></a>文件的映射</h3><p>程序并不会完整的加载到内存中，会在执行时访问数据发生缺页时再加载。其中有两个关键的映射关系：、</p>
-<ol>
-<li>可执行文件各段与虚拟地址空间的映射。（VMA的数据结构）</li>
-<li>虚拟地址空间与物理地址空间的映射。（页表）</li>
-</ol>
-<h3 id="进程虚拟地址空间的分布："><a href="#进程虚拟地址空间的分布：" class="headerlink" title="进程虚拟地址空间的分布："></a>进程虚拟地址空间的分布：</h3><p>代码区：</p>
-<p>数据区：</p>
-<p>​    静态数据区，动态数据区（堆，栈）</p>
-<h2 id="符号-amp-模块，静态链接，动态链接"><a href="#符号-amp-模块，静态链接，动态链接" class="headerlink" title="符号&amp;模块，静态链接，动态链接"></a>符号&amp;模块，静态链接，动态链接</h2><h3 id="符号-amp-模块"><a href="#符号-amp-模块" class="headerlink" title="符号&amp;模块"></a>符号&amp;模块</h3><p>符号：符号最早起源于汇编的概念，汇编最早使用机器码（数字）来描述指令，操作数，地址值，后续改进为使用符号代替机器码。后续的符号也通常用于表示地址值，对于函数地址和变量地址都以符号来表示。</p>
-<p>模块：现代语言中，通常会按照功能划分为不同的模块。在C语言中，若干变量和函数组成了一个模块，存放到一个.c源码文件中，这些源代码文件按照目录结构组织。</p>
-<p>大规模软件通常会有很大规模的模块，这些模块直接相互依赖又相互独立。编译器会对每一个模块单独编译，每一个模块都会生成中间文件。中间文件最后会组合为一个单一的可执行文件。</p>
-<p>因为模块间存在相互依赖，表现为：1. 模块间的函数调用 2. 模块间的变量访问</p>
-<p>函数访问需要知道目标函数的地址，变量访问需要知道变量的地址，即：模块间符号的引用</p>
-<h3 id="静态链接："><a href="#静态链接：" class="headerlink" title="静态链接："></a>静态链接：</h3><p>主要过程：</p>
-<pre><code> 1. 地址和空间分配：
- + 扫描所有的目标文件，获得它们每个节的长度，属性，位置，并将目标文件中的符号表中所有的符号定义和符合引用收集，统一放到一个全局的符号表。链接器可以获得所有输入目标文件的节的长度，并将它们合并，计算出输出文件中各个节合并后的长度和位置，建立映射关系。
- 2. 符号决议
- + 将每个引用于它输入的可重定位目标文件的符号表中的一个确定的符合定义关联起来。
- + 相同模块的局部符号的引用。（每个模块的每个局部符合只有一个定义）
- + 全局符号：编译器遇到一个不在当前模块中定义的符号，会假设其再其他某个模块中定义，生成一个链接器符号表条目，并将其交给链接器处理。如果链接器在它的任何输入模块都找不到被引用符号的定义，就会输出一条错误信息并终止。
- + 多个目标文件出现相同名字的全局符合：
-   1. 不允许有多个同名的强符号
-   2. 如果有一个强符合与多个弱符合同名，选择强符合
-   3. 多个弱符号同名，则从这些弱符合中任意选择一个。
- + 一个弱符号定义在多个目标文件
-   1. 多个强符号类型不同（非法）
-   2. 一个强符号，多个弱符合，出现类型不一致（同强符号，如果弱符合类型大于强，则发出警告）
-   3. 多个弱符合类型不一致（选择最大的类型）
- 3. **重定位**：
- + 链接器已经确定所有符合的虚拟地址了。链接器就可以根据符号的地址对每个需要重定位的指令进行地址修正。
-</code></pre>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* a.c */</span></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> shared;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> *b)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">100</span>;</span><br><span class="line">    swap(&amp;a, &amp;shared);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* b.c */</span></span><br><span class="line"><span class="keyword">int</span> shared = <span class="number">42</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> *b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> temp = &amp;a;</span><br><span class="line">    &amp;a = &amp;b;</span><br><span class="line">    &amp;b = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>b.c中定义了2个全局符号，一个变量<strong>shared</strong>，一个函数<strong>swap</strong>. a.c中定义了一个全局符号<strong>main</strong>，a.c中引用了b.c中的2个符号。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c a.c b.c</span><br></pre></td></tr></table></figure>
-
-<p>使用gcc将这两个文件编译为中间文件以后，a的中间文件中，符号<strong>shared</strong>,<strong>swap</strong>地址的值都为0.</p>
-<p>在这个过程中，每个模块会有一个relocation table保存每个模块的那些符号需要重定位，整体上有一个symbol table保存符号地址。</p>
-<p>静态链接过程中，各个中间文件会把relocation table中需要重定位的符号进行重定位。</p>
-<p>静态链接的问题：1. 浪费磁盘和内存空间 - 各个可执行程序中依赖的库都需要链接到可执行文件中 2. 程序的更新，部署，发布会有很多麻烦 - 每当更新程序时，都需要重新进行编译和链接</p>
-<h3 id="动态链接："><a href="#动态链接：" class="headerlink" title="动态链接："></a>动态链接：</h3><p>不对组成程序的目标文件进行链接，等到程序运行时才进行链接。即链接推迟到运行时进行。</p>
-<p>动态链接还分为：non-lazy binding(程序运行前就会被绑定) lazy binding(符号第一次使用时)绑定</p>
-<h4 id="基本实现："><a href="#基本实现：" class="headerlink" title="基本实现："></a>基本实现：</h4><ol>
-<li>动态链接会涉及到运行时的链接以及多个文件的装载，必须有操作系统的支持。</li>
-<li>在Linux中，ELF动态链接文件被称为 DSO（动态共享对象 Dynamic Shared Objects）</li>
-<li>Windows (DLL Dynamic Linking Library)</li>
-<li>当程序被装载时，系统的动态链接器会将程序所需要的所有动态链接库装载到进程的地址空间，并将程序中所有未解析的符号绑定到相应的动态链接库，然后进行重定位。</li>
-</ol>
-<h4 id="动态链接程序运行时地址空间的分布"><a href="#动态链接程序运行时地址空间的分布" class="headerlink" title="动态链接程序运行时地址空间的分布"></a>动态链接程序运行时地址空间的分布</h4><ol>
-<li>对于静态链接的可执行文件来说，整个进程只有一个文件要被映射即可执行文件。对于动态链接，除了可执行文件以外，还有它所依赖的共享目标文件。</li>
-<li>共享目标文件的地址分配<ol>
-<li>静态共享库（地址固定）将程序的各个模块统一交给操作系统进行管理，操作系统在某个特定的地址划分出一些地址块，为哪些已知的模块预留足够的控件。这个地址对不同的应用程序都是固定的。</li>
-<li>动态共享库（地址不固定）在链接时，对所有绝对地址的引用都不作重定位，而把这一步推迟到装载时再完成。一旦模块装载地址确定，即目标地址确定，那么系统就对所有绝对地址引用进行重定位。</li>
-</ol>
-</li>
-<li>地址无关代码：<ol>
-<li>把指令中需要修改的部分都剥离出来，和数据部分放在一起。这样指令部分就可以保持不变，而数据部分在每个进程都有一个副本。</li>
-</ol>
-</li>
-<li>地址引用的处理<ol>
-<li>模块内部的函数调用<ol>
-<li>调用函数和调用者在同一模块，相对位置固定，不需要重定位</li>
-</ol>
-</li>
-<li>模块内部的数据访问<ol>
-<li>统一模块，相对位置固定</li>
-</ol>
-</li>
-<li>模块外部的函数调用<ol>
-<li>会在数据段中建立一个指向这些变量的指针数组，也称为全局偏移表（Global Offset Table, GOT)，当需要引用该全局变量，可以通过GOT中相对应的间接引用。链接器会在装载模块时查找每个变量所在的地址，然后填充GOT中各项，确保指向地址正确。</li>
-</ol>
-</li>
-<li>模块外部的数据访问<ol>
-<li>会在数据段中建立一个指向这些变量的指针数组，也称为全局偏移表（Global Offset Table, GOT)，当需要引用该全局变量，可以通过GOT中相对应的间接引用。链接器会在装载模块时查找每个变量所在的地址，然后填充GOT中各项，确保指向地址正确。</li>
-</ol>
-</li>
-</ol>
-</li>
-</ol>
-<h2 id="其他内容："><a href="#其他内容：" class="headerlink" title="其他内容："></a>其他内容：</h2><h3 id="函数调用与栈："><a href="#函数调用与栈：" class="headerlink" title="函数调用与栈："></a>函数调用与栈：</h3><ol>
-<li>为什么值传递：函数调用时，参数和返回值都是放到栈帧中的，对参数的操作访问是访问的栈帧中的内容。出栈时相关的修改部分就会丢失。</li>
-<li>局部变量的生命周期：因为局部变量时存放到栈帧当中，所以局部变量的生命周期也就只有函数调用过程中。</li>
-</ol>
-<h3 id="构造函数和析构函数存在："><a href="#构造函数和析构函数存在：" class="headerlink" title="构造函数和析构函数存在："></a>构造函数和析构函数存在：</h3><p>可执行文件除了代码段以外，构造函数和析构函数一般存放在.init和.finit段。</p>
-<p>运行库中包含由入口函数，这是进程执行的入口，它会在main之前执行.init中的代码，main执行完毕后执行.finit</p>
-<p>?defer关键词是否存放到.finit</p>
-<h2 id="应用："><a href="#应用：" class="headerlink" title="应用："></a>应用：</h2><p>应用场景1：</p>
-<p>问题：APMInsight用于监控SDK本身的崩溃。对于动态库，由于可以拿到动态库的地址范围，所有很好判断。但是对于静态库SDK来说，它本身就是代码文件的一个集合，会被加入到App的compile source当中一起被编译，链接。最早的方案是通过对SDK的进行扫描，获得所有的符号集合，通过筛选符号是否在符合集合中判断堆栈里的函数是否是SDK的函数。</p>
-<p>前提概念：</p>
-<p>Xcode的静态库：</p>
-<p>由于Xcode编译源代码文件是按照compile source里顺序编译并链接的，并且是静态链接的。当整个SDK被添加到应用里的时候，相对于起始地址存在一个偏移量m，SDK的第一个符号symbol1的地址为addr1,第二个符号的地址为addr2,symbolN的地址为addrN,所有符号直接的地址偏差是固定的，也就是SDK的符号的地址范围为addr1-&gt;addrN，这样就可以在SDK的组件前后分别加上2个.c文件，获取自己的地址，这样就可以拿到SDK所属代码区间，在APM筛选过程中判断函数地址是否在SDK的范围内，即可筛选出是否为SDK的崩溃。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/zhongsongzhi97.github.io/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/zhongsongzhi97.github.io/">1</a><span class="page-number current">2</span><a class="page-number" href="/zhongsongzhi97.github.io/page/3/">3</a><a class="page-number" href="/zhongsongzhi97.github.io/page/4/">4</a><a class="extend next" rel="next" href="/zhongsongzhi97.github.io/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/zhongsongzhi97.github.io/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/zhongsongzhi97.github.io/">1</a><span class="page-number current">2</span><a class="page-number" href="/zhongsongzhi97.github.io/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/zhongsongzhi97.github.io/page/5/">5</a><a class="extend next" rel="next" href="/zhongsongzhi97.github.io/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 </div>
